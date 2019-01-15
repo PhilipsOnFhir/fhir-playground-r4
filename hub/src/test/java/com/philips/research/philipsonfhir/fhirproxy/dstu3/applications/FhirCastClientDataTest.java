@@ -1,8 +1,8 @@
 package com.philips.research.philipsonfhir.fhirproxy.dstu3.applications;
 
-import com.philips.research.philipsonfhir.fhircast.server.FhirCastServerApplication;
-import com.philips.research.philipsonfhir.fhirproxy.dstu3.applications.fhircast.app.service.FhirCastClient;
-import com.philips.research.philipsonfhir.fhirproxy.dstu3.support.fhircast.service.FhirCastException;
+import com.github.philipsonfhir.fhircast.app.FhirCastClient;
+import com.github.philipsonfhir.fhircast.server.FhirCastServerApplication;
+import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class FhirCastClientDataTest {
 
     @Test
     public void createDeleteSession() throws FhirCastException {
-        FhirCastClient fhirCastDrivingApplication = new FhirCastClient( baseUrl() );
+        FhirCastClient fhirCastDrivingApplication = new FhirCastClient( baseUrl(), "34923849238" );
         fhirCastDrivingApplication.close();
     }
 
