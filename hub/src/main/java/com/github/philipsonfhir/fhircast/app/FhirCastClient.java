@@ -2,18 +2,15 @@ package com.github.philipsonfhir.fhircast.app;
 
 import ca.uhn.fhir.context.FhirContext;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
-import com.github.philipsonfhir.fhircast.support.model.*;
-import org.apache.catalina.startup.Bootstrap;
+import com.github.philipsonfhir.fhircast.support.websub.*;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
-import java.io.Console;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -28,12 +25,12 @@ public class FhirCastClient {
         String baseUrl;
         if ( args.length<2 ){
             topic = "demo";
-            baseUrl = "http://localhost:9080/fhircast";
+            baseUrl = "http://localhost:9080/fhircast/";
         } else {
             topic = args[0];
             baseUrl = args[1];
         }
-        System.out.println("TopicUrl : "+baseUrl+"/"+topic );
+        System.out.println("TopicUrl : "+baseUrl+"/"+topic+"/websub" );
         FhirCastClient fhirCastClient = new FhirCastClient( baseUrl, topic );
 
 
@@ -130,7 +127,7 @@ public class FhirCastClient {
         fhirCastSessionSubscribe.setHub_topic( sessionId );
         fhirCastSessionSubscribe.setHub_secret("mysecret");
         fhirCastSessionSubscribe.setHub_events( FhircastEventType.OPEN_PATIENT_CHART+","+ FhircastEventType.SWITCH_PATIENT_CHART+","+ FhircastEventType.CLOSE_PATIENT_CHART ); //"patient-open-chart,patient-close-chart" );
-        restTemplate.postForEntity( topicUrl, fhirCastSessionSubscribe, String.class );
+        restTemplate.postForEntity( topicUrl+"/websub", fhirCastSessionSubscribe, String.class );
     }
 
     public void subscribePatientChange() {
@@ -140,7 +137,7 @@ public class FhirCastClient {
         fhirCastSessionSubscribe.setHub_topic( sessionId );
         fhirCastSessionSubscribe.setHub_secret("mysecret");
         fhirCastSessionSubscribe.setHub_events( FhircastEventType.OPEN_PATIENT_CHART+","+ FhircastEventType.SWITCH_PATIENT_CHART+","+ FhircastEventType.CLOSE_PATIENT_CHART ); //"patient-open-chart,patient-close-chart" );
-        restTemplate.postForEntity( topicUrl, fhirCastSessionSubscribe, String.class );
+        restTemplate.postForEntity( topicUrl+"/websub", fhirCastSessionSubscribe, String.class );
     }
 
     public Patient getCurrentPatient() {
@@ -176,7 +173,7 @@ public class FhirCastClient {
 
         RestTemplate restTemplate = new RestTemplate(  );
         logger.info("send event");
-        restTemplate.postForLocation( this.topicUrl, fhirCastWorkflowEvent );
+        restTemplate.postForLocation( this.topicUrl+"/websub", fhirCastWorkflowEvent );
     }
 
 

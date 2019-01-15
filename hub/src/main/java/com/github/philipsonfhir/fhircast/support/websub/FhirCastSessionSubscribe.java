@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.support.model;
+package com.github.philipsonfhir.fhircast.support.websub;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

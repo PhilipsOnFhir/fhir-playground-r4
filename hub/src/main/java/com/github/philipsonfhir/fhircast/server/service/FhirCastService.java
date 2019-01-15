@@ -1,13 +1,15 @@
 package com.github.philipsonfhir.fhircast.server.service;
 
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
-import com.github.philipsonfhir.fhircast.support.model.*;
+import com.github.philipsonfhir.fhircast.support.websub.*;
+import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
+@Controller
 public class FhirCastService {
     private Map<String, FhirCastSession> sessions = new TreeMap<>();
     private Logger logger = Logger.getLogger(this.getClass().getName());

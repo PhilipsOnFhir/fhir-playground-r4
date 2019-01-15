@@ -24,7 +24,7 @@ export class FhirCastRestService {
 
   updateContext(): Observable<string> {
     return new Observable<string>(observer => {
-        this.http.get<string>(this.topicUrl).subscribe(
+        this.http.get<string>(this.topicUrl + '/context').subscribe(
           context => {
             console.log('context retrieved');
             console.log(context);

@@ -9,7 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import com.github.philipsonfhir.fhircast.support.model.*;
+import com.github.philipsonfhir.fhircast.support.websub.*;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;

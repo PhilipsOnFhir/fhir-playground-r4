@@ -1,8 +1,7 @@
 package com.github.philipsonfhir.fhircast.app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.philipsonfhir.fhircast.app.FhirCastClient;
-import com.github.philipsonfhir.fhircast.support.model.FhirCastWorkflowEvent;
+import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;
 
 import java.io.*;
 import java.net.MalformedURLException;

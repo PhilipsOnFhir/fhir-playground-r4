@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.support.model;
+package com.github.philipsonfhir.fhircast.support.websub;
 
 import lombok.Getter;
 import lombok.Setter;

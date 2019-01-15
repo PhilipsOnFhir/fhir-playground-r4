@@ -1,6 +1,6 @@
 package com.github.philipsonfhir.fhircast.server.service;
 
-import com.github.philipsonfhir.fhircast.support.model.*;
+import com.github.philipsonfhir.fhircast.support.websub.*;
 import com.sun.javafx.binding.StringFormatter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;

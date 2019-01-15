@@ -1,6 +1,6 @@
 package com.github.philipsonfhir.fhircast.server.service;
 
-import com.github.philipsonfhir.fhircast.support.model.FhircastEventType;
+import com.github.philipsonfhir.fhircast.support.websub.FhircastEventType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

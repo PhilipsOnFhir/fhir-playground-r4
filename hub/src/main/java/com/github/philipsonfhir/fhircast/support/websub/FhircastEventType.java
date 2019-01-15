@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.support.model;
+package com.github.philipsonfhir.fhircast.support.websub;
 
 import java.util.Collections;
 import java.util.Map;
