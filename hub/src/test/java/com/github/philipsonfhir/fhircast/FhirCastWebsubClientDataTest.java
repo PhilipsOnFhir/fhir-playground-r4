@@ -1,6 +1,6 @@
-package com.philips.research.philipsonfhir.fhirproxy.dstu3.applications;
+package com.github.philipsonfhir.fhircast;
 
-import com.github.philipsonfhir.fhircast.app.FhirCastClient;
+import com.github.philipsonfhir.fhircast.app.FhirCastWebsubClient;
 import com.github.philipsonfhir.fhircast.server.FhirCastServerApplication;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import org.hl7.fhir.dstu3.model.HumanName;
@@ -18,7 +18,7 @@ import static junit.framework.TestCase.assertNull;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = FhirCastServerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@WebAppConfiguration
-public class FhirCastClientDataTest {
+public class FhirCastWebsubClientDataTest {
 
     TestRestTemplate restTemplate = new TestRestTemplate();
     @LocalServerPort private long port;
@@ -26,30 +26,30 @@ public class FhirCastClientDataTest {
 
     @Test
     public void createDeleteSession() throws FhirCastException {
-        FhirCastClient fhirCastDrivingApplication = new FhirCastClient( baseUrl(), "34923849238" );
+        FhirCastWebsubClient fhirCastDrivingApplication = new FhirCastWebsubClient( baseUrl(), "34923849238" );
         fhirCastDrivingApplication.close();
     }
 
     @Test
     public void createDeleteMultipleSession() throws FhirCastException {
         String sessionId = "mysession";
-        FhirCastClient fhirCastDrivingApplication = new FhirCastClient( baseUrl(), sessionId );
-        FhirCastClient fhirCastClient1 = new FhirCastClient( baseUrl(), sessionId );
-        FhirCastClient fhirCastClient2 = new FhirCastClient( baseUrl(), sessionId );
+        FhirCastWebsubClient fhirCastDrivingApplication = new FhirCastWebsubClient( baseUrl(), sessionId );
+        FhirCastWebsubClient fhirCastWebsubClient1 = new FhirCastWebsubClient( baseUrl(), sessionId );
+        FhirCastWebsubClient fhirCastWebsubClient2 = new FhirCastWebsubClient( baseUrl(), sessionId );
         fhirCastDrivingApplication.close();
-        fhirCastClient1.close();
-        fhirCastClient2.close();
+        fhirCastWebsubClient1.close();
+        fhirCastWebsubClient2.close();
     }
 
     @Test
     public void patientChange() throws FhirCastException, InterruptedException {
         String sessionId = "mysession1";
-        FhirCastClient fhirCastDrivingApplication = new FhirCastClient( baseUrl(), sessionId );
-        FhirCastClient fhirCastClient1 = new FhirCastClient( baseUrl(), sessionId );
-        fhirCastClient1.subscribePatientChange();
+        FhirCastWebsubClient fhirCastDrivingApplication = new FhirCastWebsubClient( baseUrl(), sessionId );
+        FhirCastWebsubClient fhirCastWebsubClient1 = new FhirCastWebsubClient( baseUrl(), sessionId );
+        fhirCastWebsubClient1.subscribePatientChange();
 
         assertNull( fhirCastDrivingApplication.getCurrentPatient() );
-        assertNull( fhirCastClient1.getCurrentPatient() );
+        assertNull( fhirCastWebsubClient1.getCurrentPatient() );
 
         Patient patient = new Patient();
         patient.setId( "fhircastPatient" );
@@ -60,12 +60,12 @@ public class FhirCastClientDataTest {
         Thread.sleep( 1000 );
 
         assertEquals( patient.getId(), fhirCastDrivingApplication.getCurrentPatient().getId() );
-        assertEquals( "Patient/"+patient.getId(),  fhirCastClient1.getCurrentPatient().getId() );
+        assertEquals( "Patient/"+patient.getId(),  fhirCastWebsubClient1.getCurrentPatient().getId() );
 
-        fhirCastClient1.getContext();
+        fhirCastWebsubClient1.getContext();
 
         fhirCastDrivingApplication.close();
-        fhirCastClient1.close();
+        fhirCastWebsubClient1.close();
     }
 
 

@@ -1,32 +1,53 @@
-package com.github.philipsonfhir.fhircast.server.controller;
+package com.github.philipsonfhir.fhircast.server.websub;
 
-import com.github.philipsonfhir.fhircast.server.service.FhirCastService;
+import com.github.philipsonfhir.fhircast.server.Prefix;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastBody;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastContext;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEvent;
+import com.github.philipsonfhir.fhircast.support.websub.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RestController
 @CrossOrigin(origins = "*")
-public class FhirCastContextController {
+public class FhirCastWebsubController {
 
     @Autowired
-    private FhirCastService fhirCastService = new FhirCastService();
+    private FhirCastService fhirCastService;
+
+    @RequestMapping (
+        method = RequestMethod.POST,
+        value = Prefix.FHIRCAST+"/{sessionId}/"+Prefix.WEBSUB
+    )
+    public ResponseEntity updateFhirCast(
+        @PathVariable String sessionId,
+        @RequestBody FhirCastBody fhirCastBody,
+        @RequestParam Map<String, String> queryParams
+    ) {
+        ResponseEntity<String> responseEntity = new ResponseEntity( HttpStatus.ACCEPTED);
+        try {
+            if ( fhirCastBody.isSubscribe() ){
+                fhirCastService.subscribe(sessionId, fhirCastBody.getFhirCastSessionSubscribe() );
+            }
+            if ( fhirCastBody.isEvent() ){
+                fhirCastService.sendEvent( sessionId, fhirCastBody.getFhirCastWorkflowEvent() );
+            }
+
+        } catch (FhirCastException e) {
+            responseEntity = new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR );
+        }
+        return responseEntity;
+    }
+
 
     @RequestMapping (
         method = RequestMethod.GET,
-        value = Prefix.FHIRCAST+"/{sessionId}/"+Prefix.CONTEXT
+        value = Prefix.FHIRCAST+"/{sessionId}/"+Prefix.WEBSUB
     )
     public ResponseEntity getFhirCastContext(
         @PathVariable String sessionId,

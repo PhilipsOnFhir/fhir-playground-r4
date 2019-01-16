@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.server.service;
+package com.github.philipsonfhir.fhircast.server.websub;
 
 import com.github.philipsonfhir.fhircast.support.websub.*;
 

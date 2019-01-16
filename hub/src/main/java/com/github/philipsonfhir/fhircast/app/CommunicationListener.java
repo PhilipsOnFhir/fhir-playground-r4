@@ -7,19 +7,20 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
 public class CommunicationListener implements Runnable {
     private final int port;
-    private final FhirCastClient client;
+    private final FhirCastWebsubClient client;
     Logger logger = Logger.getLogger(this.getClass().getName());
     private String headerData;
     private String contentData;
     private boolean continueListening = true;
 
-    CommunicationListener(int port, FhirCastClient client ){
+    CommunicationListener(int port, FhirCastWebsubClient client ){
         this.client = client;
         this.port = port;
     }
@@ -54,7 +55,7 @@ public class CommunicationListener implements Runnable {
                         }
 
                         String httpResponse = "HTTP/1.1 200 OK\r\n\r\n" + queryParams.get( "hub.challenge" );
-                        client.getOutputStream().write( httpResponse.getBytes( "UTF-8" ) );
+                        client.getOutputStream().write( httpResponse.getBytes( StandardCharsets.UTF_8 ) );
                         client.close();
                     } else if ( headerData.startsWith( "POST" )){
                         // new event
@@ -62,7 +63,7 @@ public class CommunicationListener implements Runnable {
                         FhirCastWorkflowEvent fhirCastWorkflowEvent = objectMapper.readValue( contentData, FhirCastWorkflowEvent.class );
                         this.client.newEvent( fhirCastWorkflowEvent );
                         String httpResponse = "HTTP/1.1 200 OK\r\n\r\n";
-                        client.getOutputStream().write( httpResponse.getBytes( "UTF-8" ) );
+                        client.getOutputStream().write( httpResponse.getBytes( StandardCharsets.UTF_8 ) );
                         client.close();
                     } else{
                         logger.warning( "unknown event "+headerData );

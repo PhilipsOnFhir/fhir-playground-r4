@@ -10,9 +10,9 @@
 //@Component
 //public class CommandLIne implements CommandMarker {
 //
-//    private final FhirCastClient fhirCastClient;
+//    private final FhirCastWebsubClient fhirCastClient;
 //
-//    CommandLIne(FhirCastClient fhirCastClient ){
+//    CommandLIne(FhirCastWebsubClient fhirCastClient ){
 //        this.fhirCastClient = fhirCastClient;
 //    }
 //

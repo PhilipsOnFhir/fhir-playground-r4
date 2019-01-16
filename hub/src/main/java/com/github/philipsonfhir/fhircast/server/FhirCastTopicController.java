@@ -1,11 +1,7 @@
-package com.github.philipsonfhir.fhircast.server.controller;
+package com.github.philipsonfhir.fhircast.server;
 
-import com.github.philipsonfhir.fhircast.server.service.FhirCastService;
+import com.github.philipsonfhir.fhircast.server.websub.FhirCastService;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastBody;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastContext;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +18,7 @@ import java.util.stream.Collectors;
 public class FhirCastTopicController {
 
     @Autowired
-    private FhirCastService fhirCastService = new FhirCastService();
+    private FhirCastService fhirCastService;
 
     @PostMapping( Prefix.FHIRCAST )
     public ResponseEntity<String> createFhirCastSession(

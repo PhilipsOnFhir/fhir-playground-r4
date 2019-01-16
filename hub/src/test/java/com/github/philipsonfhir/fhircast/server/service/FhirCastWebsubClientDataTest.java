@@ -1,10 +1,11 @@
 package com.github.philipsonfhir.fhircast.server.service;
 
+import com.github.philipsonfhir.fhircast.server.websub.FhirCastClientData;
 import com.github.philipsonfhir.fhircast.support.websub.FhircastEventType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class FhirCastClientDataTest {
+public class FhirCastWebsubClientDataTest {
     @Test
     public void testAddRemoveSubscribtions(){
         String clientCallbackUrl = "someCallbackUrl";

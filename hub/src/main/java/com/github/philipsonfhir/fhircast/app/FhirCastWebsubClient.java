@@ -16,11 +16,11 @@ import java.io.InputStreamReader;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class FhirCastClient {
+public class FhirCastWebsubClient {
 
     private final int port;
 
-    public static void main(String args[] ) throws IOException {
+    public static void main(String[] args) throws IOException {
         String topic;
         String baseUrl;
         if ( args.length<2 ){
@@ -31,7 +31,7 @@ public class FhirCastClient {
             baseUrl = args[1];
         }
         System.out.println("TopicUrl : "+baseUrl+"/"+topic+"/websub" );
-        FhirCastClient fhirCastClient = new FhirCastClient( baseUrl, topic );
+        FhirCastWebsubClient fhirCastWebsubClient = new FhirCastWebsubClient( baseUrl, topic );
 
 
         boolean continueApp = true;
@@ -42,17 +42,17 @@ public class FhirCastClient {
             String s = br.readLine();
             switch ( s ){
                 case "exit": continueApp=false; break;
-                case "subscribe": fhirCastClient.subscribePatientChange(); break;
-                case "unsubscribe": fhirCastClient.unSubscribePatientChange(); break;
+                case "subscribe": fhirCastWebsubClient.subscribePatientChange(); break;
+                case "unsubscribe": fhirCastWebsubClient.unSubscribePatientChange(); break;
                 case "current" :
-                    Patient patient = fhirCastClient.getCurrentPatient();
+                    Patient patient = fhirCastWebsubClient.getCurrentPatient();
                     System.out.println("Patient id: "+(patient!=null?patient.getId():"null"));
                     break;
             }
             if ( s.startsWith( "set " )){
                 String patientID = s.replace( "set ","" ).trim();
                 System.out.println( "chanhe to patient "+patientID);
-                fhirCastClient.setCurrentPatient( (Patient) new Patient().setId(patientID) );
+                fhirCastWebsubClient.setCurrentPatient( (Patient) new Patient().setId(patientID) );
             }
         }
     }
@@ -96,7 +96,7 @@ public class FhirCastClient {
     }
 
 
-    public FhirCastClient(String url, String sessionId) {
+    public FhirCastWebsubClient(String url, String sessionId) {
         this.baseUrl = url;
         this.topicUrl = url+"/"+sessionId;
         restTemplate.put( this.topicUrl, String.class  );
@@ -198,7 +198,7 @@ public class FhirCastClient {
 
     public void getContext() {
         RestTemplate restTemplate =  new RestTemplate(  );
-        FhirCastWorkflowEvent fhirCastWorkflowEvent = restTemplate.getForObject( topicUrl, FhirCastWorkflowEvent.class );
+        FhirCastWorkflowEvent fhirCastWorkflowEvent = restTemplate.getForObject( topicUrl+"/websub", FhirCastWorkflowEvent.class );
         System.out.println(fhirCastWorkflowEvent);
     }
 }

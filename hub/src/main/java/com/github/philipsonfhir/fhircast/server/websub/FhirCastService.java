@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.server.service;
+package com.github.philipsonfhir.fhircast.server.websub;
 
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.websub.*;
@@ -59,7 +59,7 @@ public class FhirCastService {
         FhirCastSession fhirCastSession = getFhirCastSession( sessionId );
         fhirCastSession.sendEvent( fhirCastWorkflowEvent );
         if ( this.eventChannelListener!=null){
-            this.eventChannelListener.sendEvent( fhirCastWorkflowEvent );
+            this.eventChannelListener.sendEvent( fhirCastWorkflowEvent.getEvent() );
         }
 
     }
