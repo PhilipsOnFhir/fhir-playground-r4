@@ -4,6 +4,7 @@ import com.github.philipsonfhir.fhircast.server.service.FhirCastService;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.websub.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,8 +19,8 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*")
 public class FhirCastWebsubController {
 
-//    @Autowired
-    private FhirCastService fhirCastService = new FhirCastService();
+    @Autowired
+    private FhirCastService fhirCastService;
 
     @RequestMapping (
         method = RequestMethod.POST,

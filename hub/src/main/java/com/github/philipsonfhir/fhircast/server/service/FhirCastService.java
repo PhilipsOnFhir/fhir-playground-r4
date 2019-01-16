@@ -4,15 +4,14 @@ import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.websub.*;
 import org.springframework.stereotype.Controller;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.logging.Logger;
 
 @Controller
 public class FhirCastService {
     private Map<String, FhirCastSession> sessions = new TreeMap<>();
     private Logger logger = Logger.getLogger(this.getClass().getName());
+    private EventChannelListener eventChannelListener = null;
 
     public FhirCastService(){
         this.updateFhirCastSession( "demo" );
@@ -59,6 +58,10 @@ public class FhirCastService {
         logger.info( "send event "+fhirCastWorkflowEvent.getEvent().getHub_event().getName()+" for "+sessionId );
         FhirCastSession fhirCastSession = getFhirCastSession( sessionId );
         fhirCastSession.sendEvent( fhirCastWorkflowEvent );
+        if ( this.eventChannelListener!=null){
+            this.eventChannelListener.sendEvent( fhirCastWorkflowEvent );
+        }
+
     }
 
     public Map<String, String> getContext(String sessionId) throws FhirCastException {
@@ -76,5 +79,9 @@ public class FhirCastService {
             fhirCastSession = new FhirCastSession( sessionId );
             sessions.put( sessionId, fhirCastSession );
         }
+    }
+
+    public void register( EventChannelListener eventChannelListener ) {
+        this.eventChannelListener = eventChannelListener;
     }
 }

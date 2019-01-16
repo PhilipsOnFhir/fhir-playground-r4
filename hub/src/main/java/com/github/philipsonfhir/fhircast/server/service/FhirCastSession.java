@@ -15,6 +15,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
@@ -26,8 +27,9 @@ public class FhirCastSession {
     Logger logger = Logger.getLogger( this.getClass().getName() );
     Map<String, String> context = new TreeMap<>(  );
     private boolean verified;
+    private EventChannelListener webSocketListener;
 
-    public FhirCastSession( String topicId){
+    public FhirCastSession(String topicId ){
         this.topicId = topicId;
     }
 
@@ -66,7 +68,7 @@ public class FhirCastSession {
         //TODO check permission to send
         updateContext( fhirCastWorkflowEvent );
 
-        // send events
+        // send websub events
         logger.info( "sendEvent " + fhirCastWorkflowEvent );
         for ( FhirCastClientData fhirCastClientData: this.fhirCastClientMap.values() ) {
             if ( fhirCastClientData.isVerified() && fhirCastClientData.hasSubscription( fhirCastWorkflowEvent.getEvent().getHub_event() ) ) {
