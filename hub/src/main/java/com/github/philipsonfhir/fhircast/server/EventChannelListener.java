@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.server.websub.service;
+package com.github.philipsonfhir.fhircast.server;
 
 import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEvent;
 

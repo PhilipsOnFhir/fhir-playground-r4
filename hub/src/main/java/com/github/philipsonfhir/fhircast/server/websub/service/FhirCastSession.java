@@ -2,6 +2,7 @@ package com.github.philipsonfhir.fhircast.server.websub.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.philipsonfhir.fhircast.server.EventChannelListener;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import lombok.ToString;
 import org.springframework.http.HttpEntity;

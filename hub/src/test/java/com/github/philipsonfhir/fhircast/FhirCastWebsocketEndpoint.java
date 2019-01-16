@@ -43,7 +43,7 @@ public class FhirCastWebsocketEndpoint {
 
     @Before
     public void setup() {
-        URL = "ws://localhost:" + port + "/fhicast/websocket";
+        URL = "ws://localhost:" + port + "/fhircast/websocket";
     }
 
     @Test

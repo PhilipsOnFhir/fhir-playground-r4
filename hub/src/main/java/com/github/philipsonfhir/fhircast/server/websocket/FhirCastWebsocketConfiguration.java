@@ -23,7 +23,7 @@ public class FhirCastWebsocketConfiguration implements WebSocketMessageBrokerCon
         RequestUpgradeStrategy upgradeStrategy = new TomcatRequestUpgradeStrategy();
 
         registry
-            .addEndpoint("/fhicast/websocket")
+            .addEndpoint("/fhircast/websocket")
             .setAllowedOrigins("*")
             .withSockJS();
 

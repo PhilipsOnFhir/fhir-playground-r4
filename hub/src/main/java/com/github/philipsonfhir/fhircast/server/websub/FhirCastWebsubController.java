@@ -1,6 +1,7 @@
 package com.github.philipsonfhir.fhircast.server.websub;
 
 import com.github.philipsonfhir.fhircast.server.Prefix;
+import com.github.philipsonfhir.fhircast.server.websocket.WebsocketEventSender;
 import com.github.philipsonfhir.fhircast.server.websub.service.FhirCastService;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.websub.*;
@@ -21,6 +22,9 @@ public class FhirCastWebsubController {
     @Autowired
     private FhirCastService fhirCastService;
 
+    @Autowired
+    private WebsocketEventSender websocketService;
+
     @RequestMapping (
         method = RequestMethod.POST,
         value = Prefix.FHIRCAST+"/{sessionId}/"+Prefix.WEBSUB
@@ -36,6 +40,7 @@ public class FhirCastWebsubController {
                 fhirCastService.subscribe(sessionId, fhirCastBody.getFhirCastSessionSubscribe() );
             }
             if ( fhirCastBody.isEvent() ){
+                websocketService.sendEvent( fhirCastBody.getEvent() );
                 fhirCastService.sendEvent( sessionId, fhirCastBody.getFhirCastWorkflowEvent() );
             }
 

@@ -1,5 +1,6 @@
 package com.github.philipsonfhir.fhircast.server.websub.service;
 
+import com.github.philipsonfhir.fhircast.server.EventChannelListener;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.websub.*;
 import org.springframework.stereotype.Controller;
@@ -11,7 +12,6 @@ import java.util.logging.Logger;
 public class FhirCastService {
     private Map<String, FhirCastSession> sessions = new TreeMap<>();
     private Logger logger = Logger.getLogger(this.getClass().getName());
-    private EventChannelListener eventChannelListener = null;
 
     public FhirCastService(){
         this.updateFhirCastSession( "demo" );
@@ -54,14 +54,18 @@ public class FhirCastService {
         fhirCastSession.updateSubscriptions( fhirCastSessionSubscribe );
     }
 
+    public void sendEvent( FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent ) throws FhirCastException {
+        FhirCastWorkflowEvent fhirCastWorkflowEvent = new FhirCastWorkflowEvent();
+        fhirCastWorkflowEvent.setEvent( fhirCastWorkflowEventEvent );
+        fhirCastWorkflowEvent.setId( "WS"+System.currentTimeMillis() );
+        fhirCastWorkflowEvent.setTimestamp( ""+new Date() );
+        sendEvent( fhirCastWorkflowEventEvent.getHub_topic(), fhirCastWorkflowEvent );
+    }
+
     public void sendEvent(String sessionId, FhirCastWorkflowEvent fhirCastWorkflowEvent) throws FhirCastException {
-        logger.info( "send event "+fhirCastWorkflowEvent.getEvent().getHub_event().getName()+" for "+sessionId );
+            logger.info( "send event "+fhirCastWorkflowEvent.getEvent().getHub_event().getName()+" for "+sessionId );
         FhirCastSession fhirCastSession = getFhirCastSession( sessionId );
         fhirCastSession.sendEvent( fhirCastWorkflowEvent );
-        if ( this.eventChannelListener!=null){
-            this.eventChannelListener.sendEvent( fhirCastWorkflowEvent.getEvent() );
-        }
-
     }
 
     public Map<String, String> getContext(String sessionId) throws FhirCastException {
@@ -79,9 +83,5 @@ public class FhirCastService {
             fhirCastSession = new FhirCastSession( sessionId );
             sessions.put( sessionId, fhirCastSession );
         }
-    }
-
-    public void register( EventChannelListener eventChannelListener ) {
-        this.eventChannelListener = eventChannelListener;
     }
 }
