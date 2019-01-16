@@ -1,6 +1,7 @@
 package com.github.philipsonfhir.fhircast.server.websub;
 
 import com.github.philipsonfhir.fhircast.server.Prefix;
+import com.github.philipsonfhir.fhircast.server.websub.service.FhirCastService;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.websub.*;
 

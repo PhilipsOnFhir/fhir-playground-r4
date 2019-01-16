@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.server.websub;
+package com.github.philipsonfhir.fhircast.server.websub.service;
 
 import com.github.philipsonfhir.fhircast.support.websub.*;
 import com.sun.javafx.binding.StringFormatter;

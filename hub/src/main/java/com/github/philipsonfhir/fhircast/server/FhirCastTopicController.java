@@ -1,6 +1,6 @@
 package com.github.philipsonfhir.fhircast.server;
 
-import com.github.philipsonfhir.fhircast.server.websub.FhirCastService;
+import com.github.philipsonfhir.fhircast.server.websub.service.FhirCastService;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
