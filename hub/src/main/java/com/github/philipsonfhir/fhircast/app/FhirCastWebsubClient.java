@@ -42,9 +42,16 @@ public class FhirCastWebsubClient {
             System.out.print("Enter command\n");
             String s = br.readLine();
             switch ( s ){
-                case "exit": continueApp=false; break;
+                case "help":
+                    System.out.println("exit: exists app");
+                    System.out.println("subscribe : subscribes to patient events");
+                    System.out.println("unsubscribe : unsubscribes to patient events");
+                    System.out.println("set <patientid> : changes current patient");
+                    System.out.println("currrent : lists current patient");
+                    break;
                 case "subscribe": fhirCastWebsubClient.subscribePatientChange(); break;
                 case "unsubscribe": fhirCastWebsubClient.unSubscribePatientChange(); break;
+                case "exit": continueApp=false; break;
                 case "current" :
                     Patient patient = fhirCastWebsubClient.getCurrentPatient();
                     System.out.println("Patient id: "+(patient!=null?patient.getId():"null"));
@@ -181,17 +188,13 @@ public class FhirCastWebsubClient {
 
     public void newEvent(FhirCastWorkflowEvent fhirCastWorkflowEvent) {
         logger.info(  "New event "+fhirCastWorkflowEvent.getEvent().getContext() );
-        switch( fhirCastWorkflowEvent.getEvent().getHub_event() ){
-            case OPEN_PATIENT_CHART:
-            case SWITCH_PATIENT_CHART:
-                FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent = fhirCastWorkflowEvent.getEvent();
-                for( FhirCastContext fhirCastContext: fhirCastWorkflowEventEvent.getContext()){
+        FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent = fhirCastWorkflowEvent.getEvent();
+        for( FhirCastContext fhirCastContext: fhirCastWorkflowEventEvent.getContext()){
 //                    FhirResource fhirResource = fhirCastContext.getResource();
-                    IBaseResource resource = ourCtx.newJsonParser().parseResource( fhirCastContext.getResource() );
-                    this.context.put( fhirCastContext.getKey(), resource);
-                }
-                break;
+            IBaseResource resource = ourCtx.newJsonParser().parseResource( fhirCastContext.getResource() );
+            this.context.put( fhirCastContext.getKey(), resource);
         }
+
         if ( this.context.containsKey( "patient" )){
             this.patient = (Patient) this.context.get( "patient" );
         }
