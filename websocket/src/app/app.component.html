@@ -1,6 +1,10 @@
 <!--The content below is only a placeholder and can be replaced.-->
+<p>Open message viewer to see what is happening (F12 in chrome)</p>
+
 <p>{{connected}}</p>
 <button (click)="connect()">connect</button>
 <button (click)="updatePatient1()">update1</button>
 <button (click)="updatePatient2()">update2</button>
 <button (click)="disconnect()">disconnect</button>
+
+<ngx-json-viewer [json]="current"></ngx-json-viewer>

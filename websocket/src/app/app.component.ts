@@ -13,7 +13,9 @@ export class AppComponent {
   title = 'app';
   private stompClient: any;
   connected = false;
-  destination = '/app/fhircast/demo/open-patient-chart' ;
+  sendDestination = '/app/fhircast/demo/open-patient-chart' ;
+  receiveDestination = '/hub/fhircast/demo/open-patient-chart' ;
+  current;
 
   connect() {
     const socket = new SockJS('http://localhost:9080//fhircast/websocket');
@@ -25,10 +27,12 @@ export class AppComponent {
       _this.connected = true;
       console.log('Connected: ' + frame);
 
-      console.log('subscribe to ' + _this.destination);
-      _this.stompClient.subscribe(_this.destination, function (hello) {
-        console.log('subscribed');
+      console.log('subscribe to ' + _this.sendDestination);
+      _this.stompClient.subscribe(_this.receiveDestination, function (hello) {
+        console.log('Event received');
         console.log( hello);
+        console.log( JSON.parse(hello.body) );
+        _this.current = JSON.parse(hello.body);
 
       });
     });
@@ -41,15 +45,21 @@ export class AppComponent {
     // const message = { 'hub.topic' : 'demo', 'hub.event': 'open-patient-chart' };
     const message = {
         'hub.topic': 'demo',
-        'hub.event': 'switch-patient-chart',
+        'hub.event': 'open-patient-chart',
         'context': [{'key': 'patient', 'resource': { 'resourceType': 'Patient', 'id': '9999'}  } ]
       };
-    this.stompClient.send( this.destination , {}, JSON.stringify(message ));
+    console.log(message);
+    this.stompClient.send( this.sendDestination , {}, JSON.stringify(message ));
   }
 
   updatePatient2() {
-    const message = { 'patient' : '4321' };
-    this.stompClient.send( '/server/demo/patient' , {}, JSON.stringify(message ));
+    const message = {
+      'hub.topic': 'demo',
+      'hub.event': 'open-patient-chart',
+      'context': [{'key': 'patient', 'resource': { 'resourceType': 'Patient', 'id': '88888'}  } ]
+    };
+    console.log(message);
+    this.stompClient.send( this.sendDestination , {}, JSON.stringify(message ));
   }
 
   disconnect() {
