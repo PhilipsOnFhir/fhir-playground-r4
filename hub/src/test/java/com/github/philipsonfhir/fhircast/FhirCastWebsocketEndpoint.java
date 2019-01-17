@@ -72,7 +72,7 @@ public class FhirCastWebsocketEndpoint {
 
         //////////////////////////////////////////////////////////////////////
         FhirCastWorkflowEventEvent fhirCastEvent = new FhirCastWorkflowEventEvent();
-        fhirCastEvent.setHub_topic( "topic" );
+        fhirCastEvent.setHub_topic( "demo" );
         fhirCastEvent.setHub_event( FhircastEventType.OPEN_PATIENT_CHART );
 
         stompSession.send(SEND_FHICAST_EVENT_ENDPOINT + uuid+"/event", fhirCastEvent);

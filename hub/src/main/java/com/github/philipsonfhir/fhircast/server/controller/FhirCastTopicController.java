@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.server;
+package com.github.philipsonfhir.fhircast.server.controller;
 
 import com.github.philipsonfhir.fhircast.server.websub.service.FhirCastService;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;

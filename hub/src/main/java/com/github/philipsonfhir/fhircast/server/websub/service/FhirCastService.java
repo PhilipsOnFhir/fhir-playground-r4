@@ -1,6 +1,5 @@
 package com.github.philipsonfhir.fhircast.server.websub.service;
 
-import com.github.philipsonfhir.fhircast.server.EventChannelListener;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.websub.*;
 import org.springframework.stereotype.Controller;
@@ -40,6 +39,11 @@ public class FhirCastService {
         }
     }
 
+    public boolean hasFhirCastSession(String sessionId) {
+        FhirCastSession fhirCastSession = sessions.get( sessionId );
+        return( fhirCastSession !=null );
+    }
+
     private FhirCastSession getFhirCastSession(String sessionId) throws FhirCastException {
         FhirCastSession fhirCastSession = sessions.get( sessionId );
         if ( fhirCastSession !=null ){
@@ -63,7 +67,7 @@ public class FhirCastService {
     }
 
     public void sendEvent(String sessionId, FhirCastWorkflowEvent fhirCastWorkflowEvent) throws FhirCastException {
-            logger.info( "send event "+fhirCastWorkflowEvent.getEvent().getHub_event().getName()+" for "+sessionId );
+        logger.info( "send event "+fhirCastWorkflowEvent.getEvent().getHub_event().getName()+" for "+sessionId );
         FhirCastSession fhirCastSession = getFhirCastSession( sessionId );
         fhirCastSession.sendEvent( fhirCastWorkflowEvent );
     }

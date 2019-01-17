@@ -1,6 +1,6 @@
 package com.github.philipsonfhir.fhircast.server.websub;
 
-import com.github.philipsonfhir.fhircast.server.Prefix;
+import com.github.philipsonfhir.fhircast.server.controller.Prefix;
 import com.github.philipsonfhir.fhircast.server.websocket.WebsocketEventSender;
 import com.github.philipsonfhir.fhircast.server.websub.service.FhirCastService;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
@@ -62,7 +62,7 @@ public class FhirCastWebsubController {
         ResponseEntity<FhirCastWorkflowEvent> responseEntity = new ResponseEntity( HttpStatus.ACCEPTED);
 
         try {
-            Map<String,String> context =  fhirCastService.getContext( sessionId );
+            Map<String, String> context =  fhirCastService.getContext( sessionId );
             FhirCastWorkflowEvent fhirCastWorkflowEvent = new FhirCastWorkflowEvent();
             fhirCastWorkflowEvent.setId( UUID.randomUUID().toString() );
             fhirCastWorkflowEvent.setTimestamp( ""+new Date() );

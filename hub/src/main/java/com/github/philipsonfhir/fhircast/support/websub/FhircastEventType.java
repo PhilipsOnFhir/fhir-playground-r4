@@ -1,5 +1,7 @@
 package com.github.philipsonfhir.fhircast.support.websub;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,6 +24,7 @@ public enum FhircastEventType {
         this.name = name;
     }
 
+    @JsonValue
     public String getName() {
         return this.name;
     }

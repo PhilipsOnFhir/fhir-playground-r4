@@ -1,6 +1,7 @@
 package com.github.philipsonfhir.fhircast.app;
 
 import ca.uhn.fhir.context.FhirContext;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.websub.*;
 import org.hl7.fhir.dstu3.model.Patient;
@@ -161,6 +162,7 @@ public class FhirCastWebsubClient {
         List<FhirCastContext> fhirCastContextList = new ArrayList<>(  );
         FhirCastContext fhirCastContext = new FhirCastContext();
         fhirCastContext.setKey( "patient" );
+
         fhirCastContext.setResource( ourCtx.newJsonParser().encodeResourceToString( patient ) );
         fhirCastContextList.add( fhirCastContext );
         fhirCastWorkflowEventEvent.setContext( fhirCastContextList );
@@ -184,8 +186,8 @@ public class FhirCastWebsubClient {
             case SWITCH_PATIENT_CHART:
                 FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent = fhirCastWorkflowEvent.getEvent();
                 for( FhirCastContext fhirCastContext: fhirCastWorkflowEventEvent.getContext()){
-                    String resourceStr = fhirCastContext.getResource();
-                    IBaseResource resource = ourCtx.newJsonParser().parseResource( resourceStr );
+//                    FhirResource fhirResource = fhirCastContext.getResource();
+                    IBaseResource resource = ourCtx.newJsonParser().parseResource( fhirCastContext.getResource() );
                     this.context.put( fhirCastContext.getKey(), resource);
                 }
                 break;

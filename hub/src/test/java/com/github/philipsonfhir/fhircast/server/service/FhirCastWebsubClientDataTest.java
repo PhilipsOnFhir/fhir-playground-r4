@@ -6,6 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class FhirCastWebsubClientDataTest {
+
     @Test
     public void testAddRemoveSubscribtions(){
         String clientCallbackUrl = "someCallbackUrl";

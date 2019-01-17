@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.server;
+package com.github.philipsonfhir.fhircast.server.controller;
 
 public class Prefix {
     public static final String FHIRCAST  = "fhircast";

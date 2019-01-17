@@ -1,6 +1,6 @@
 package com.github.philipsonfhir.fhircast.server.websocket;
 
-import com.github.philipsonfhir.fhircast.server.EventChannelListener;
+import com.github.philipsonfhir.fhircast.server.controller.EventChannelListener;
 import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -54,7 +54,9 @@ public class WebsocketEventSender implements EventChannelListener {
             ).get(1, SECONDS);
             FhircastSendFrameHandler fhircastSendFrameHandler = new FhircastSendFrameHandler();
 
-            stompSession.send(SEND_FHICAST_EVENT_ENDPOINT + fhirCastEvent.getHub_topic()+"/"+fhirCastEvent.getHub_event().getName(), fhirCastEvent);
+            String destination = SEND_FHICAST_EVENT_ENDPOINT + fhirCastEvent.getHub_topic()+"/"+fhirCastEvent.getHub_event().getName();
+            stompSession.send( destination, fhirCastEvent);
+            stompSession.disconnect();
         } catch ( Exception e ) {
             e.printStackTrace();
         }
