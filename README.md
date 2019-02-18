@@ -2,22 +2,37 @@
 Java implementation of the FHIR Cast protocol
 
 The repository contains 4 different elements:
-* hub-server: back-end server  
-* hub-app: web-sub client application 
-* res: Angular 6 rest based client
+* library: FHIRCast library containing the code for both server and clients.
+* hub: back-end server - instantiates a server
+* websub: console application that communicates with server using web-sub. 
+* rest: Angular 6 rest based client
 * websocket: Angular6 websocket client
 
-## Composition
-The repository is divided into three parts:
-* hub : maven repository with hub-server and hub-app
-  * hub-server application: hub\src\main\java\com\github\philipsonfhir\fhircast\server\FhirCastServerApplication.java
-  * hub-app application: hub\src\main\java\com\github\philipsonfhir\fhircast\app\FhirCastWebsubClient.java
-* rest
-  * Angular 6 application that addresses the context endpoint
-* websocket
-  * Angular 6 application that implements the websocket interface
- 
- 
+## Compile
+The project can be compiled by running mvn install in the root directory. This will compile and 
+build the library, hub and websub modules.
+
+## Execute
+Running the code requires that mvn install has been run.
+For each of the servers a shell script has been added.
+* launchHub.sh - launches the fhir-cast hub server
+* launchRestServer.sh - compiles and launches the angular server for the rest client
+* launchWebsocketServer.sh - compiles and launches the angular server for the websocket client.
+* openWebSubConsole.sh - opens a WebSub console application client.
+
+## handling demo
+### websub
+The WebSub client implements a simple console interface:
+* subscribe - subscribes to patient events
+* unsubscribe - unsubscribes from patient events
+* open <xxxx> - opens patient xxxx
+
+### websocket
+The websocket client implements a simple interface that is explained in the webpage.
+
+## known issues
+Currently the websocket events are not received by the other clients.
+
 
 
 

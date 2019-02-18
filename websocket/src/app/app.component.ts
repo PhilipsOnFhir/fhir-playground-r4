@@ -10,15 +10,15 @@ import {disconnect} from 'cluster';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app';
+  title = 'com.github.philipsonfhir.fhircast.app';
   private stompClient: any;
   connected = false;
-  sendDestination = '/app/fhircast/demo/open-patient-chart' ;
+  sendDestination = '/app/com.github.philipsonfhir.fhircast/demo/open-patient-chart' ;
   receiveDestination = '/hub/fhircast/demo/open-patient-chart' ;
   current;
 
   connect() {
-    const socket = new SockJS('http://localhost:9080//fhircast/websocket');
+    const socket = new SockJS('http://localhost:9080/fhircast/websocket');
     this.stompClient = Stomp.Stomp.over( socket);
 
     const _this = this;
