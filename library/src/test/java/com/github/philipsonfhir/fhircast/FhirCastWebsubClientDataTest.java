@@ -27,7 +27,7 @@ public class FhirCastWebsubClientDataTest {
     @Test
     public void createDeleteSession() throws FhirCastException {
         FhirCastWebsubClient fhirCastDrivingApplication = new FhirCastWebsubClient( baseUrl(), "34923849238" );
-        fhirCastDrivingApplication.close();
+        fhirCastDrivingApplication.logout();
     }
 
     @Test
@@ -36,9 +36,9 @@ public class FhirCastWebsubClientDataTest {
         FhirCastWebsubClient fhirCastDrivingApplication = new FhirCastWebsubClient( baseUrl(), sessionId );
         FhirCastWebsubClient fhirCastWebsubClient1 = new FhirCastWebsubClient( baseUrl(), sessionId );
         FhirCastWebsubClient fhirCastWebsubClient2 = new FhirCastWebsubClient( baseUrl(), sessionId );
-        fhirCastDrivingApplication.close();
-        fhirCastWebsubClient1.close();
-        fhirCastWebsubClient2.close();
+        fhirCastDrivingApplication.logout();
+        fhirCastWebsubClient1.logout();
+        fhirCastWebsubClient2.logout();
     }
 
     @Test
@@ -64,8 +64,8 @@ public class FhirCastWebsubClientDataTest {
 
         fhirCastWebsubClient1.getContext();
 
-        fhirCastDrivingApplication.close();
-        fhirCastWebsubClient1.close();
+        fhirCastDrivingApplication.logout();
+        fhirCastWebsubClient1.logout();
     }
 
 

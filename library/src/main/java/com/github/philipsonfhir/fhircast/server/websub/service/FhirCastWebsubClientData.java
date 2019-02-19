@@ -4,13 +4,13 @@ import com.github.philipsonfhir.fhircast.support.websub.*;
 
 import java.util.*;
 
-public class FhirCastClientData {
+public class FhirCastWebsubClientData {
     String clientCallbackUrl;
     Set<FhircastEventType> subscriptions = new TreeSet<>();
     private String secret;
     private boolean verified;
 
-    public FhirCastClientData(String clientCallbackUrl, String secret) {
+    public FhirCastWebsubClientData(String clientCallbackUrl, String secret) {
         this.clientCallbackUrl = clientCallbackUrl;
         this.secret = secret;
     }

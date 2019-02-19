@@ -91,7 +91,7 @@ public class CommunicationListener implements Runnable {
         try {
             int c;
             while ((c = reader.read()) != -1) {
-                System.out.print((char) c);
+//                System.out.print((char) c);
                 headerTempData += (char) c;
 
                 if (headerTempData.contains("\r\n\r\n"))

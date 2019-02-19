@@ -1,7 +1,7 @@
 package com.github.philipsonfhir.fhircast.server.context;
 
 import com.github.philipsonfhir.fhircast.server.controller.Prefix;
-import com.github.philipsonfhir.fhircast.server.websub.service.FhirCastService;
+import com.github.philipsonfhir.fhircast.server.websub.service.FhirCastWebsubService;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.websub.FhirCastContext;
 import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;
@@ -17,10 +17,10 @@ import java.util.*;
 @Controller
 @RestController
 @CrossOrigin(origins = "*")
-public class FhirCastContextController {
+public class FhirCastRestController {
 
     @Autowired
-    private FhirCastService fhirCastService;
+    private FhirCastWebsubService fhirCastWebsubService;
 
     @RequestMapping (
         method = RequestMethod.GET,
@@ -33,7 +33,7 @@ public class FhirCastContextController {
         ResponseEntity<FhirCastWorkflowEvent> responseEntity = new ResponseEntity( HttpStatus.ACCEPTED);
 
         try {
-            Map<String, String> context =  fhirCastService.getContext( sessionId );
+            Map<String, String> context =  fhirCastWebsubService.getContext( sessionId );
             FhirCastWorkflowEvent fhirCastWorkflowEvent = new FhirCastWorkflowEvent();
             fhirCastWorkflowEvent.setId( UUID.randomUUID().toString() );
             fhirCastWorkflowEvent.setTimestamp( ""+new Date() );

@@ -2,8 +2,9 @@ package com.github.philipsonfhir.fhircast.server.websub;
 
 import com.github.philipsonfhir.fhircast.server.controller.Prefix;
 import com.github.philipsonfhir.fhircast.server.websocket.WebsocketEventSender;
-import com.github.philipsonfhir.fhircast.server.websub.service.FhirCastService;
+import com.github.philipsonfhir.fhircast.server.websub.service.FhirCastWebsubService;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
+import com.github.philipsonfhir.fhircast.support.NotImplementedException;
 import com.github.philipsonfhir.fhircast.support.websub.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import java.util.*;
 public class FhirCastWebsubController {
 
     @Autowired
-    private FhirCastService fhirCastService;
+    private FhirCastWebsubService fhirCastWebsubService;
 
     @Autowired
     private WebsocketEventSender websocketService;
@@ -37,14 +38,14 @@ public class FhirCastWebsubController {
         ResponseEntity<String> responseEntity = new ResponseEntity( HttpStatus.ACCEPTED);
         try {
             if ( fhirCastBody.isSubscribe() ){
-                fhirCastService.subscribe(sessionId, fhirCastBody.getFhirCastSessionSubscribe() );
+                fhirCastWebsubService.subscribe(sessionId, fhirCastBody.getFhirCastSessionSubscribe() );
             }
             if ( fhirCastBody.isEvent() ){
-                websocketService.sendEvent( fhirCastBody.getEvent() );
-                fhirCastService.sendEvent( sessionId, fhirCastBody.getFhirCastWorkflowEvent() );
+                //websocketService.sendEvent( fhirCastBody.getEvent() );
+                fhirCastWebsubService.eventReceived( fhirCastBody.getFhirCastWorkflowEvent() );
             }
 
-        } catch (FhirCastException e) {
+        } catch ( FhirCastException | NotImplementedException e) {
             responseEntity = new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR );
         }
         return responseEntity;
@@ -62,7 +63,7 @@ public class FhirCastWebsubController {
         ResponseEntity<FhirCastWorkflowEvent> responseEntity = new ResponseEntity( HttpStatus.ACCEPTED);
 
         try {
-            Map<String, String> context =  fhirCastService.getContext( sessionId );
+            Map<String, String> context =  fhirCastWebsubService.getContext( sessionId );
             FhirCastWorkflowEvent fhirCastWorkflowEvent = new FhirCastWorkflowEvent();
             fhirCastWorkflowEvent.setId( UUID.randomUUID().toString() );
             fhirCastWorkflowEvent.setTimestamp( ""+new Date() );
