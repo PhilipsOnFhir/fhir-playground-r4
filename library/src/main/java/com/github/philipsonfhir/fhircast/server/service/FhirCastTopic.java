@@ -6,6 +6,8 @@ import lombok.ToString;
 import org.hl7.fhir.dstu3.model.ImagingStudy;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,7 @@ public class FhirCastTopic {
     private FhirCastTopicStudyOrPatient _current;
     private boolean _loggedOut;
 
+
     FhirCastTopic( FhirCastContextService source ){
         this( source, "FC"+System.currentTimeMillis() );
     }
@@ -29,7 +32,6 @@ public class FhirCastTopic {
         _topic = topic;
         _source = source;
     }
-
 
 
     public String getTopic() {
@@ -62,13 +64,23 @@ public class FhirCastTopic {
     }
 
     public FhirCastTopicStudyOrPatient openPatientChart(Patient patient) {
-        if ( _current!=null) { _fhirCastTopicStudyOrPatients.add( _current ); }
-        _current = new FhirCastTopicStudyOrPatient( patient );
-        sendEvent( FhircastEventType.OPEN_PATIENT_CHART, patient );
+        FhirCastTopicStudyOrPatient studyOrPatient = new FhirCastTopicStudyOrPatient( patient );
+        if ( _current == null ){
+            _current = studyOrPatient;
+            sendEvent( FhircastEventType.OPEN_PATIENT_CHART, patient );
+        } else if ( !_current.equals( studyOrPatient )) {
+            _fhirCastTopicStudyOrPatients.add( _current );
+            _current = studyOrPatient;
+            sendEvent( FhircastEventType.OPEN_PATIENT_CHART, patient );
+        }
         return _current;
     }
 
     public void switchPatient(Patient patient) throws FhirCastException {
+        FhirCastTopicStudyOrPatient studyOrPatient = new FhirCastTopicStudyOrPatient( patient );
+        if ( _current!=null && _current.equals( studyOrPatient )){
+            return;
+        }
         Optional<FhirCastTopicStudyOrPatient> optPatient = this._fhirCastTopicStudyOrPatients.stream()
             .filter( fhirCastTopicStudyOrPatient -> fhirCastTopicStudyOrPatient.hasPatient() )
             .filter( fhirCastTopicStudyOrPatient -> fhirCastTopicStudyOrPatient.getPatient().getId().equals( patient.getId() ) )
@@ -91,21 +103,23 @@ public class FhirCastTopic {
     }
 
     public void closeCurrent(){
-        if ( _current.hasPatient() ) {
-            sendEvent( FhircastEventType.CLOSE_PATIENT_CHART, _current.getPatient() );
-        } else {
-            sendEvent( FhircastEventType.CLOSE_IMAGING_STUDY, _current.getImagingStudy() );
-        }
-        if (  !_fhirCastTopicStudyOrPatients.isEmpty()) {
-            _current = _fhirCastTopicStudyOrPatients.get( 0 );
-            _fhirCastTopicStudyOrPatients.remove( _current );
+        if ( _current!=null ) {
             if ( _current.hasPatient() ) {
-                sendEvent( FhircastEventType.SWITCH_PATIENT_CHART, _current.getPatient() );
+                sendEvent( FhircastEventType.CLOSE_PATIENT_CHART, _current.getPatient() );
             } else {
-                sendEvent( FhircastEventType.SWITCH_IMAGING_STUDY, _current.getImagingStudy() );
+                sendEvent( FhircastEventType.CLOSE_IMAGING_STUDY, _current.getImagingStudy() );
             }
-        } else {
-            _current = null;
+            if ( !_fhirCastTopicStudyOrPatients.isEmpty() ) {
+                _current = _fhirCastTopicStudyOrPatients.get( 0 );
+                _fhirCastTopicStudyOrPatients.remove( _current );
+                if ( _current.hasPatient() ) {
+                    sendEvent( FhircastEventType.SWITCH_PATIENT_CHART, _current.getPatient() );
+                } else {
+                    sendEvent( FhircastEventType.SWITCH_IMAGING_STUDY, _current.getImagingStudy() );
+                }
+            } else {
+                _current = null;
+            }
         }
     }
 
@@ -113,10 +127,11 @@ public class FhirCastTopic {
         TreeMap<String, Object > map = new TreeMap<>();
         if ( resource!=null && resource instanceof Patient){ map.put( "patient", resource ); }
         if ( resource!=null && resource instanceof ImagingStudy){ map.put( "study", resource ); }
-        FhirCastTopicEvent fhirCastWorkflowEvent = new FhirCastTopicEvent(  this, fhircastEventType, map );
+        FhirCastTopicEvent fhirCastWorkflowEvent = new FhirCastTopicEvent(  this, _topic, fhircastEventType, map );
         _listenersSet.stream().forEach( listener ->{
             listener.newFhirCastTopicEvent( fhirCastWorkflowEvent );
         } );
+        _source.publishEvent( fhirCastWorkflowEvent );
     }
 
 

@@ -1,7 +1,6 @@
 package com.github.philipsonfhir.fhircast.server.websub;
 
 import com.github.philipsonfhir.fhircast.server.controller.Prefix;
-import com.github.philipsonfhir.fhircast.server.websocket.WebsocketEventSender;
 import com.github.philipsonfhir.fhircast.server.websub.service.FhirCastWebsubService;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.NotImplementedException;

@@ -2,7 +2,6 @@ package com.github.philipsonfhir.fhircast.server.websub.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.philipsonfhir.fhircast.server.controller.EventChannelListener;
 import com.github.philipsonfhir.fhircast.server.service.FhirCastTopicEvent;
 import com.github.philipsonfhir.fhircast.server.service.FhirCastTopicEventListener;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
@@ -31,7 +30,6 @@ public class FhirCastWebsubSession implements FhirCastTopicEventListener {
     Logger logger = Logger.getLogger( this.getClass().getName() );
     Map<String, String> context = new TreeMap<String, String>(  );
     private boolean verified;
-    private EventChannelListener webSocketListener;
 
     public FhirCastWebsubSession(String topicId ){
         this.topicId = topicId;

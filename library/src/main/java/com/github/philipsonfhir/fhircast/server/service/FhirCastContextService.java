@@ -1,6 +1,8 @@
 package com.github.philipsonfhir.fhircast.server.service;
 
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -10,6 +12,9 @@ import java.util.logging.Logger;
 public class FhirCastContextService {
     private static final Logger logger = Logger.getLogger( FhirCastContextService.class.getName() );
     private Map<String, FhirCastTopic> _topicMap = new TreeMap<>(  );
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     public FhirCastTopic createTopic() {
         FhirCastTopic fhirCastTopic = new FhirCastTopic( this );
@@ -47,5 +52,10 @@ public class FhirCastContextService {
 
     public Collection<FhirCastTopic> getTopics() {
         return Collections.unmodifiableCollection( _topicMap.values() );
+    }
+
+
+    public void publishEvent(FhirCastTopicEvent fhirCastWorkflowEvent) {
+        this.applicationEventPublisher.publishEvent( fhirCastWorkflowEvent );
     }
 }
