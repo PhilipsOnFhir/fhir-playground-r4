@@ -7,4 +7,6 @@
 <button (click)="updatePatient2()">update2</button>
 <button (click)="disconnect()">disconnect</button>
 
-<ngx-json-viewer [json]="current"></ngx-json-viewer>
+<div *ngFor="let event of events">
+  <ngx-json-viewer [json]="event"></ngx-json-viewer>
+</div>

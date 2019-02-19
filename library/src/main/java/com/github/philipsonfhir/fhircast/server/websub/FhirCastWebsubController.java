@@ -23,9 +23,6 @@ public class FhirCastWebsubController {
     @Autowired
     private FhirCastWebsubService fhirCastWebsubService;
 
-    @Autowired
-    private WebsocketEventSender websocketService;
-
     @RequestMapping (
         method = RequestMethod.POST,
         value = Prefix.FHIRCAST+"/{sessionId}/"+Prefix.WEBSUB
