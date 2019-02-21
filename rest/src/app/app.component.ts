@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FhirCastRestService} from './service/fhir-cast-rest.service';
-import {Observable, timer } from 'rxjs';
+import {timer} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +8,7 @@ import {Observable, timer } from 'rxjs';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'app';
+  title = 'com.github.philipsonfhir.fhircast.app';
   private context: string;
   private status: string;
   topicUrl:string;
@@ -19,7 +19,8 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fhirCastRestService.getTopicUrl();timer(1)
+    this.fhirCastRestService.getTopicUrl();
+    timer(1);
     this.timer = timer( 0, 1000);
     this.timer.subscribe( t=> {
       console.log(t);

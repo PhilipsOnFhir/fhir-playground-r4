@@ -1,5 +1,5 @@
 /**
- * This file includes polyfills needed by Angular and is loaded before the app.
+ * This file includes polyfills needed by Angular and is loaded before the com.github.philipsonfhir.fhircast.app.
  * You can add your own extra polyfills to this file.
  *
  * This file is divided into 2 sections:
@@ -44,6 +44,10 @@
 /** Evergreen browsers require these. **/
 // Used for reflect-metadata in JIT. If you use AOT (and only Angular decorators), you can remove.
 import 'core-js/es7/reflect';
+/***************************************************************************************************
+ * Zone JS is required by default for Angular itself.
+ */
+import 'zone.js/dist/zone'; // Included with Angular CLI.
 
 
 /**
@@ -67,12 +71,6 @@ import 'core-js/es7/reflect';
  * with the following flag, it will bypass `zone.js` patch for IE/Edge
  */
 // (window as any).__Zone_enable_cross_context_check = true;
-
-/***************************************************************************************************
- * Zone JS is required by default for Angular itself.
- */
-import 'zone.js/dist/zone';  // Included with Angular CLI.
-
 
 
 /***************************************************************************************************

@@ -1,4 +1,4 @@
-import {Injectable, OnInit} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
@@ -7,7 +7,7 @@ import {Observable} from 'rxjs';
   providedIn: 'root'
 })
 export class FhirCastRestService {
-  private topicUrl: string ;
+  private topicUrl = 'http://localhost:9080/fhircast/demo' ;
   private status: string;
   private context: string;
 
@@ -16,7 +16,9 @@ export class FhirCastRestService {
     // Note: Below 'queryParams' can be replaced with 'params' depending on your requirements
     this.activatedRoute.queryParams.subscribe(params => {
       console.log(params);
-      this.topicUrl = params['hub'];
+      if ( params['hub']) {
+        this.topicUrl = params['hub'];
+      }
       console.log(this.topicUrl);
     });
 

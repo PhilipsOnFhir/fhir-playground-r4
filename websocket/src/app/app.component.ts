@@ -1,8 +1,6 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import * as Stomp from '@stomp/stompjs';
 import * as SockJS from 'sockjs-client';
-import {$} from 'protractor';
-import {disconnect} from 'cluster';
 
 @Component({
   selector: 'app-root',
@@ -10,15 +8,19 @@ import {disconnect} from 'cluster';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app';
+  title = 'com.github.philipsonfhir.fhircast.app';
   private stompClient: any;
   connected = false;
-  sendDestination = '/app/fhircast/demo/open-patient-chart' ;
-  receiveDestination = '/hub/fhircast/demo/open-patient-chart' ;
-  current;
+  destOpen = '/app/fhircast/demo/open-patient-chart' ;
+  destClose = '/app/fhircast/demo/close-patient-chart' ;
+  destSwitch = '/app/fhircast/demo/switch-patient-chart' ;
+  receiveOpen = '/hub/fhircast/demo/open-patient-chart' ;
+  receiveClose = '/hub/fhircast/demo/close-patient-chart' ;
+  receiveSwitch = '/hub/fhircast/demo/switch-patient-chart' ;
+  events = [];
 
   connect() {
-    const socket = new SockJS('http://localhost:9080//fhircast/websocket');
+    const socket = new SockJS('http://localhost:9080/fhircast/websocket');
     this.stompClient = Stomp.Stomp.over( socket);
 
     const _this = this;
@@ -27,12 +29,28 @@ export class AppComponent {
       _this.connected = true;
       console.log('Connected: ' + frame);
 
-      console.log('subscribe to ' + _this.sendDestination);
-      _this.stompClient.subscribe(_this.receiveDestination, function (hello) {
-        console.log('Event received');
+      console.log('subscribe to ' + _this.receiveOpen);
+      _this.stompClient.subscribe(_this.receiveOpen, function (hello) {
+        console.log('Open event received');
         console.log( hello);
         console.log( JSON.parse(hello.body) );
-        _this.current = JSON.parse(hello.body);
+        _this.events.unshift( JSON.parse(hello.body));
+
+      });
+      console.log('subscribe to ' + _this.receiveSwitch);
+      _this.stompClient.subscribe(_this.receiveSwitch, function (hello) {
+        console.log('Switch event received');
+        console.log( hello);
+        console.log( JSON.parse(hello.body) );
+        _this.events.unshift( JSON.parse(hello.body));
+
+      });
+      console.log('subscribe to ' + _this.receiveClose);
+      _this.stompClient.subscribe(_this.receiveClose, function (hello) {
+        console.log('Close event received');
+        console.log( hello);
+        console.log( JSON.parse(hello.body) );
+        _this.events.unshift( JSON.parse(hello.body));
 
       });
     });
@@ -49,7 +67,7 @@ export class AppComponent {
         'context': [{'key': 'patient', 'resource': { 'resourceType': 'Patient', 'id': '9999'}  } ]
       };
     console.log(message);
-    this.stompClient.send( this.sendDestination , {}, JSON.stringify(message ));
+    this.stompClient.send( this.destOpen , {}, JSON.stringify(message ));
   }
 
   updatePatient2() {
@@ -59,7 +77,7 @@ export class AppComponent {
       'context': [{'key': 'patient', 'resource': { 'resourceType': 'Patient', 'id': '88888'}  } ]
     };
     console.log(message);
-    this.stompClient.send( this.sendDestination , {}, JSON.stringify(message ));
+    this.stompClient.send( this.destOpen , {}, JSON.stringify(message ));
   }
 
   disconnect() {
