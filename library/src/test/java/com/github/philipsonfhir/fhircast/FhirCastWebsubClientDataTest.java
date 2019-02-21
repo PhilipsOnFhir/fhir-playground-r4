@@ -2,7 +2,6 @@ package com.github.philipsonfhir.fhircast;
 
 import com.github.philipsonfhir.fhircast.app.FhirCastWebsubClient;
 import com.github.philipsonfhir.fhircast.server.FhirCastServerApplication;
-import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.junit.Test;
@@ -25,13 +24,13 @@ public class FhirCastWebsubClientDataTest {
 
 
     @Test
-    public void createDeleteSession() throws FhirCastException {
+    public void createDeleteSession() {
         FhirCastWebsubClient fhirCastDrivingApplication = new FhirCastWebsubClient( baseUrl(), "34923849238" );
         fhirCastDrivingApplication.logout();
     }
 
     @Test
-    public void createDeleteMultipleSession() throws FhirCastException {
+    public void createDeleteMultipleSession()  {
         String sessionId = "mysession";
         FhirCastWebsubClient fhirCastDrivingApplication = new FhirCastWebsubClient( baseUrl(), sessionId );
         FhirCastWebsubClient fhirCastWebsubClient1 = new FhirCastWebsubClient( baseUrl(), sessionId );
@@ -42,7 +41,7 @@ public class FhirCastWebsubClientDataTest {
     }
 
     @Test
-    public void patientChange() throws FhirCastException, InterruptedException {
+    public void patientChange() throws InterruptedException {
         String sessionId = "mysession1";
         FhirCastWebsubClient fhirCastDrivingApplication = new FhirCastWebsubClient( baseUrl(), sessionId );
         FhirCastWebsubClient fhirCastWebsubClient1 = new FhirCastWebsubClient( baseUrl(), sessionId );
@@ -59,7 +58,7 @@ public class FhirCastWebsubClientDataTest {
 
         Thread.sleep( 1000 );
 
-        assertEquals( patient.getId(), fhirCastDrivingApplication.getCurrentPatient().getId() );
+        assertEquals( patient.getIdElement().getIdPart(), fhirCastDrivingApplication.getCurrentPatient().getIdElement().getIdPart());
         assertEquals( "Patient/"+patient.getId(),  fhirCastWebsubClient1.getCurrentPatient().getId() );
 
         fhirCastWebsubClient1.getContext();

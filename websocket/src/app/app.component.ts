@@ -1,8 +1,6 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import * as Stomp from '@stomp/stompjs';
 import * as SockJS from 'sockjs-client';
-import {$} from 'protractor';
-import {disconnect} from 'cluster';
 
 @Component({
   selector: 'app-root',
@@ -36,7 +34,7 @@ export class AppComponent {
         console.log('Open event received');
         console.log( hello);
         console.log( JSON.parse(hello.body) );
-        _this.events.push( JSON.parse(hello.body));
+        _this.events.unshift( JSON.parse(hello.body));
 
       });
       console.log('subscribe to ' + _this.receiveSwitch);
@@ -44,7 +42,7 @@ export class AppComponent {
         console.log('Switch event received');
         console.log( hello);
         console.log( JSON.parse(hello.body) );
-        _this.events.push( JSON.parse(hello.body));
+        _this.events.unshift( JSON.parse(hello.body));
 
       });
       console.log('subscribe to ' + _this.receiveClose);
@@ -52,7 +50,7 @@ export class AppComponent {
         console.log('Close event received');
         console.log( hello);
         console.log( JSON.parse(hello.body) );
-        _this.events.push( JSON.parse(hello.body));
+        _this.events.unshift( JSON.parse(hello.body));
 
       });
     });

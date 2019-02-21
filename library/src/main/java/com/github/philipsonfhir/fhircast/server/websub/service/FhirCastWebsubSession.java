@@ -3,8 +3,11 @@ package com.github.philipsonfhir.fhircast.server.websub.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.philipsonfhir.fhircast.server.service.FhirCastTopicEvent;
-import com.github.philipsonfhir.fhircast.server.service.FhirCastTopicEventListener;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
+import com.github.philipsonfhir.fhircast.support.websub.FhirCastContext;
+import com.github.philipsonfhir.fhircast.support.websub.FhirCastSessionSubscribe;
+import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;
+import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEvent;
 import lombok.ToString;
 import org.hl7.fhir.dstu3.model.Resource;
 import org.springframework.http.HttpEntity;
@@ -12,30 +15,27 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import com.github.philipsonfhir.fhircast.support.websub.*;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
-import java.util.Date;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.logging.Logger;
 
 @ToString
-public class FhirCastWebsubSession implements FhirCastTopicEventListener {
+public class FhirCastWebsubSession {
     private Map<String, FhirCastSessionSubscribe> fhirCastSubscriptions = new TreeMap<>();
     private Map<String, FhirCastWebsubClientData> fhirCastClientMap = new TreeMap<>( );
     private String topicId;
     Logger logger = Logger.getLogger( this.getClass().getName() );
-    Map<String, String> context = new TreeMap<String, String>(  );
+    Map<String, String> context = new TreeMap<>(  );
     private boolean verified;
 
-    public FhirCastWebsubSession(String topicId ){
+    FhirCastWebsubSession(String topicId ){
         this.topicId = topicId;
     }
 
-    public void updateSubscriptions(FhirCastSessionSubscribe fhirCastSessionSubscribe) throws FhirCastException {
+    void updateSubscriptions(FhirCastSessionSubscribe fhirCastSessionSubscribe) throws FhirCastException {
         FhirCastWebsubClientData fhirCastWebsubClientData = getFhirCastClientData( fhirCastSessionSubscribe );
         if ( fhirCastSessionSubscribe.getHub_mode().equals("subscribe")){
             this.fhirCastSubscriptions.put( fhirCastSessionSubscribe.getHub_callback(), fhirCastSessionSubscribe );
@@ -66,7 +66,7 @@ public class FhirCastWebsubSession implements FhirCastTopicEventListener {
 
 
     RestTemplate restTemplate = new RestTemplate();
-    public void sendEvent(FhirCastWorkflowEvent fhirCastWorkflowEvent) throws FhirCastException {
+    private void sendEvent(FhirCastWorkflowEvent fhirCastWorkflowEvent) throws FhirCastException {
         //TODO check permission to send
         updateContext( fhirCastWorkflowEvent );
 
@@ -99,13 +99,13 @@ public class FhirCastWebsubSession implements FhirCastTopicEventListener {
 
 
     private void updateContext(FhirCastWorkflowEvent fhirCastWorkflowEvent) {
-        fhirCastWorkflowEvent.getEvent().getContext().stream()
+        fhirCastWorkflowEvent.getEvent().getContext()
             .forEach( fhirCastContext -> this.context.put( fhirCastContext.getKey(), fhirCastContext.getResource() ) );
         //TODO check whether this is valid.....
     }
 
 
-    public static String calculateHMAC(String secret, String content ) throws FhirCastException {
+    private static String calculateHMAC(String secret, String content ) throws FhirCastException {
         Mac mac = null;
         try {
             mac = Mac.getInstance("HmacSHA256");
@@ -124,33 +124,25 @@ public class FhirCastWebsubSession implements FhirCastTopicEventListener {
         return context;
     }
 
-    public void setCorrect(boolean success) {
-        this.verified = success ;
-    }
+    public void newFhirCastTopicEvent(FhirCastTopicEvent event) throws FhirCastException {
+        FhirCastWorkflowEvent fhirCastWorkflowEvent = new FhirCastWorkflowEvent();
+        fhirCastWorkflowEvent.setTimestamp( String.valueOf( new Date() ) );
+        fhirCastWorkflowEvent.setId( "FC"+System.currentTimeMillis() );
 
-    @Override
-    public void newFhirCastTopicEvent(FhirCastTopicEvent fhirCastTopicEvent) {
-        try {
-            FhirCastWorkflowEvent fhirCastWorkflowEvent = new FhirCastWorkflowEvent();
+        FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent = new FhirCastWorkflowEventEvent();
+        fhirCastWorkflowEventEvent.setHub_event( event.getEventType() );
+        fhirCastWorkflowEventEvent.setHub_topic( event.getTopic() );
 
-            FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent = new FhirCastWorkflowEventEvent();
-            fhirCastWorkflowEventEvent.setHub_topic( this.topicId );
-            fhirCastWorkflowEventEvent.setHub_event( fhirCastTopicEvent.getEventType() );
-            fhirCastTopicEvent.getContext().entrySet().forEach(
-                entry -> {
-                    FhirCastContext fhirCastContext = new FhirCastContext();
-                    fhirCastContext.setKey( entry.getKey() );
-                    fhirCastContext.setResource( (Resource)entry.getValue() );
-                    fhirCastWorkflowEventEvent.getContext().add( fhirCastContext );
-                }
-            );
-            fhirCastWorkflowEvent.setEvent( fhirCastWorkflowEventEvent );
-            fhirCastWorkflowEvent.setId( "WS"+fhirCastTopicEvent.hashCode() );
-            fhirCastWorkflowEvent.setTimestamp( ""+new Date() );
-//        eventReceived( fhirCastWorkflowEventEvent.getHub_topic(), fhirCastWorkflowEvent );
-            this.sendEvent( fhirCastWorkflowEvent );
-        } catch ( FhirCastException e ) {
-            e.printStackTrace();
-        }
+        List<FhirCastContext> contextList = new ArrayList<>(  );
+        event.getContext().entrySet().forEach( entry ->{
+            FhirCastContext fhirCastContext = new FhirCastContext();
+            fhirCastContext.setKey( entry.getKey() );
+            fhirCastContext.setResource( (Resource) entry.getValue() );
+            contextList.add( fhirCastContext );
+        } );
+        fhirCastWorkflowEventEvent.setContext( contextList );
+
+        fhirCastWorkflowEvent.setEvent( fhirCastWorkflowEventEvent );
+        sendEvent( fhirCastWorkflowEvent );
     }
 }

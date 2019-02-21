@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 @Component
@@ -13,8 +16,13 @@ public class FhirCastContextService {
     private static final Logger logger = Logger.getLogger( FhirCastContextService.class.getName() );
     private Map<String, FhirCastTopic> _topicMap = new TreeMap<>(  );
 
-    @Autowired
+
     private ApplicationEventPublisher applicationEventPublisher;
+
+    @Autowired
+    FhirCastContextService(ApplicationEventPublisher applicationEventPublisher){
+        this.applicationEventPublisher =applicationEventPublisher;
+    }
 
     public FhirCastTopic createTopic() {
         FhirCastTopic fhirCastTopic = new FhirCastTopic( this );

@@ -11,4 +11,6 @@ public class FhirCastWorkflowEvent {
     String timestamp;
     String id;
     FhirCastWorkflowEventEvent event;
+
+
 }

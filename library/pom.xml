@@ -4,8 +4,7 @@
 
 
     <name>library</name>
-    <description>The ng2boot backend project</description>
-    <groupId>com.github.philipsonfhir.fhircast</groupId>
+    <description>The fhircast library project</description>
     <artifactId>library</artifactId>
     <packaging>jar</packaging>
 
@@ -154,12 +153,6 @@
                     <groupId>org.hamcrest</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>1.9.5</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>

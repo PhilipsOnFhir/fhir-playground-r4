@@ -2,55 +2,34 @@ package com.github.philipsonfhir.fhircast.server.websub.service;
 
 import com.github.philipsonfhir.fhircast.server.service.FhirCastContextService;
 import com.github.philipsonfhir.fhircast.server.service.FhirCastTopic;
+import com.github.philipsonfhir.fhircast.server.service.FhirCastTopicEvent;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.NotImplementedException;
-import com.github.philipsonfhir.fhircast.support.websub.*;
+import com.github.philipsonfhir.fhircast.support.websub.FhirCastSessionSubscribe;
+import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;
+import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEvent;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Controller;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 @Controller
-public class FhirCastWebsubService {
+public class FhirCastWebsubService implements ApplicationListener<FhirCastTopicEvent> {
     @Autowired
     private FhirCastContextService fhirCastContextService;
 
     private Map<String, FhirCastWebsubSession> sessions = new TreeMap<>();
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
-    public FhirCastWebsubService(){
-//        this.updateFhirCastSession( "demo" );
-    }
-
-//    public FhirCastWebsubSession createFhirCastSession() {
-//        String topicId = "FC"+System.currentTimeMillis();
-//        FhirCastWebsubSession fhirCastWebsubSession = new FhirCastWebsubSession( topicId );
-//
-//        sessions.put( topicId, fhirCastWebsubSession );
-//        logger.info("create session"+topicId);
-//        return fhirCastWebsubSession;
-//    }
-
     public Collection<FhirCastWebsubSession> getActiveFhirCastSessions() {
         return sessions.values();
     }
 
-//    public void deleteFhirCastSession(String topicId)  {
-//        logger.info("remove session"+topicId);
-//        try {
-//            FhirCastWebsubSession fhirCastWebsubSession = getFhirCastSession(topicId);
-//            sessions.remove( topicId );
-//            //TODO send remove events.
-//        } catch ( FhirCastException e ) {
-//        }
-//    }
-
-//    public boolean hasFhirCastSession(String topicId) {
-//        FhirCastWebsubSession fhirCastWebsubSession = sessions.get( topicId );
-//        return( fhirCastWebsubSession !=null );
-//    }
 
     private FhirCastWebsubSession getFhirCastSession(String topicId) throws FhirCastException {
         FhirCastTopic fhirCastTopic = this.fhirCastContextService.getTopic( topicId );
@@ -58,7 +37,6 @@ public class FhirCastWebsubService {
         if ( fhirCastWebsubSession ==null ){
             logger.info( "Create WebSub session for topic "+topicId );
             fhirCastWebsubSession = new FhirCastWebsubSession( topicId );
-            fhirCastTopic.registerFhirCastTopicEventListener( fhirCastWebsubSession );
             sessions.put( topicId, fhirCastWebsubSession );
         }
         return fhirCastWebsubSession;
@@ -74,49 +52,26 @@ public class FhirCastWebsubService {
         eventReceived( fhirCastWorkflowEvent.getEvent() );
     }
 
-    public void eventReceived(FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent ) throws FhirCastException, NotImplementedException {
+    private void eventReceived(FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent ) throws FhirCastException, NotImplementedException {
         FhirCastTopic fhirCastTopic = this.fhirCastContextService.getTopic( fhirCastWorkflowEventEvent.getHub_topic() );
-        switch( fhirCastWorkflowEventEvent.getHub_event() ){
+        switch ( fhirCastWorkflowEventEvent.getHub_event() ) {
             case OPEN_PATIENT_CHART: {
-                Patient patient = getPatientFromContext( fhirCastWorkflowEventEvent );
+                Patient patient = fhirCastWorkflowEventEvent.retrievePatientFromContext();
                 fhirCastTopic.openPatientChart( patient );
                 break;
             }
             case CLOSE_PATIENT_CHART:
                 fhirCastTopic.closeCurrent();
                 break;
-            case SWITCH_PATIENT_CHART:{
-                Patient patient = getPatientFromContext( fhirCastWorkflowEventEvent );
+            case SWITCH_PATIENT_CHART: {
+                Patient patient = fhirCastWorkflowEventEvent.retrievePatientFromContext();
                 fhirCastTopic.switchPatient( patient );
                 break;
             }
             default:
-                throw new NotImplementedException(  );
+                throw new NotImplementedException();
         }
-//        FhirCastWorkflowEvent fhirCastWorkflowEvent = new FhirCastWorkflowEvent();
-//        fhirCastWorkflowEvent.setEvent( fhirCastWorkflowEventEvent );
-//        fhirCastWorkflowEvent.setId( "WS"+System.currentTimeMillis() );
-//        fhirCastWorkflowEvent.setTimestamp( ""+new Date() );
-//        eventReceived( fhirCastWorkflowEventEvent.getHub_topic(), fhirCastWorkflowEvent );
     }
-
-    private Patient getPatientFromContext(FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent ) throws FhirCastException {
-        Optional<FhirCastContext> opt = fhirCastWorkflowEventEvent.getContext()
-            .stream()
-            .filter( fhirCastContext -> fhirCastContext.getKey().equals( "patient" ) )
-            .findFirst();
-        if ( opt.isPresent() ){
-            return (Patient) opt.get().retrieveFhirResource();
-        }
-        throw new FhirCastException( "Context should contain patient" );
-    }
-
-//    public void eventReceived(String topicId, FhirCastWorkflowEvent fhirCastWorkflowEvent) throws FhirCastException {
-//        //TODO
-//        logger.info( "send event "+fhirCastWorkflowEvent.getEvent().getHub_event().getName()+" for "+topicId );
-//        FhirCastWebsubSession fhirCastWebsubSession = getFhirCastSession( topicId );
-//        fhirCastWebsubSession.eventReceived( fhirCastWorkflowEvent );
-//    }
 
     public Map<String, String> getContext(String topicId) throws FhirCastException {
         //TODO
@@ -125,14 +80,13 @@ public class FhirCastWebsubService {
         return fhirCastWebsubSession.getContext();
     }
 
-//    public void updateFhirCastSession(String topicId) {
-//        logger.info( "update topic"+topicId );
-//        FhirCastWebsubSession fhirCastWebsubSession = null;
-//        try {
-//            fhirCastWebsubSession = getFhirCastSession( topicId );
-//        } catch ( FhirCastException e ) {
-//            fhirCastWebsubSession = new FhirCastWebsubSession( topicId );
-//            sessions.put( topicId, fhirCastWebsubSession );
-//        }
-//    }
+    @Override
+    public void onApplicationEvent(FhirCastTopicEvent event) {
+        try {
+            getFhirCastSession( event.getTopic() ).newFhirCastTopicEvent(event);
+        } catch ( FhirCastException e ) {
+            e.printStackTrace();
+        }
+    }
+
 }
