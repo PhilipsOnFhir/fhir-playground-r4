@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.server.service;
+package com.github.philipsonfhir.fhircast.server.topic;
 
 import org.hl7.fhir.dstu3.model.ImagingStudy;
 import org.hl7.fhir.dstu3.model.Patient;

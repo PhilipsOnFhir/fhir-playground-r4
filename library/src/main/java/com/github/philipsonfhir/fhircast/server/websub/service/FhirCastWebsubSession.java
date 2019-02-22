@@ -2,7 +2,7 @@ package com.github.philipsonfhir.fhircast.server.websub.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.philipsonfhir.fhircast.server.service.FhirCastTopicEvent;
+import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopicEvent;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.websub.FhirCastContext;
 import com.github.philipsonfhir.fhircast.support.websub.FhirCastSessionSubscribe;

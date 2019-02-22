@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.server.service;
+package com.github.philipsonfhir.fhircast.server.topic;
 
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.websub.FhircastEventType;
@@ -6,6 +6,7 @@ import lombok.ToString;
 import org.hl7.fhir.dstu3.model.ImagingStudy;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Resource;
+import org.jboss.logging.Logger;
 
 import java.util.*;
 
@@ -14,10 +15,9 @@ public class FhirCastTopic {
     private final FhirCastContextService _source;
     private String _topic;
     private List<FhirCastTopicStudyOrPatient> _fhirCastTopicStudyOrPatients = new ArrayList<>(  );
-//    private List<FhirCastTopicEventListener> _listenersSet = new ArrayList<>(  );
     private FhirCastTopicStudyOrPatient _current;
     private boolean _loggedOut;
-
+    private Logger logger = Logger.getLogger("FhirCastTopic-"+_topic);
 
     FhirCastTopic( FhirCastContextService source ){
         this( source, "FC"+System.currentTimeMillis() );
@@ -34,6 +34,7 @@ public class FhirCastTopic {
     }
 
     public void userLogout() throws FhirCastException {
+        logger.info( "logout" );
         this._fhirCastTopicStudyOrPatients.add(_current );
         _current=null;
         _fhirCastTopicStudyOrPatients.stream()
@@ -54,11 +55,8 @@ public class FhirCastTopic {
         }
     }
 
-//    public void registerFhirCastTopicEventListener( FhirCastTopicEventListener eventListener) {
-//        _listenersSet.add( eventListener );
-//    }
-
     public FhirCastTopicStudyOrPatient openPatientChart(Patient patient) {
+        logger.info( "open patient "+patient.getId() );
         FhirCastTopicStudyOrPatient studyOrPatient = new FhirCastTopicStudyOrPatient( patient );
         if ( _current == null ){
             _current = studyOrPatient;
@@ -72,6 +70,7 @@ public class FhirCastTopic {
     }
 
     public void switchPatient(Patient patient) throws FhirCastException {
+        logger.info( "switch patient "+patient.getId() );
         FhirCastTopicStudyOrPatient studyOrPatient = new FhirCastTopicStudyOrPatient( patient );
         if ( _current!=null && _current.equals( studyOrPatient )){
             return;
@@ -91,30 +90,45 @@ public class FhirCastTopic {
     }
 
     FhirCastTopicStudyOrPatient openImagingStudy(ImagingStudy study ) {
+        logger.info( "open study "+study.getId() );
         if ( _current!=null) { _fhirCastTopicStudyOrPatients.add( _current ); }
         _current = new FhirCastTopicStudyOrPatient( this, study );
         sendEvent( FhircastEventType.OPEN_IMAGING_STUDY, study );
         return _current;
     }
 
-    public void closeCurrent(){
-        if ( _current!=null ) {
-            if ( _current.hasPatient() ) {
+    public void close( Patient patient ){
+        logger.info( "close patient "+patient.getId() );
+        if ( _current!=null && _current.hasPatient() ) {
+            if ( _current.getPatient().getIdElement().getIdPart().equals( patient.getIdElement().getIdPart() )){
                 sendEvent( FhircastEventType.CLOSE_PATIENT_CHART, _current.getPatient() );
-            } else {
+                closeCurrent();
+            }
+        } else {
+            logger.info( "close patient "+patient.getId()+" did not match current patient" );
+        }
+    }
+
+    public void close( ImagingStudy imagingStudy ){
+        if ( _current!=null && _current.hasImagingStudy() ) {
+            if ( _current.getImagingStudy().getIdElement().getIdPart().equals( imagingStudy.getIdElement().getIdPart() )){
                 sendEvent( FhircastEventType.CLOSE_IMAGING_STUDY, _current.getImagingStudy() );
+                closeCurrent();
             }
-            if ( !_fhirCastTopicStudyOrPatients.isEmpty() ) {
-                _current = _fhirCastTopicStudyOrPatients.get( 0 );
-                _fhirCastTopicStudyOrPatients.remove( _current );
-                if ( _current.hasPatient() ) {
-                    sendEvent( FhircastEventType.SWITCH_PATIENT_CHART, _current.getPatient() );
-                } else {
-                    sendEvent( FhircastEventType.SWITCH_IMAGING_STUDY, _current.getImagingStudy() );
-                }
+        }
+    }
+
+    private void closeCurrent(){
+        if ( !_fhirCastTopicStudyOrPatients.isEmpty() ) {
+            _current = _fhirCastTopicStudyOrPatients.get( 0 );
+            _fhirCastTopicStudyOrPatients.remove( _current );
+            if ( _current.hasPatient() ) {
+                sendEvent( FhircastEventType.SWITCH_PATIENT_CHART, _current.getPatient() );
             } else {
-                _current = null;
+                sendEvent( FhircastEventType.SWITCH_IMAGING_STUDY, _current.getImagingStudy() );
             }
+        } else {
+            _current = null;
         }
     }
 
@@ -123,9 +137,6 @@ public class FhirCastTopic {
         if ( resource instanceof Patient ){ map.put( "patient", resource ); }
         if ( resource instanceof ImagingStudy ){ map.put( "study", resource ); }
         FhirCastTopicEvent fhirCastWorkflowEvent = new FhirCastTopicEvent(  this, _topic, fhircastEventType, map );
-//        _listenersSet.stream().forEach( listener ->{
-//            listener.newFhirCastTopicEvent( fhirCastWorkflowEvent );
-//        } );
         _source.publishEvent( fhirCastWorkflowEvent );
     }
 

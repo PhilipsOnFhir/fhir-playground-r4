@@ -42,7 +42,6 @@ public class FhirCastWebsubController {
                 fhirCastWebsubService.subscribe(sessionId, fhirCastBody.getFhirCastSessionSubscribe() );
             }
             if ( fhirCastBody.isEvent() ){
-                //websocketService.sendEvent( fhirCastBody.getEvent() );
                 fhirCastWebsubService.eventReceived( fhirCastBody.getFhirCastWorkflowEvent() );
             }
 

@@ -32,7 +32,7 @@ public class WebsubConsoleApplication {
                 case "exit": continueApp=false; break;
                 case "subscribe": fhirCastWebsubClient.subscribePatientChange(); break;
                 case "unsubscribe": fhirCastWebsubClient.unSubscribePatientChange(); break;
-                case "close": fhirCastWebsubClient.close(); break;
+                case "closeCurrent": fhirCastWebsubClient.close(); break;
                 case "logout": fhirCastWebsubClient.logout(); break;
                 case "current" :
                     Patient patient = fhirCastWebsubClient.getCurrentPatient();

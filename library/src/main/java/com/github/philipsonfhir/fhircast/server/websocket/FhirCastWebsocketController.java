@@ -1,7 +1,7 @@
 package com.github.philipsonfhir.fhircast.server.websocket;
 
-import com.github.philipsonfhir.fhircast.server.service.FhirCastContextService;
-import com.github.philipsonfhir.fhircast.server.service.FhirCastTopic;
+import com.github.philipsonfhir.fhircast.server.topic.FhirCastContextService;
+import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopic;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.NotImplementedException;
 import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEvent;
@@ -25,22 +25,6 @@ public class FhirCastWebsocketController  {
     @Autowired
     private FhirCastContextService fhirCastContextService;
 
-//    @SubscribeMapping("/fhircast/*")
-//    public void subscribe(@DestinationVariable String topic,@DestinationVariable String event  ) {
-//        logger.info("WebSocket subscribe "+topic+"/"+event );
-//        try {
-//            fhirCastContextService.updateTopic( topic );
-//            WebsocketEventSender websocketEventSender = map.get( topic );
-//            if ( websocketEventSender == null ) {
-//                websocketEventSender = new WebsocketEventSender( topic );
-//                map.put( topic, websocketEventSender );
-//                fhirCastContextService.getTopic( topic ).registerFhirCastTopicEventListener( websocketEventSender );
-//            }
-//        }catch ( FhirCastException e ){
-//            e.printStackTrace();
-//        }
-//    }
-
     @MessageMapping("/fhircast/{topic}/{event}")
     @SendTo("/hub/fhircast/{topic}/{event}")
     public FhirCastWorkflowEventEvent fhircastEvent(@DestinationVariable String topic,@DestinationVariable String event, FhirCastWorkflowEventEvent fhirCastEvent) throws NotImplementedException {
@@ -55,7 +39,7 @@ public class FhirCastWebsocketController  {
                     fhirCastTopic.switchPatient( fhirCastEvent.retrievePatientFromContext() );
                     break;
                 case CLOSE_PATIENT_CHART:
-                    fhirCastTopic.closeCurrent();
+                    fhirCastTopic.close( fhirCastEvent.retrievePatientFromContext() );
                     break;
                 case USER_LOGOUT:
                     fhirCastTopic.userLogout();

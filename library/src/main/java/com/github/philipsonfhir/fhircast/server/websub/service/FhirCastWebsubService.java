@@ -1,8 +1,8 @@
 package com.github.philipsonfhir.fhircast.server.websub.service;
 
-import com.github.philipsonfhir.fhircast.server.service.FhirCastContextService;
-import com.github.philipsonfhir.fhircast.server.service.FhirCastTopic;
-import com.github.philipsonfhir.fhircast.server.service.FhirCastTopicEvent;
+import com.github.philipsonfhir.fhircast.server.topic.FhirCastContextService;
+import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopic;
+import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopicEvent;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.NotImplementedException;
 import com.github.philipsonfhir.fhircast.support.websub.FhirCastSessionSubscribe;
@@ -60,9 +60,11 @@ public class FhirCastWebsubService implements ApplicationListener<FhirCastTopicE
                 fhirCastTopic.openPatientChart( patient );
                 break;
             }
-            case CLOSE_PATIENT_CHART:
-                fhirCastTopic.closeCurrent();
+            case CLOSE_PATIENT_CHART: {
+                Patient patient = fhirCastWorkflowEventEvent.retrievePatientFromContext();
+                fhirCastTopic.close( patient );
                 break;
+            }
             case SWITCH_PATIENT_CHART: {
                 Patient patient = fhirCastWorkflowEventEvent.retrievePatientFromContext();
                 fhirCastTopic.switchPatient( patient );

@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.server.service;
+package com.github.philipsonfhir.fhircast.server.topic;
 
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import org.springframework.beans.factory.annotation.Autowired;

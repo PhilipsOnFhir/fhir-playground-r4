@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.server.service;
+package com.github.philipsonfhir.fhircast.server.topic;
 
 import com.github.philipsonfhir.fhircast.support.websub.FhircastEventType;
 import org.springframework.context.ApplicationEvent;

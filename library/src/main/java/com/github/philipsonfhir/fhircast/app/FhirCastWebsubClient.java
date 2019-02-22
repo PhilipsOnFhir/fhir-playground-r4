@@ -89,6 +89,11 @@ public class FhirCastWebsubClient {
         fhirCastWorkflowEventEvent.setHub_event( FhircastEventType.CLOSE_PATIENT_CHART );
 
         List<FhirCastContext> fhirCastContextList = new ArrayList<>(  );
+        FhirCastContext fhirCastContext = new FhirCastContext();
+        fhirCastContext.setKey( "patient" );
+        fhirCastContext.setResource( patient );
+        fhirCastContextList.add( fhirCastContext );
+        fhirCastWorkflowEventEvent.setContext( fhirCastContextList );
 
         FhirCastWorkflowEvent fhirCastWorkflowEvent = new FhirCastWorkflowEvent();
         Date today = new Date();
@@ -130,20 +135,12 @@ public class FhirCastWebsubClient {
 
         FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent= new FhirCastWorkflowEventEvent();
         fhirCastWorkflowEventEvent.setHub_topic( this.topicId );
-//        if ( this.patient ==null ){
-            fhirCastWorkflowEventEvent.setHub_event( FhircastEventType.OPEN_PATIENT_CHART );
-//        } else if ( !this.patient.getId().equals( patient.getId()  )) {
-//            fhirCastWorkflowEventEvent.setHub_event( FhircastEventType.SWITCH_PATIENT_CHART );
-//        }
-//        else{
-//            return;
-//        }
+        fhirCastWorkflowEventEvent.setHub_event( FhircastEventType.OPEN_PATIENT_CHART );
         this.patient = patient;
 
         List<FhirCastContext> fhirCastContextList = new ArrayList<>(  );
         FhirCastContext fhirCastContext = new FhirCastContext();
         fhirCastContext.setKey( "patient" );
-
         fhirCastContext.setResource( patient );
         fhirCastContextList.add( fhirCastContext );
         fhirCastWorkflowEventEvent.setContext( fhirCastContextList );

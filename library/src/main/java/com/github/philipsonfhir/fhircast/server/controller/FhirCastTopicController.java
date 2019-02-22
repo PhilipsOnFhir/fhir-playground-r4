@@ -1,7 +1,7 @@
 package com.github.philipsonfhir.fhircast.server.controller;
 
-import com.github.philipsonfhir.fhircast.server.service.FhirCastContextService;
-import com.github.philipsonfhir.fhircast.server.service.FhirCastTopic;
+import com.github.philipsonfhir.fhircast.server.topic.FhirCastContextService;
+import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopic;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,6 @@ public class FhirCastTopicController {
         System.out.println( request.getLocalName() );
 
         FhirCastTopic fhirCastTopic = fhirCastContextService.createTopic();
-//        fhirCastWebsubService.updateFhirCastSession( fhirCastTopic.getTopic() );
         ResponseEntity<String> responseEntity = new ResponseEntity( fhirCastTopic.getTopic(), HttpStatus.CREATED );
 
         return responseEntity;
@@ -40,21 +39,16 @@ public class FhirCastTopicController {
         return fhirCastContextService.getTopics().stream()
             .map( fhirCastTopic -> fhirCastTopic.getTopic() )
             .collect( Collectors.toList());
-//        return  fhirCastWebsubService.getActiveFhirCastSessions().stream()
-//            .map( session -> session.getTopicId())
-//            .collect( Collectors.toList());
     }
 
     @PutMapping( Prefix.FHIRCAST+"/{sessionId}" )
     public void updateFhirCastService( @PathVariable String sessionId) throws FhirCastException {
         fhirCastContextService.updateTopic( sessionId );
-//        fhirCastWebsubService.updateFhirCastSession(sessionId);
     }
 
     @DeleteMapping( Prefix.FHIRCAST+"/{sessionId}" )
     public void removeFhirCastService( @PathVariable String sessionId) throws FhirCastException {
         fhirCastContextService.removeTopic( sessionId );
-//        fhirCastWebsubService.deleteFhirCastSession(sessionId);
     }
 
 }
