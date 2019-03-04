@@ -1,7 +1,6 @@
 package com.github.philipsonfhir.fhircast.server.websub.service;
 
 import com.github.philipsonfhir.fhircast.support.websub.FhirCastSessionSubscribe;
-import com.sun.javafx.binding.StringFormatter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,13 +35,13 @@ public class WebsubVerificationProcess implements Runnable {
         RestTemplate restTemplate = new RestTemplate(  );
 //        GET https://app.example.com/session/callback/v7tfwuk17a?hub.mode=subscribe&hub.topic=7jaa86kgdudewiaq0wtu&hub.events=patient-open-chart,patient-close-chart&hub.challenge=meu3we944ix80ox HTTP 1.1
         this.challenge = generateChallenge();
-        String query = StringFormatter.format( "?hub.mode=%s&hub.topic=%s&hub.events=%s&hub.challenge=%s&hub.lease+seconds=%s",
+        String query = String.format( "?hub.mode=%s&hub.topic=%s&hub.events=%s&hub.challenge=%s&hub.lease+seconds=%s",
             fhirCastSessionSubscribe.getHub_mode(),
             fhirCastSessionSubscribe.getHub_topic(),
             fhirCastSessionSubscribe.getHub_events(),
             challenge,
             "10000000"
-            ).getValue();
+            );
 
          ResponseEntity<String> response = restTemplate.getForEntity( url+query, String.class  );
 
