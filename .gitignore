@@ -12,5 +12,5 @@ websocket/node_modules/
 websocket/node/
 websocket/dist/
 websocket/e2e/
-/basicwebsocket/basicwebsocket/e2e/
-/basicwebsocket/basicwebsocket/node_modules/
+/basicwebsocket/e2e/
+/basicwebsocket/node_modules/
