@@ -19,6 +19,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
     this.fhirCastRestService.getTopicUrl();
     timer(1);
     this.timer = timer( 0, 1000);

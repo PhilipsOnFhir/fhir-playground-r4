@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.server.websocket;
+package com.github.philipsonfhir.fhircast.server.wsstomp;
 
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastContextService;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopic;

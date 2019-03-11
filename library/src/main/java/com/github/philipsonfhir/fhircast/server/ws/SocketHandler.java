@@ -1,6 +1,12 @@
 package com.github.philipsonfhir.fhircast.server.ws;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.philipsonfhir.fhircast.server.controller.Prefix;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopicEvent;
+import com.github.philipsonfhir.fhircast.support.websub.FhirCastContext;
+import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;
+import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEvent;
+import org.hl7.fhir.dstu3.model.Resource;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -10,6 +16,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -43,16 +50,47 @@ public class SocketHandler extends TextWebSocketHandler implements ApplicationLi
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         System.out.println("afterConnectionClosed");
+        sessions.remove( session );
     }
 
     @Override
     public void onApplicationEvent(FhirCastTopicEvent event) {
         System.out.println("ws message "+event.getEventType());
         sessions.forEach( session ->{
-            MyMessage myMessage = new MyMessage( event.getTopic()+" = "+event.getEventType() );
-            TextMessage textMessage = new TextMessage( event.getTopic()+" = "+event.getEventType() );
             try {
-                session.sendMessage( textMessage );
+                String prefix = "/fhircast/";
+                String postfix = Prefix.WEBSOCKET;
+                String url = session.getUri().toString();
+                String topicId = url.substring( prefix.length() );
+                if ( url.endsWith( postfix )){
+                    topicId = url.substring( prefix.length(), url.length()-( postfix.length()+1) );
+                    if ( event.getTopic().equals( topicId )) {
+
+                        FhirCastWorkflowEvent fhirCastWorkflowEvent = new FhirCastWorkflowEvent();
+                        fhirCastWorkflowEvent.setId( "WS"+System.currentTimeMillis() );
+                        fhirCastWorkflowEvent.setTimestamp( new Date().toString() );
+
+                        FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent = new FhirCastWorkflowEventEvent();
+                        fhirCastWorkflowEventEvent.setHub_topic( event.getTopic() );
+                        fhirCastWorkflowEventEvent.setHub_event( event.getEventType() );
+                        event.getContext().entrySet().stream()
+                            .forEach( entry -> {
+                                FhirCastContext fhirCastContext = new FhirCastContext();
+                                fhirCastContext.setKey( entry.getKey() );
+                                fhirCastContext.setResource( (Resource) entry.getValue() );
+                                fhirCastWorkflowEventEvent.getContext().add( fhirCastContext );
+                            } );
+
+                        fhirCastWorkflowEvent.setEvent( fhirCastWorkflowEventEvent );
+
+                        ObjectMapper objectMapper = new ObjectMapper(  );
+                        String message = objectMapper.writeValueAsString( fhirCastWorkflowEvent );
+
+                        TextMessage textMessage = new TextMessage( message );
+
+                        session.sendMessage( textMessage );
+                    }
+                }
             } catch ( IOException e ) {
                 e.printStackTrace();
             }

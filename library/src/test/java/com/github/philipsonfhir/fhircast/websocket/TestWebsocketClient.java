@@ -8,12 +8,13 @@ import java.net.URI;
 public class TestWebsocketClient {
 //    private final String uri="ws://localhost:9080/chat/fu";
 //    private final String uri = "ws://echo.websocket.org";
-    private final String uri="ws://localhost:9080/name";
+    private final String uri="ws://localhost:9080/fhircast/demo/websocket";
     private Session session;
     //    private ClientWindow clientWindow;
     WebSocketContainer container;
 
     public TestWebsocketClient(){
+        System.out.println("Connect to "+uri);
         try{
             container=ContainerProvider.
                 getWebSocketContainer();

@@ -3,6 +3,7 @@ package com.github.philipsonfhir.fhircast.server.websub.service;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastContextService;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopic;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopicEvent;
+import com.github.philipsonfhir.fhircast.server.wsstomp.FhircastWebsocketService;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.NotImplementedException;
 import com.github.philipsonfhir.fhircast.support.websub.FhirCastSessionSubscribe;
@@ -11,20 +12,23 @@ import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEve
 import org.hl7.fhir.dstu3.model.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
-@Controller
+@Service
 public class FhirCastWebsubService implements ApplicationListener<FhirCastTopicEvent> {
-    @Autowired
-    private FhirCastContextService fhirCastContextService;
 
     private Map<String, FhirCastWebsubSession> sessions = new TreeMap<>();
     private Logger logger = Logger.getLogger(this.getClass().getName());
+    @Autowired
+    private FhirCastContextService fhirCastContextService;
+    @Autowired
+    private FhircastWebsocketService fhircastWebsocketService;
+
 
     public Collection<FhirCastWebsubSession> getActiveFhirCastSessions() {
         return sessions.values();
@@ -33,6 +37,7 @@ public class FhirCastWebsubService implements ApplicationListener<FhirCastTopicE
 
     private FhirCastWebsubSession getFhirCastSession(String topicId) throws FhirCastException {
         FhirCastTopic fhirCastTopic = this.fhirCastContextService.getTopic( topicId );
+
         FhirCastWebsubSession fhirCastWebsubSession = sessions.get( topicId );
         if ( fhirCastWebsubSession ==null ){
             logger.info( "Create WebSub session for topic "+topicId );
@@ -45,7 +50,20 @@ public class FhirCastWebsubService implements ApplicationListener<FhirCastTopicE
     public void subscribe(String sessionId, FhirCastSessionSubscribe fhirCastSessionSubscribe) throws FhirCastException {
         logger.info("subscibe session"+sessionId);
         FhirCastWebsubSession fhirCastWebsubSession = getFhirCastSession( sessionId );
-        fhirCastWebsubSession.updateSubscriptions( fhirCastSessionSubscribe );
+
+        switch( fhirCastSessionSubscribe.getHub_channel_type()){
+            case "websocket":
+                // TODO update when mechanism is clear
+//                fhircastWebsocketService.updateSubscriptions( fhirCastSessionSubscribe );
+//                break;
+            case "websub":
+            default:
+                fhirCastWebsubSession.updateSubscriptions( fhirCastSessionSubscribe );
+                // TODO ensure channel is added
+//                logger.warning( "channel type does not exist: "+fhirCastSessionSubscribe );
+
+        }
+
     }
 
     public void eventReceived(FhirCastWorkflowEvent fhirCastWorkflowEvent ) throws FhirCastException, NotImplementedException {

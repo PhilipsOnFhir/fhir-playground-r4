@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.server.websocket;
+package com.github.philipsonfhir.fhircast.server.wsstomp;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

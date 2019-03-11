@@ -13,4 +13,5 @@ public class FhirCastSessionSubscribe {
     @JsonProperty("hub.secret")        String hub_secret;
     @JsonProperty("hub.events")        String hub_events;
     @JsonProperty("hub.lease_seconds") String hub_lease_seconds;
+    @JsonProperty("hub.channel.type")  String hub_channel_type ="none";
 }
