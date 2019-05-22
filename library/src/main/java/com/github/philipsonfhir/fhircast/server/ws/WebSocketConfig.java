@@ -1,6 +1,6 @@
 package com.github.philipsonfhir.fhircast.server.ws;
 
-import com.github.philipsonfhir.fhircast.server.controller.Prefix;
+import com.github.philipsonfhir.fhircast.server.Prefix;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;

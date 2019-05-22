@@ -1,5 +1,6 @@
 package com.github.philipsonfhir.fhircast.server.controller;
 
+import com.github.philipsonfhir.fhircast.server.Prefix;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastContextService;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopic;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;

@@ -1,6 +1,5 @@
-(window as any).global = window;
 /**
- * This file includes polyfills needed by Angular and is loaded before the com.github.philipsonfhir.fhircast.app.
+ * This file includes polyfills needed by Angular and is loaded before the app.
  * You can add your own extra polyfills to this file.
  *
  * This file is divided into 2 sections:
@@ -50,7 +49,7 @@ import 'core-js/es7/reflect';
  */
 import 'zone.js/dist/zone'; // Included with Angular CLI.
 
-
+(window as any).global = window;
 /**
  * Web Animations `@angular/platform-browser/animations`
  * Only required if AnimationBuilder is used within the application and using IE/Edge or Safari.

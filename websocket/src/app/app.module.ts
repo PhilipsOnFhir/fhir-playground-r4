@@ -1,7 +1,8 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
 
-import { AppComponent } from './app.component';
+import {AppComponent} from './app.component';
+import {WebsocketService} from "./websocket.service";
 import {NgxJsonViewerModule} from "ngx-json-viewer";
 
 @NgModule({
@@ -12,7 +13,7 @@ import {NgxJsonViewerModule} from "ngx-json-viewer";
     NgxJsonViewerModule,
     BrowserModule
   ],
-  providers: [],
+  providers: [WebsocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

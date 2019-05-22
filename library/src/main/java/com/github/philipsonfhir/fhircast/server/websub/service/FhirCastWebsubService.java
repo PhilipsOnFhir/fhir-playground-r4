@@ -3,7 +3,6 @@ package com.github.philipsonfhir.fhircast.server.websub.service;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastContextService;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopic;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopicEvent;
-import com.github.philipsonfhir.fhircast.server.wsstomp.FhircastWebsocketService;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.NotImplementedException;
 import com.github.philipsonfhir.fhircast.support.websub.FhirCastSessionSubscribe;
@@ -26,9 +25,6 @@ public class FhirCastWebsubService implements ApplicationListener<FhirCastTopicE
     private Logger logger = Logger.getLogger(this.getClass().getName());
     @Autowired
     private FhirCastContextService fhirCastContextService;
-    @Autowired
-    private FhircastWebsocketService fhircastWebsocketService;
-
 
     public Collection<FhirCastWebsubSession> getActiveFhirCastSessions() {
         return sessions.values();

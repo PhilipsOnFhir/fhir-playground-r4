@@ -1,7 +1,7 @@
 package com.github.philipsonfhir.fhircast.server.ws;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.philipsonfhir.fhircast.server.controller.Prefix;
+import com.github.philipsonfhir.fhircast.server.Prefix;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopicEvent;
 import com.github.philipsonfhir.fhircast.support.websub.FhirCastContext;
 import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;

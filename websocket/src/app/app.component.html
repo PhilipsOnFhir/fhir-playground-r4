@@ -1,13 +1,10 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<h1>Websocket based on STOMP</h1>
-<p>Open message viewer to see what is happening (F12 in chrome)</p>
+<div style="text-align:center">
+  <h1>
+    Welcome to {{ title }}!
+  </h1>
 
-<p>{{connected}}</p>
-<button (click)="connect()">connect</button>
-<button (click)="updatePatient1()">update1</button>
-<button (click)="updatePatient2()">update2</button>
-<button (click)="disconnect()">disconnect</button>
-
+</div>
 <div *ngFor="let event of events">
   <ngx-json-viewer [json]="event"></ngx-json-viewer>
 </div>
