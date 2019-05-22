@@ -23,6 +23,10 @@
         <!--<relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
     <!--</parent>-->
 
+    <properties>
+        <docker.image.prefix>springio</docker.image.prefix>
+    </properties>
+
     <!--<properties>-->
         <!--<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
         <!--<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>-->
@@ -84,6 +88,15 @@
                     <mainClass>com.github.philipsonfhir.fhircast.FhirCastHubServerApplication</mainClass>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.9</version>
+                <configuration>
+                    <repository>${docker.image.prefix}/${project.artifactId}</repository>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
