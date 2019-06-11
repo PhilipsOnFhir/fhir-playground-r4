@@ -1,16 +1,3 @@
-# Created by .ignore support plugin (hsz.mobi)
-*.iml
-.idea/
-library/target/
-websub/target/
-hub/target/
-rest/node_modules/
-rest/node/
-rest/dist/
-rest/e2e/
-websocket/node_modules/
-websocket/node/
-websocket/dist/
-websocket/e2e/
-/websocket/e2e/
-/websocket/node_modules/
+.idea\
+target\
+target\
