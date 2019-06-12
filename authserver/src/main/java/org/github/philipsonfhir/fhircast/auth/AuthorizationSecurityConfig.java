@@ -6,11 +6,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by zakaria on 16/07/17.
@@ -23,10 +33,13 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
 //    private AuthenticationManager authenticationManager;
 //
 //
-//    @Override
-//    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-//        endpoints.authenticationManager(this.authenticationManager);
-//    }
+    @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        endpoints
+                .tokenStore(new InMemoryTokenStore())
+                .tokenEnhancer( new CustomTokenEnhancer())
+                ;
+    }
 
 
 
@@ -60,5 +73,69 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
         oauthServer
                 .tokenKeyAccess("permitAll()")
                 .checkTokenAccess("permitAll()");
+    }
+
+    private class CustomTokenEnhancer implements TokenEnhancer {
+        @Override
+        public OAuth2AccessToken enhance(OAuth2AccessToken oAuth2AccessToken, OAuth2Authentication oAuth2Authentication) {
+            Map<String,Object> additionalInfo = new HashMap<>();
+            additionalInfo.put("patient","patientId");
+            additionalInfo.put("encounter","encounterId");
+            additionalInfo.put("need_patient_banner","false");
+
+            OAuth2AccessToken newToken = new MyOAuth2AccessToken(oAuth2AccessToken,additionalInfo);
+
+            return newToken;
+        }
+
+        private class MyOAuth2AccessToken implements OAuth2AccessToken {
+            private final Map<String, Object> additionalInfo;
+            private final OAuth2AccessToken token;
+
+            public MyOAuth2AccessToken(OAuth2AccessToken oAuth2AccessToken, Map<String, Object> additionalInfo) {
+                this.additionalInfo = additionalInfo;
+                this.token = oAuth2AccessToken;
+            }
+
+            @Override
+            public Map<String, Object> getAdditionalInformation() {
+                return additionalInfo;
+            }
+
+            @Override
+            public Set<String> getScope() {
+                return token.getScope();
+            }
+
+            @Override
+            public OAuth2RefreshToken getRefreshToken() {
+                return token.getRefreshToken();
+            }
+
+            @Override
+            public String getTokenType() {
+                return token.getTokenType();
+            }
+
+            @Override
+            public boolean isExpired() {
+                return token.isExpired();
+            }
+
+            @Override
+            public Date getExpiration() {
+                return token.getExpiration();
+            }
+
+            @Override
+            public int getExpiresIn() {
+                return token.getExpiresIn();
+            }
+
+            @Override
+            public String getValue() {
+                return token.getValue();
+            }
+        }
     }
 }

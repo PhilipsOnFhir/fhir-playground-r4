@@ -111,6 +111,7 @@ public class SeleniumTests {
         assertTrue( jsonNode.get("token_type").asText().length()>1);
         assertTrue( jsonNode.get("scope").asText().length()>1);
 
+        System.out.println(response.getBody());
         driver.quit();
     }
     @Test
