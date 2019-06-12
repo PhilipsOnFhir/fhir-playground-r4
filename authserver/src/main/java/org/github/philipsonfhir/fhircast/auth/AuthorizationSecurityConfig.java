@@ -51,7 +51,7 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
                         .accessTokenValiditySeconds(3600)
                         .redirectUris("http://localhost:8080/test")
 //                        .resourceIds("resource")
-                        .secret("fhircast-secret");
+                        .secret("{noop}fhircast-secret");
     }
 
     @Override
