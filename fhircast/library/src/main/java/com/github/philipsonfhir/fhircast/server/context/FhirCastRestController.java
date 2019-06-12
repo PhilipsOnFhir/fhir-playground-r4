@@ -27,22 +27,22 @@ public class FhirCastRestController {
 
     @RequestMapping (
         method = RequestMethod.GET,
-        value = Prefix.FHIRCAST+"/{sessionId}/"+Prefix.CONTEXT
+        value = Prefix.FHIRCAST+"/{topicId}/"+Prefix.CONTEXT
     )
     public ResponseEntity getFhirCastContext(
-        @PathVariable String sessionId,
+        @PathVariable String topicId,
         @RequestParam Map<String, String> queryParams
     ) {
         ResponseEntity<FhirCastWorkflowEvent> responseEntity = new ResponseEntity( HttpStatus.ACCEPTED);
 
         try {
-            Map<String, String> context =  fhirCastWebsubService.getContext( sessionId );
+            Map<String, String> context =  fhirCastWebsubService.getContext(topicId);
             FhirCastWorkflowEvent fhirCastWorkflowEvent = new FhirCastWorkflowEvent();
             fhirCastWorkflowEvent.setId( UUID.randomUUID().toString() );
             fhirCastWorkflowEvent.setTimestamp( ""+new Date() );
 
             FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent = new FhirCastWorkflowEventEvent();
-            fhirCastWorkflowEventEvent.setHub_topic( sessionId );
+            fhirCastWorkflowEventEvent.setHub_topic(topicId);
             fhirCastWorkflowEventEvent.setContext( new ArrayList<>(  ) );
 
             context.entrySet().stream()

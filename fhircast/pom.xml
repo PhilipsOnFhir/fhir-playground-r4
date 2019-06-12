@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>parent</name>
+	<name>parent-fhircast</name>
 	<description>The FHIR cast parent project</description>
 
 	<parent>
