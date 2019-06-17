@@ -3,6 +3,8 @@
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/hapi-r4" />
+    <file type="web" url="file://$PROJECT_DIR$/worklist/server" />
+    <file type="web" url="file://$PROJECT_DIR$/worklist/tutorial-server" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">

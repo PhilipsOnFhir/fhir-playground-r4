@@ -45,7 +45,8 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
+        clients
+            .inMemory()
                 .withClient("my-trusted-client")
                     .authorizedGrantTypes("password",
                             "refresh_token", "implicit", "client_credentials", "authorization_code")
@@ -55,7 +56,7 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
                     .redirectUris("http://localhost:8081/test.html")
 //                    .resourceIds("resource")
                     .secret("mysecret")
-                .and()
+            .and()
                 .withClient("fhircasthub")
                         .authorizedGrantTypes("password",
                                 "refresh_token", "implicit", "client_credentials", "authorization_code")
@@ -63,8 +64,16 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
                         .scopes("read", "write", "trust")
                         .accessTokenValiditySeconds(3600)
                         .redirectUris("http://localhost:8080/test")
-//                        .resourceIds("resource")
-                        .secret("{noop}fhircast-secret");
+                        .secret("{noop}fhircast-secret")
+            .and()
+                .withClient("worklist")
+                .authorizedGrantTypes("password",
+                        "refresh_token", "implicit", "client_credentials", "authorization_code")
+                .authorities("EMR")
+                .scopes("read","user/*.*")
+                .accessTokenValiditySeconds(3600)
+                .redirectUris("http://localhost:9010/token")
+                .secret("{noop}worklist-secret");
     }
 
     @Override
@@ -78,6 +87,7 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
     private class CustomTokenEnhancer implements TokenEnhancer {
         @Override
         public OAuth2AccessToken enhance(OAuth2AccessToken oAuth2AccessToken, OAuth2Authentication oAuth2Authentication) {
+            System.out.println("enhance");
             Map<String,Object> additionalInfo = new HashMap<>();
             additionalInfo.put("patient","patientId");
             additionalInfo.put("encounter","encounterId");

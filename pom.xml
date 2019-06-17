@@ -13,6 +13,7 @@
         <module>authserver</module>
         <module>fhircast</module>
         <module>smartonfhir</module>
+        <module>worklist</module>
     </modules>
 
     <build>

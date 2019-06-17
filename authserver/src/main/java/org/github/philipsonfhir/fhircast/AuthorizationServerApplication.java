@@ -1,5 +1,5 @@
 
-package org.github.philipsonfhir.fhircast.auth;
+package org.github.philipsonfhir.fhircast;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

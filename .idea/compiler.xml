@@ -7,7 +7,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="worklist-server" />
         <module name="hapi-fhir-jpaserver-starter" />
+        <module name="worklist-web" />
         <module name="library" />
         <module name="oauth2" />
         <module name="smartonfhir" />
@@ -17,6 +19,8 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="fhir-cast" target="1.8" />
+      <module name="tutorial-server" target="1.8" />
+      <module name="tutorial-web" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -26,7 +30,11 @@
       <module name="library" options="-parameters" />
       <module name="oauth2" options="-parameters" />
       <module name="smartonfhir" options="-parameters" />
+      <module name="tutorial-server" options="-parameters" />
+      <module name="tutorial-web" options="-parameters" />
       <module name="websub" options="-parameters" />
+      <module name="worklist-server" options="-parameters" />
+      <module name="worklist-web" options="-parameters" />
     </option>
   </component>
 </project>

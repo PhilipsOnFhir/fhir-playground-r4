@@ -45,7 +45,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
         auth.inMemoryAuthentication()
-                .withUser("admin").password(encoder.encode("admin")).authorities("ROLE_USER");
+                .withUser("admin").password(encoder.encode("admin")).authorities("ROLE_USER")
+            .and()
+                .withUser("practitioner").password(encoder.encode("practitioner")).authorities("ROLE_USER")
+            .and()
+                .withUser("nurse").password(encoder.encode("nurse")).authorities("ROLE_USER")
+            .and()
+                .withUser("patient").password(encoder.encode("patient")).authorities("ROLE_USER");
+
     }
 
 //    @Bean
@@ -75,8 +82,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .anyRequest().authenticated()
             .and()
-//                .formLogin().defaultSuccessUrl("/test.html")
-//                .formLogin().successHandler(myAuthenticationSuccessHandler())
                 .formLogin()
             .and()
                 .logout().permitAll()
