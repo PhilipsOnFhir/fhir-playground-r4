@@ -43,14 +43,14 @@ public class FhirCastWebsubService implements ApplicationListener<FhirCastTopicE
         return fhirCastWebsubSession;
     }
 
-    public void subscribe(String sessionId, FhirCastSessionSubscribe fhirCastSessionSubscribe) throws FhirCastException {
+    public String subscribe(String sessionId, FhirCastSessionSubscribe fhirCastSessionSubscribe) throws FhirCastException {
         logger.info("subscibe session"+sessionId);
         FhirCastWebsubSession fhirCastWebsubSession = getFhirCastSession( sessionId );
 
         switch( fhirCastSessionSubscribe.getHub_channel_type()){
             case "websocket":
                 // TODO update when mechanism is clear
-//                fhircastWebsocketService.updateSubscriptions( fhirCastSessionSubscribe );
+                fhirCastWebsubSession.updateSubscriptions( fhirCastSessionSubscribe );
 //                break;
             case "websub":
             default:
@@ -60,6 +60,7 @@ public class FhirCastWebsubService implements ApplicationListener<FhirCastTopicE
 
         }
 
+        return "";
     }
 
     public void eventReceived(FhirCastWorkflowEvent fhirCastWorkflowEvent ) throws FhirCastException, NotImplementedException {

@@ -7,7 +7,7 @@ import org.springframework.web.client.RestTemplate;
 import java.security.SecureRandom;
 import java.util.logging.Logger;
 
-public class WebsubVerificationProcess implements Runnable {
+public class WebsocketVerificationProcess implements Runnable {
 
     private final FhirCastWebsubClientData fhirCastWebsubClientData;
     private final FhirCastSessionSubscribe fhirCastSessionSubscribe;
@@ -17,16 +17,16 @@ public class WebsubVerificationProcess implements Runnable {
     private boolean success;
     private Logger logger = Logger.getLogger( this.getClass().getName() );
 
-    public static WebsubVerificationProcess verify(FhirCastWebsubClientData fhirCastWebsubClientData, FhirCastSessionSubscribe fhirCastSessionSubscribe) {
+    public static WebsocketVerificationProcess verify(FhirCastWebsubClientData fhirCastWebsubClientData, FhirCastSessionSubscribe fhirCastSessionSubscribe) {
         fhirCastWebsubClientData.setVerified( false );
-        WebsubVerificationProcess websubVerificationProcess = new WebsubVerificationProcess( fhirCastWebsubClientData, fhirCastSessionSubscribe);
+        WebsocketVerificationProcess websubVerificationProcess = new WebsocketVerificationProcess( fhirCastWebsubClientData, fhirCastSessionSubscribe);
         Thread thread = new Thread( websubVerificationProcess );
         thread.setName("Verification");
         thread.start();
         return websubVerificationProcess;
     }
 
-    WebsubVerificationProcess(FhirCastWebsubClientData fhirCastWebsubClientData, FhirCastSessionSubscribe fhirCastSessionSubscribe){
+    WebsocketVerificationProcess(FhirCastWebsubClientData fhirCastWebsubClientData, FhirCastSessionSubscribe fhirCastSessionSubscribe){
         this.fhirCastWebsubClientData = fhirCastWebsubClientData;
         this.fhirCastSessionSubscribe = fhirCastSessionSubscribe;
         this.url = fhirCastSessionSubscribe.getHub_callback();

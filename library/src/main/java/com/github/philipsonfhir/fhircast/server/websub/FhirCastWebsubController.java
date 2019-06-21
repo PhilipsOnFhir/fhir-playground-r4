@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,17 +30,19 @@ public class FhirCastWebsubController {
 
     @RequestMapping (
         method = RequestMethod.POST,
-        value = Prefix.FHIRCAST+"/{sessionId}/"+Prefix.WEBSUB
+        value = Prefix.FHIRCAST+"/{sessionId}"
     )
     public ResponseEntity updateFhirCast(
         @PathVariable String sessionId,
         @RequestBody FhirCastBody fhirCastBody,
-        @RequestParam Map<String, String> queryParams
-    ) {
+        @RequestParam Map<String, String> queryParams,
+        UriComponentsBuilder uriComponentsBuilder
+        ) {
         ResponseEntity<String> responseEntity = new ResponseEntity( HttpStatus.ACCEPTED);
         try {
             if ( fhirCastBody.isSubscribe() ){
-                fhirCastWebsubService.subscribe(sessionId, fhirCastBody.getFhirCastSessionSubscribe() );
+                String responseStr = fhirCastWebsubService.subscribe(sessionId, fhirCastBody.getFhirCastSessionSubscribe() );
+                String websocketUrl = uriComponentsBuilder.toUriString()+"/"+sessionId+"/"+responseStr;
             }
             if ( fhirCastBody.isEvent() ){
                 fhirCastWebsubService.eventReceived( fhirCastBody.getFhirCastWorkflowEvent() );
@@ -54,7 +57,7 @@ public class FhirCastWebsubController {
 
     @RequestMapping (
         method = RequestMethod.GET,
-        value = Prefix.FHIRCAST+"/{sessionId}/"+Prefix.WEBSUB
+        value = Prefix.FHIRCAST+"/{sessionId}"
     )
     public ResponseEntity getFhirCastContext(
         @PathVariable String sessionId,

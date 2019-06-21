@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
-public class CommunicationListener implements Runnable {
+public class WebsubCommunicationListener implements Runnable {
     private final int port;
     private final FhirCastWebsubClient client;
     Logger logger = Logger.getLogger(this.getClass().getName());
@@ -23,7 +23,7 @@ public class CommunicationListener implements Runnable {
     private String contentData;
     private boolean continueListening = true;
 
-    CommunicationListener(int port, FhirCastWebsubClient client ){
+    WebsubCommunicationListener(int port, FhirCastWebsubClient client ){
         this.client = client;
         this.port = port;
     }

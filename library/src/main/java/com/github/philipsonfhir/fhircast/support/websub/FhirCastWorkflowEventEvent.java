@@ -17,6 +17,7 @@ import java.util.Optional;
 public class FhirCastWorkflowEventEvent {
     @JsonProperty("hub.topic")      String hub_topic;
     @JsonProperty("hub.event")     FhircastEventType hub_event;
+    @JsonProperty("hub.channel.type")     FhircastChannelType channel_type;
     List<FhirCastContext> context = new ArrayList<>();
 
     public Patient retrievePatientFromContext( ) throws FhirCastException {

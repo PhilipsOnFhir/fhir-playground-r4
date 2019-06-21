@@ -19,6 +19,7 @@ public class FhirCastContext {
     String resource;
 
     static final private FhirContext ourCtx = FhirContext.forDstu3();
+
     public IBaseResource retrieveFhirResource(){
         return ourCtx.newJsonParser().parseResource( resource );
     }

@@ -25,7 +25,8 @@ import java.util.logging.Logger;
 @ToString
 public class FhirCastWebsubSession {
     private Map<String, FhirCastSessionSubscribe> fhirCastSubscriptions = new TreeMap<>();
-    private Map<String, FhirCastWebsubClientData> fhirCastClientMap = new TreeMap<>( );
+    private Map<String, FhirCastWebsubClientData> fhirCastRestClientMap = new TreeMap<>( );
+    private Map<String, FhirCastWebsubClientData> fhirCastWebsocketClientMap = new TreeMap<>( );
     private String topicId;
     Logger logger = Logger.getLogger( this.getClass().getName() );
     Map<String, String> context = new TreeMap<>(  );
@@ -51,10 +52,10 @@ public class FhirCastWebsubSession {
     }
 
     private FhirCastWebsubClientData getFhirCastClientData(FhirCastSessionSubscribe fhirCastSessionSubscribe) {
-        FhirCastWebsubClientData fhirCastWebsubClientData = this.fhirCastClientMap.get( fhirCastSessionSubscribe.getHub_callback() );
+        FhirCastWebsubClientData fhirCastWebsubClientData = this.fhirCastRestClientMap.get( fhirCastSessionSubscribe.getHub_callback() );
         if ( fhirCastWebsubClientData == null ){
             fhirCastWebsubClientData = new FhirCastWebsubClientData( fhirCastSessionSubscribe.getHub_callback(), fhirCastSessionSubscribe.getHub_secret() );
-            this.fhirCastClientMap.put( fhirCastSessionSubscribe.getHub_callback(), fhirCastWebsubClientData );
+            this.fhirCastRestClientMap.put( fhirCastSessionSubscribe.getHub_callback(), fhirCastWebsubClientData );
         }
         return fhirCastWebsubClientData;
     }
@@ -72,7 +73,7 @@ public class FhirCastWebsubSession {
 
         // send websub events
         logger.info( "eventReceived " + fhirCastWorkflowEvent );
-        for ( FhirCastWebsubClientData fhirCastWebsubClientData : this.fhirCastClientMap.values() ) {
+        for ( FhirCastWebsubClientData fhirCastWebsubClientData : this.fhirCastRestClientMap.values() ) {
             if ( fhirCastWebsubClientData.isVerified() && fhirCastWebsubClientData.hasSubscription( fhirCastWorkflowEvent.getEvent().getHub_event() ) ) {
                 logger.info( "Sending event to " + fhirCastWebsubClientData.getClientCallbackUrl() );
 

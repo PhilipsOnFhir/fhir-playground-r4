@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class FhirCastWebsubClient {
+public class FhirCastWebSocketClient {
 
     private final int port;
 
@@ -26,8 +26,6 @@ public class FhirCastWebsubClient {
     private Patient patient = null ;
     private Logger logger = Logger.getLogger( this.getClass().getName() );
     private Map<String, IBaseResource> context = new TreeMap<String, IBaseResource>(  );
-    private List<FhirCastWorkflowEvent> events = new ArrayList<>();
-
 
     //server.port=9601","fhircast.topic=123
     @Value("${server.port}")
@@ -57,22 +55,16 @@ public class FhirCastWebsubClient {
         initialize();
     }
 
-    public FhirCastWebsubClient(String url, String topicId) {
-        this( url, topicId, true );
-    }
 
-    public FhirCastWebsubClient(String baseUrl, String topicId, boolean rest) {
-
-        this.baseUrl = baseUrl;
-        this.topicUrl = baseUrl+"/"+ topicId;
+    public FhirCastWebSocketClient(String url, String topicId) {
+        this.baseUrl = url;
+        this.topicUrl = url+"/"+ topicId;
         restTemplate.put( this.topicUrl, String.class  );
         this.topicId = topicId;
 
         port = new Random( System.currentTimeMillis() ).nextInt( 100 )+9300;
-        WebsubCommunicationListener websubCommunicationListener = new WebsubCommunicationListener( port, this );
-        Thread  thread = new Thread(websubCommunicationListener);
-        thread.setName("com-list");
-        thread.start();
+        WebsocketCommunicationListener websubCommunicationListener = new WebsocketCommunicationListener( port, this );
+        new Thread(websubCommunicationListener).start();
 
     }
 
@@ -131,7 +123,7 @@ public class FhirCastWebsubClient {
         fhirCastSessionSubscribe.setHub_topic( topicId );
         fhirCastSessionSubscribe.setHub_secret("mysecret");
         fhirCastSessionSubscribe.setHub_events( FhircastEventType.OPEN_PATIENT_CHART+","+ FhircastEventType.SWITCH_PATIENT_CHART+","+ FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.USER_LOGOUT ); //"patient-open-chart,patient-logout-chart" );
-        restTemplate.postForEntity( topicUrl, fhirCastSessionSubscribe, String.class );
+        restTemplate.postForEntity( topicUrl+"/websub", fhirCastSessionSubscribe, String.class );
     }
 
     public Patient getCurrentPatient() {
@@ -159,20 +151,12 @@ public class FhirCastWebsubClient {
 
         RestTemplate restTemplate = new RestTemplate(  );
         logger.info("send event");
-        restTemplate.postForLocation( this.topicUrl, fhirCastWorkflowEvent );
+        restTemplate.postForLocation( this.topicUrl+"/websub", fhirCastWorkflowEvent );
     }
 
-    public List<FhirCastWorkflowEvent> getEvents(){
-        return Collections.unmodifiableList(events);
-    }
-
-    public void clearEvents(){
-        this.events.clear();
-    }
 
     public void newEvent(FhirCastWorkflowEvent fhirCastWorkflowEvent) {
         logger.info(  "New event "+fhirCastWorkflowEvent.getEvent() );
-        this.events.add( fhirCastWorkflowEvent );
 //        switch( fhirCastWorkflowEvent.getEvent().getHub_event() ){
 //            case OPEN_PATIENT_CHART:
 //            case SWITCH_PATIENT_CHART:
