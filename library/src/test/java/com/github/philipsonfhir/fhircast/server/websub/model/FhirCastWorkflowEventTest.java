@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.support.websub;
+package com.github.philipsonfhir.fhircast.server.websub.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +19,6 @@ public class FhirCastWorkflowEventTest {
         fhirCastWorkflowEvent.setId("id");
         fhirCastWorkflowEvent.setTimestamp("opDitMonent");
         FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent = new FhirCastWorkflowEventEvent();
-        fhirCastWorkflowEventEvent.setChannel_type( FhircastChannelType.WEBSOCKET);
         fhirCastWorkflowEventEvent.setContext( null );
         fhirCastWorkflowEventEvent.setHub_topic("myTopic");
         fhirCastWorkflowEvent.setEvent(fhirCastWorkflowEventEvent);

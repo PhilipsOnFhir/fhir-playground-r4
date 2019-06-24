@@ -1,64 +1,69 @@
 package com.github.philipsonfhir.fhircast.server.websub.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopicEvent;
+import com.github.philipsonfhir.fhircast.server.websub.service.websocket.FhircastWebsubClientWebsocket;
+import com.github.philipsonfhir.fhircast.server.websub.service.websocket.SocketHandler;
+import com.github.philipsonfhir.fhircast.server.websub.service.websub.FhircastWebsubClientRest;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastContext;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastSessionSubscribe;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEvent;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhirCastContext;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhirCastSessionSubscribe;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhirCastWorkflowEvent;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhirCastWorkflowEventEvent;
+import com.github.philipsonfhir.fhircast.support.NotImplementedException;
 import lombok.ToString;
 import org.hl7.fhir.dstu3.model.Resource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 import java.util.*;
 import java.util.logging.Logger;
 
 @ToString
 public class FhirCastWebsubSession {
-    private Map<String, FhirCastSessionSubscribe> fhirCastSubscriptions = new TreeMap<>();
-    private Map<String, FhirCastWebsubClientData> fhirCastRestClientMap = new TreeMap<>( );
-    private Map<String, FhirCastWebsubClientData> fhirCastWebsocketClientMap = new TreeMap<>( );
+    private final SocketHandler socketHandler;
+    //    private Map<String, FhirCastSessionSubscribe> fhirCastSubscriptions = new TreeMap<>();
+    private Map<String, FhircastWebsubClientRest>      fhirCastRestClientMap      = new TreeMap<>( );
+    private Map<String, FhircastWebsubClientWebsocket> fhirCastWebsocketClientMap = new TreeMap<>( );
     private String topicId;
     Logger logger = Logger.getLogger( this.getClass().getName() );
     Map<String, String> context = new TreeMap<>(  );
     private boolean verified;
 
-    FhirCastWebsubSession(String topicId ){
+    FhirCastWebsubSession(String topicId, SocketHandler socketHandler){
         this.topicId = topicId;
+        this.socketHandler = socketHandler;
     }
 
-    String updateSubscriptions(FhirCastSessionSubscribe fhirCastSessionSubscribe) throws FhirCastException {
-        FhirCastWebsubClientData fhirCastWebsubClientData = getFhirCastClientData( fhirCastSessionSubscribe );
+    String updateSubscriptions(FhirCastSessionSubscribe fhirCastSessionSubscribe) throws FhirCastException, NotImplementedException {
+        FhirCastWebsubClient fhirCastWebsubClient = getFhirCastClientData( fhirCastSessionSubscribe );
+
         if ( fhirCastSessionSubscribe.getHub_mode().equals("subscribe")){
-            this.fhirCastSubscriptions.put( fhirCastSessionSubscribe.getHub_callback(), fhirCastSessionSubscribe );
-            fhirCastWebsubClientData.subscribe( fhirCastSessionSubscribe.getHub_events() );
-            WebsubVerificationProcess.verify( fhirCastWebsubClientData, fhirCastSessionSubscribe );
+            fhirCastWebsubClient.subscribe( fhirCastSessionSubscribe );
         } else if ( fhirCastSessionSubscribe.getHub_mode().equals("unsubscribe")) {
-            this.fhirCastSubscriptions.remove( fhirCastSessionSubscribe.getHub_callback() );
-            fhirCastWebsubClientData.unsubscribe( fhirCastSessionSubscribe.getHub_events() );
+            fhirCastWebsubClient.unsubscribe( fhirCastSessionSubscribe );
         } else {
             throw new FhirCastException("Unknown value for hub.mode "+fhirCastSessionSubscribe.getHub_mode());
         }
 
-        return fhirCastWebsubClientData.getWebsocketId();
+        return  ( fhirCastWebsubClient.getSubscriptionReturn() );
     }
 
-    private FhirCastWebsubClientData getFhirCastClientData(FhirCastSessionSubscribe fhirCastSessionSubscribe) {
-        FhirCastWebsubClientData fhirCastWebsubClientData = this.fhirCastRestClientMap.get( fhirCastSessionSubscribe.getHub_callback() );
-        if ( fhirCastWebsubClientData == null ){
-            fhirCastWebsubClientData = new FhirCastWebsubClientData( fhirCastSessionSubscribe.getHub_callback(), fhirCastSessionSubscribe.getHub_secret() );
-            this.fhirCastRestClientMap.put( fhirCastSessionSubscribe.getHub_callback(), fhirCastWebsubClientData );
+
+    private FhirCastWebsubClient getFhirCastClientData(FhirCastSessionSubscribe fhirCastSessionSubscribe) throws FhirCastException {
+        if( fhirCastSessionSubscribe.hasWebsocketChannelType() ){
+            FhircastWebsubClientWebsocket fhirCastWebsubClient =
+                  this.fhirCastWebsocketClientMap.get( fhirCastSessionSubscribe.getHub_channel_endpoint() );
+            if ( fhirCastWebsubClient == null ){
+                fhirCastWebsubClient = new FhircastWebsubClientWebsocket( socketHandler, fhirCastSessionSubscribe.getHub_topic() );
+                this.fhirCastWebsocketClientMap.put( fhirCastSessionSubscribe.getHub_channel_endpoint(), fhirCastWebsubClient);
+            }
+            return  fhirCastWebsubClient;
+        } else {
+            FhircastWebsubClientRest fhirCastWebsubClient = this.fhirCastRestClientMap.get( fhirCastSessionSubscribe.getHub_callback() );
+            if ( fhirCastWebsubClient == null ){
+                fhirCastWebsubClient = new FhircastWebsubClientRest( fhirCastSessionSubscribe );
+                this.fhirCastRestClientMap.put( fhirCastSessionSubscribe.getHub_callback(), fhirCastWebsubClient);
+            }
+            return  fhirCastWebsubClient;
         }
-        return fhirCastWebsubClientData;
     }
 
 
@@ -67,69 +72,23 @@ public class FhirCastWebsubSession {
     }
 
 
-    RestTemplate restTemplate = new RestTemplate();
-    private void sendEvent(FhirCastWorkflowEvent fhirCastWorkflowEvent) throws FhirCastException {
-        //TODO check permission to send
-        updateContext( fhirCastWorkflowEvent );
-
-        // send websub events
-        logger.info( "eventReceived " + fhirCastWorkflowEvent );
-        for ( FhirCastWebsubClientData fhirCastWebsubClientData : this.fhirCastRestClientMap.values() ) {
-            if ( fhirCastWebsubClientData.isVerified() && fhirCastWebsubClientData.hasSubscription( fhirCastWorkflowEvent.getEvent().getHub_event() ) ) {
-                logger.info( "Sending event to " + fhirCastWebsubClientData.getClientCallbackUrl() );
-
-                HttpHeaders httpHeaders = new HttpHeaders();
-                ObjectMapper objectMapper = new ObjectMapper();
-                String content = null;
-                try {
-                    content = objectMapper.writeValueAsString( fhirCastWorkflowEvent );
-                } catch ( JsonProcessingException e ) {
-                    throw new FhirCastException( "parsing Event failed" );
-                }
-
-                httpHeaders.add( "X-Hub-Signature", calculateHMAC( fhirCastWebsubClientData.getHubSecret(), content ) );
-
-                HttpEntity<String> entity = new HttpEntity<>( content, httpHeaders );
-                ResponseEntity<String> response = restTemplate.exchange(
-                    fhirCastWebsubClientData.getClientCallbackUrl(),
-                    HttpMethod.POST, entity, String.class
-                );
-                logger.info( "Sending event to " + fhirCastWebsubClientData.getClientCallbackUrl() + " : " + response.getStatusCode() );
-            }
-        }
-    }
-
-
-    private void updateContext(FhirCastWorkflowEvent fhirCastWorkflowEvent) {
-        fhirCastWorkflowEvent.getEvent().getContext()
-            .forEach( fhirCastContext -> this.context.put( fhirCastContext.getKey(), fhirCastContext.getResource() ) );
-        //TODO check whether this is valid.....
-    }
-
-
-    private static String calculateHMAC(String secret, String content ) throws FhirCastException {
-        Mac mac = null;
-        try {
-            mac = Mac.getInstance("HmacSHA256");
-            String magicKey = "hellothere";
-            mac.init(new SecretKeySpec(magicKey.getBytes(), "HmacSHA256"));
-
-            byte[] hash = mac.doFinal(secret.getBytes());
-            return DatatypeConverter.printHexBinary(hash);
-        } catch ( Exception e ) {
-            throw new FhirCastException( "Error generating HMAC" );
-        }
-    }
-
 
     public Map<String, String> getContext() {
-        return context;
+        return Collections.unmodifiableMap( context );
     }
+    private void updateContext(FhirCastWorkflowEvent fhirCastWorkflowEvent) {
+        fhirCastWorkflowEvent.getEvent().getContext()
+                    .forEach(fhirCastContext -> this.context.put(fhirCastContext.getKey(), fhirCastContext.getResource()));
+            //TODO check whether this is valid.....
+    }
+
+
 
     public void newFhirCastTopicEvent(FhirCastTopicEvent event) throws FhirCastException {
         FhirCastWorkflowEvent fhirCastWorkflowEvent = new FhirCastWorkflowEvent();
-        fhirCastWorkflowEvent.setTimestamp( String.valueOf( new Date() ) );
-        fhirCastWorkflowEvent.setId( "FC"+System.currentTimeMillis() );
+//        fhirCastWorkflowEvent.setTimestamp( String.valueOf( new Date() ) );
+//        fhirCastWorkflowEvent.setId( "FC"+System.currentTimeMillis() );
+        fhirCastWorkflowEvent.initialize();
 
         FhirCastWorkflowEventEvent fhirCastWorkflowEventEvent = new FhirCastWorkflowEventEvent();
         fhirCastWorkflowEventEvent.setHub_event( event.getEventType() );
@@ -143,8 +102,17 @@ public class FhirCastWebsubSession {
             contextList.add( fhirCastContext );
         } );
         fhirCastWorkflowEventEvent.setContext( contextList );
-
         fhirCastWorkflowEvent.setEvent( fhirCastWorkflowEventEvent );
-        sendEvent( fhirCastWorkflowEvent );
+
+        updateContext( fhirCastWorkflowEvent );
+
+        for ( FhirCastWebsubClient fhircastWebsubClient: this.fhirCastWebsocketClientMap.values() ) {
+            fhircastWebsubClient.sendEvent(fhirCastWorkflowEvent);
+        }
+        for ( FhirCastWebsubClient fhircastWebsubClient: this.fhirCastRestClientMap.values() ) {
+            fhircastWebsubClient.sendEvent(fhirCastWorkflowEvent);
+        }
     }
+
+
 }

@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.support.websub;
+package com.github.philipsonfhir.fhircast.server.websub.model;
 
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.annotation.JsonRawValue;

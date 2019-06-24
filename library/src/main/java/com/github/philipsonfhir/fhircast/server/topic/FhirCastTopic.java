@@ -1,7 +1,7 @@
 package com.github.philipsonfhir.fhircast.server.topic;
 
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
-import com.github.philipsonfhir.fhircast.support.websub.FhircastEventType;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhircastEventType;
 import lombok.ToString;
 import org.hl7.fhir.dstu3.model.ImagingStudy;
 import org.hl7.fhir.dstu3.model.Patient;

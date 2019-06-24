@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.support.websub;
+package com.github.philipsonfhir.fhircast.server.websub.model;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

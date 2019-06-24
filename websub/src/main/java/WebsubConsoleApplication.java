@@ -18,7 +18,7 @@ public class WebsubConsoleApplication {
             baseUrl = args[1];
         }
 
-        System.out.println("TopicUrl : "+baseUrl+"/"+topic+"/websub" );
+        System.out.println("TopicUrl : "+baseUrl+"/"+topic+"/model" );
         FhirCastWebsubClient fhirCastWebsubClient = new FhirCastWebsubClient( baseUrl, topic );
 
 

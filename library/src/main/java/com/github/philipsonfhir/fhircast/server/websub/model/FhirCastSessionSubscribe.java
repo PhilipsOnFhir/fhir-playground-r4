@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.support.websub;
+package com.github.philipsonfhir.fhircast.server.websub.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -14,4 +14,9 @@ public class FhirCastSessionSubscribe {
     @JsonProperty("hub.events")        String hub_events;
     @JsonProperty("hub.lease_seconds") String hub_lease_seconds;
     @JsonProperty("hub.channel.type")  String hub_channel_type ="none";
+    @JsonProperty("hub.channel.endpoint")  String hub_channel_endpoint ="none";
+
+    public boolean hasWebsocketChannelType() {
+        return this.getHub_channel_type().equals("websocket");
+    }
 }

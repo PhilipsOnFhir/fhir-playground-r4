@@ -1,6 +1,6 @@
 package com.github.philipsonfhir.fhircast.server.topic;
 
-import com.github.philipsonfhir.fhircast.support.websub.FhircastEventType;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhircastEventType;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.Map;

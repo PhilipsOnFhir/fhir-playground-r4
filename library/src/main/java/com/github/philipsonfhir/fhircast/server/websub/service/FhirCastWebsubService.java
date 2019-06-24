@@ -3,11 +3,12 @@ package com.github.philipsonfhir.fhircast.server.websub.service;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastContextService;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopic;
 import com.github.philipsonfhir.fhircast.server.topic.FhirCastTopicEvent;
+import com.github.philipsonfhir.fhircast.server.websub.service.websocket.SocketHandler;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.NotImplementedException;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastSessionSubscribe;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEvent;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhirCastSessionSubscribe;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhirCastWorkflowEvent;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhirCastWorkflowEventEvent;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -18,13 +19,20 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
+
 @Service
 public class FhirCastWebsubService implements ApplicationListener<FhirCastTopicEvent> {
 
+    private final SocketHandler socketHandler;
     private Map<String, FhirCastWebsubSession> sessions = new TreeMap<>();
     private Logger logger = Logger.getLogger(this.getClass().getName());
-    @Autowired
     private FhirCastContextService fhirCastContextService;
+
+    @Autowired
+    public FhirCastWebsubService(FhirCastContextService fhirCastContextService, SocketHandler socketHandler){
+        this.fhirCastContextService = fhirCastContextService;
+        this.socketHandler = socketHandler;
+    }
 
     public Collection<FhirCastWebsubSession> getActiveFhirCastSessions() {
         return sessions.values();
@@ -32,38 +40,26 @@ public class FhirCastWebsubService implements ApplicationListener<FhirCastTopicE
 
 
     private FhirCastWebsubSession getFhirCastSession(String topicId) throws FhirCastException {
-        FhirCastTopic fhirCastTopic = this.fhirCastContextService.getTopic( topicId );
+//        FhirCastTopic fhirCastTopic = this.fhirCastContextService.getTopic( topicId );
 
         FhirCastWebsubSession fhirCastWebsubSession = sessions.get( topicId );
         if ( fhirCastWebsubSession ==null ){
             logger.info( "Create WebSub session for topic "+topicId );
-            fhirCastWebsubSession = new FhirCastWebsubSession( topicId );
+            fhirCastWebsubSession = new FhirCastWebsubSession( topicId, socketHandler );
             sessions.put( topicId, fhirCastWebsubSession );
         }
         return fhirCastWebsubSession;
     }
 
-    public String subscribe(String sessionId, FhirCastSessionSubscribe fhirCastSessionSubscribe) throws FhirCastException {
+    public String subscribe(String sessionId, FhirCastSessionSubscribe fhirCastSessionSubscribe) throws FhirCastException, NotImplementedException {
         logger.info("subscibe session"+sessionId);
         FhirCastWebsubSession fhirCastWebsubSession = getFhirCastSession( sessionId );
+        String response = fhirCastWebsubSession.updateSubscriptions( fhirCastSessionSubscribe );
 
-        switch( fhirCastSessionSubscribe.getHub_channel_type()){
-            case "websocket":
-                // TODO update when mechanism is clear
-                String response = fhirCastWebsubSession.updateSubscriptions( fhirCastSessionSubscribe );
-//                break;
-            case "websub":
-            default:
-                fhirCastWebsubSession.updateSubscriptions( fhirCastSessionSubscribe );
-                // TODO ensure channel is added
-//                logger.warning( "channel type does not exist: "+fhirCastSessionSubscribe );
-
-        }
-
-        return "";
+        return response;
     }
 
-    public void eventReceived(FhirCastWorkflowEvent fhirCastWorkflowEvent ) throws FhirCastException, NotImplementedException {
+        public void eventReceived(FhirCastWorkflowEvent fhirCastWorkflowEvent ) throws FhirCastException, NotImplementedException {
         eventReceived( fhirCastWorkflowEvent.getEvent() );
     }
 

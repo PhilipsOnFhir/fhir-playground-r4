@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.support.websub;
+package com.github.philipsonfhir.fhircast.server.websub.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -14,6 +14,8 @@ public class FhirCastBody {
     @JsonProperty("hub.secret")        String hub_secret;
     @JsonProperty("hub.events")        String hub_events;
     @JsonProperty("hub.lease_seconds") String hub_lease_seconds;
+    @JsonProperty("hub.channel.type")  String hub_channel_type ="none";
+    @JsonProperty("hub.channel.endpoint")  String hub_channel_endpoint ="none";
 
     // event
     String timestamp;
@@ -32,6 +34,8 @@ public class FhirCastBody {
         fhirCastSessionSubscribe.hub_secret   = hub_secret;
         fhirCastSessionSubscribe.hub_events   = hub_events;
         fhirCastSessionSubscribe.hub_lease_seconds = hub_lease_seconds;
+        fhirCastSessionSubscribe.hub_channel_type = hub_channel_type;
+        fhirCastSessionSubscribe.hub_channel_endpoint = hub_channel_endpoint;
         return fhirCastSessionSubscribe;
     }
 

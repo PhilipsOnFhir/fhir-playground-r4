@@ -1,6 +1,7 @@
-package com.github.philipsonfhir.fhircast.server.websub.service;
+package com.github.philipsonfhir.fhircast.server.websub.service.websub;
 
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastSessionSubscribe;
+import com.github.philipsonfhir.fhircast.server.websub.service.FhirCastWebsubClient;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhirCastSessionSubscribe;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -9,7 +10,7 @@ import java.util.logging.Logger;
 
 public class WebsubVerificationProcess implements Runnable {
 
-    private final FhirCastWebsubClientData fhirCastWebsubClientData;
+    private final FhirCastWebsubClient fhirCastWebsubClient;
     private final FhirCastSessionSubscribe fhirCastSessionSubscribe;
     private final String url;
     private String challenge;
@@ -17,17 +18,17 @@ public class WebsubVerificationProcess implements Runnable {
     private boolean success;
     private Logger logger = Logger.getLogger( this.getClass().getName() );
 
-    public static WebsubVerificationProcess verify(FhirCastWebsubClientData fhirCastWebsubClientData, FhirCastSessionSubscribe fhirCastSessionSubscribe) {
-        fhirCastWebsubClientData.setVerified( false );
-        WebsubVerificationProcess websubVerificationProcess = new WebsubVerificationProcess( fhirCastWebsubClientData, fhirCastSessionSubscribe);
+    public static WebsubVerificationProcess verify(FhirCastWebsubClient fhirCastWebsubClient, FhirCastSessionSubscribe fhirCastSessionSubscribe) {
+        fhirCastWebsubClient.setVerified( false );
+        WebsubVerificationProcess websubVerificationProcess = new WebsubVerificationProcess(fhirCastWebsubClient, fhirCastSessionSubscribe);
         Thread thread = new Thread( websubVerificationProcess );
         thread.setName("Verification");
         thread.start();
         return websubVerificationProcess;
     }
 
-    WebsubVerificationProcess(FhirCastWebsubClientData fhirCastWebsubClientData, FhirCastSessionSubscribe fhirCastSessionSubscribe){
-        this.fhirCastWebsubClientData = fhirCastWebsubClientData;
+    WebsubVerificationProcess(FhirCastWebsubClient fhirCastWebsubClient, FhirCastSessionSubscribe fhirCastSessionSubscribe){
+        this.fhirCastWebsubClient = fhirCastWebsubClient;
         this.fhirCastSessionSubscribe = fhirCastSessionSubscribe;
         this.url = fhirCastSessionSubscribe.getHub_callback();
     }
@@ -49,7 +50,7 @@ public class WebsubVerificationProcess implements Runnable {
 
         this.success = response.getStatusCode().value()>=200 && response.getStatusCode().value()<300 && response.getBody().equalsIgnoreCase( challenge );
         ready=true;
-        this.fhirCastWebsubClientData.setVerified(success);
+        this.fhirCastWebsubClient.setVerified(success);
         logger.info( "verification of "+fhirCastSessionSubscribe.getHub_callback()+" returned "+success );
     }
 

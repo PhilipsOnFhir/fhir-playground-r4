@@ -2,7 +2,7 @@ package com.github.philipsonfhir.fhircast.app;
 
 import ca.uhn.fhir.context.FhirContext;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
-import com.github.philipsonfhir.fhircast.support.websub.*;
+import com.github.philipsonfhir.fhircast.server.websub.model.*;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,12 +11,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.websocket.DeploymentException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.logging.Logger;
 
 public class FhirCastWebsubClient {
 
-    private final int port;
+    private WebsubCommunicationListener websubCommunicationListener = null;
+    private WebsocketCommunicationListener websocketCommunicationListener = null;
+    private int port;
+    private final boolean rest;
+
 
     private FhirContext ourCtx = FhirContext.forDstu3();
     private String baseUrl;
@@ -31,8 +38,9 @@ public class FhirCastWebsubClient {
 
     //server.port=9601","fhircast.topic=123
     @Value("${server.port}")
-    public void setPort( String port ) throws FhirCastException {
+    public void setPort( int port ) throws FhirCastException {
         this.baseUrl = "http://localhost:"+port;
+        this.port = port;
         System.out.println(baseUrl);
         initialize();
     }
@@ -57,23 +65,27 @@ public class FhirCastWebsubClient {
         initialize();
     }
 
-    public FhirCastWebsubClient(String url, String topicId) {
+    public FhirCastWebsubClient(String url, String topicId) throws DeploymentException, IOException, URISyntaxException {
         this( url, topicId, true );
+
     }
 
-    public FhirCastWebsubClient(String baseUrl, String topicId, boolean rest) {
-
+    public FhirCastWebsubClient(String baseUrl, String topicId, boolean rest) throws DeploymentException, IOException, URISyntaxException {
+        this.rest = rest;
         this.baseUrl = baseUrl;
         this.topicUrl = baseUrl+"/"+ topicId;
         restTemplate.put( this.topicUrl, String.class  );
         this.topicId = topicId;
 
-        port = new Random( System.currentTimeMillis() ).nextInt( 100 )+9300;
-        WebsubCommunicationListener websubCommunicationListener = new WebsubCommunicationListener( port, this );
-        Thread  thread = new Thread(websubCommunicationListener);
-        thread.setName("com-list");
-        thread.start();
-
+        if ( rest ) {
+            port = new Random(System.currentTimeMillis()).nextInt(100) + 9300;
+            websubCommunicationListener = new WebsubCommunicationListener(port, this);
+            Thread thread = new Thread(websubCommunicationListener);
+            thread.setName("com-list");
+            thread.start();
+        } else {
+            websocketCommunicationListener = new WebsocketCommunicationListener( this );
+        }
     }
 
     public List<String> getSessions(){
@@ -84,11 +96,11 @@ public class FhirCastWebsubClient {
 
     public void logout() {
         try {
-            restTemplate.delete( this.topicUrl );
-        } catch ( HttpServerErrorException error ){
-            System.out.println("Http error "+ error.getStatusText());
+            restTemplate.delete(this.topicUrl);
+            this.topicId = null;
+        } catch (HttpServerErrorException error) {
+            System.out.println("Http error " + error.getStatusText());
         }
-        this.topicId = null;
     }
 
     public void close() {
@@ -109,29 +121,40 @@ public class FhirCastWebsubClient {
         fhirCastWorkflowEvent.setId( UUID.randomUUID().toString() );
         fhirCastWorkflowEvent.setEvent( fhirCastWorkflowEventEvent );
 
-        RestTemplate restTemplate = new RestTemplate(  );
+
+        RestTemplate restTemplate = new RestTemplate();
         logger.info("send event");
-        restTemplate.postForLocation( this.topicUrl+"/websub", fhirCastWorkflowEvent );
+        restTemplate.postForLocation(this.topicUrl, fhirCastWorkflowEvent);
     }
 
-    public void unSubscribePatientChange() {
+    public void unSubscribePatientChange() throws DeploymentException, IOException, URISyntaxException {
         FhirCastSessionSubscribe fhirCastSessionSubscribe = new FhirCastSessionSubscribe();
-        fhirCastSessionSubscribe.setHub_callback( "http://localhost:"+port );
         fhirCastSessionSubscribe.setHub_mode( "unsubscribe" );
         fhirCastSessionSubscribe.setHub_topic( topicId );
         fhirCastSessionSubscribe.setHub_secret("mysecret");
+        fhirCastSessionSubscribe.setHub_channel_type("websocket");
         fhirCastSessionSubscribe.setHub_events( FhircastEventType.OPEN_PATIENT_CHART+","+ FhircastEventType.SWITCH_PATIENT_CHART+","+ FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.USER_LOGOUT ); //"patient-open-chart,patient-logout-chart" );
-        restTemplate.postForEntity( topicUrl+"/websub", fhirCastSessionSubscribe, String.class );
+
+        ResponseEntity<String> websockUrl = restTemplate.postForEntity(topicUrl, fhirCastSessionSubscribe, String.class);
+
+        if ( !this.rest  ) {
+            this.websocketCommunicationListener.connect( websockUrl.getBody() );
+        }
     }
 
-    public void subscribePatientChange() {
+    public void subscribePatientChange() throws DeploymentException, IOException, URISyntaxException {
         FhirCastSessionSubscribe fhirCastSessionSubscribe = new FhirCastSessionSubscribe();
         fhirCastSessionSubscribe.setHub_callback( "http://localhost:"+port );
         fhirCastSessionSubscribe.setHub_mode( "subscribe" );
         fhirCastSessionSubscribe.setHub_topic( topicId );
         fhirCastSessionSubscribe.setHub_secret("mysecret");
         fhirCastSessionSubscribe.setHub_events( FhircastEventType.OPEN_PATIENT_CHART+","+ FhircastEventType.SWITCH_PATIENT_CHART+","+ FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.USER_LOGOUT ); //"patient-open-chart,patient-logout-chart" );
-        restTemplate.postForEntity( topicUrl, fhirCastSessionSubscribe, String.class );
+        fhirCastSessionSubscribe.setHub_channel_type("websocket");
+        ResponseEntity<String> websockUrl = restTemplate.postForEntity( topicUrl, fhirCastSessionSubscribe, String.class );
+
+        if ( !this.rest  ) {
+            this.websocketCommunicationListener.connect( websockUrl.getBody() );
+        }
     }
 
     public Patient getCurrentPatient() {
@@ -192,7 +215,7 @@ public class FhirCastWebsubClient {
 
     public void getContext() {
         RestTemplate restTemplate =  new RestTemplate(  );
-        FhirCastWorkflowEvent fhirCastWorkflowEvent = restTemplate.getForObject( topicUrl+"/websub", FhirCastWorkflowEvent.class );
+        FhirCastWorkflowEvent fhirCastWorkflowEvent = restTemplate.getForObject( topicUrl+"/model", FhirCastWorkflowEvent.class );
         System.out.println(fhirCastWorkflowEvent);
     }
 

@@ -1,4 +1,4 @@
-package com.github.philipsonfhir.fhircast.support.websub;
+package com.github.philipsonfhir.fhircast.server.websub.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
@@ -15,9 +15,9 @@ import java.util.Optional;
 @Setter
 @ToString
 public class FhirCastWorkflowEventEvent {
-    @JsonProperty("hub.topic")      String hub_topic;
-    @JsonProperty("hub.event")     FhircastEventType hub_event;
-    @JsonProperty("hub.channel.type")     FhircastChannelType channel_type;
+    @JsonProperty("hub.topic")          String hub_topic;
+    @JsonProperty("hub.event")          FhircastEventType hub_event;
+//    @JsonProperty("hub.channel.type")   FhircastChannelType channel_type;
     List<FhirCastContext> context = new ArrayList<>();
 
     public Patient retrievePatientFromContext( ) throws FhirCastException {

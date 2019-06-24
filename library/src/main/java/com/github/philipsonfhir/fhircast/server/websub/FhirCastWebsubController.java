@@ -4,10 +4,10 @@ import com.github.philipsonfhir.fhircast.server.Prefix;
 import com.github.philipsonfhir.fhircast.server.websub.service.FhirCastWebsubService;
 import com.github.philipsonfhir.fhircast.support.FhirCastException;
 import com.github.philipsonfhir.fhircast.support.NotImplementedException;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastBody;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastContext;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;
-import com.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEvent;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhirCastBody;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhirCastContext;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhirCastWorkflowEvent;
+import com.github.philipsonfhir.fhircast.server.websub.model.FhirCastWorkflowEventEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class FhirCastWebsubController {
 
     @RequestMapping (
         method = RequestMethod.POST,
-        value = Prefix.FHIRCAST+"/{sessionId}"
+        value = Prefix.FHIRCAST+"{sessionId}"
     )
     public ResponseEntity updateFhirCast(
         @PathVariable String sessionId,
@@ -42,7 +42,8 @@ public class FhirCastWebsubController {
         try {
             if ( fhirCastBody.isSubscribe() ){
                 String responseStr = fhirCastWebsubService.subscribe(sessionId, fhirCastBody.getFhirCastSessionSubscribe() );
-                String websocketUrl = uriComponentsBuilder.toUriString()+"/"+sessionId+"/"+responseStr;
+                String websocketUrl = uriComponentsBuilder.toUriString().replace("http:","ws:")+Prefix.WEBSOCKET+responseStr;
+                responseEntity = new ResponseEntity<>( websocketUrl, HttpStatus.ACCEPTED);
             }
             if ( fhirCastBody.isEvent() ){
                 fhirCastWebsubService.eventReceived( fhirCastBody.getFhirCastWorkflowEvent() );
