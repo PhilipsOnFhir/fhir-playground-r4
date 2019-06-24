@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class FhirCastWebsubClientData {
+    private final String websocketId;
     String clientCallbackUrl;
     Set<FhircastEventType> subscriptions = new TreeSet<>();
     private String secret;
@@ -14,6 +15,7 @@ public class FhirCastWebsubClientData {
     public FhirCastWebsubClientData(String clientCallbackUrl, String secret) {
         this.clientCallbackUrl = clientCallbackUrl;
         this.secret = secret;
+        this.websocketId = ""+System.currentTimeMillis();
     }
 
     public String getClientCallbackUrl() {
@@ -50,5 +52,9 @@ public class FhirCastWebsubClientData {
 
     public boolean isVerified() {
         return this.verified;
+    }
+
+    public String getWebsocketId() {
+        return websocketId;
     }
 }

@@ -36,7 +36,7 @@ public class FhirCastWebsubSession {
         this.topicId = topicId;
     }
 
-    void updateSubscriptions(FhirCastSessionSubscribe fhirCastSessionSubscribe) throws FhirCastException {
+    String updateSubscriptions(FhirCastSessionSubscribe fhirCastSessionSubscribe) throws FhirCastException {
         FhirCastWebsubClientData fhirCastWebsubClientData = getFhirCastClientData( fhirCastSessionSubscribe );
         if ( fhirCastSessionSubscribe.getHub_mode().equals("subscribe")){
             this.fhirCastSubscriptions.put( fhirCastSessionSubscribe.getHub_callback(), fhirCastSessionSubscribe );
@@ -49,6 +49,7 @@ public class FhirCastWebsubSession {
             throw new FhirCastException("Unknown value for hub.mode "+fhirCastSessionSubscribe.getHub_mode());
         }
 
+        return fhirCastWebsubClientData.getWebsocketId();
     }
 
     private FhirCastWebsubClientData getFhirCastClientData(FhirCastSessionSubscribe fhirCastSessionSubscribe) {

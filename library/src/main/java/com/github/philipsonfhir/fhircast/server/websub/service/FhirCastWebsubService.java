@@ -50,7 +50,7 @@ public class FhirCastWebsubService implements ApplicationListener<FhirCastTopicE
         switch( fhirCastSessionSubscribe.getHub_channel_type()){
             case "websocket":
                 // TODO update when mechanism is clear
-                fhirCastWebsubSession.updateSubscriptions( fhirCastSessionSubscribe );
+                String response = fhirCastWebsubSession.updateSubscriptions( fhirCastSessionSubscribe );
 //                break;
             case "websub":
             default:
