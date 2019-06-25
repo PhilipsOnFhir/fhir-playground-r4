@@ -60,11 +60,14 @@ public class FhirCastWebsocketSession {
     }
 
     public void sendEvent(FhirCastWorkflowEvent fhirCastWorkflowEvent) throws IOException {
-        if ( state!= StateEnum.VERIFIED ) {
+        if ( state == StateEnum.VERIFIED ) {
+            logger.info( "event send" );
             ObjectMapper objectMapper = new ObjectMapper();
             String message = objectMapper.writeValueAsString(fhirCastWorkflowEvent);
             TextMessage textMessage = new TextMessage(message);
             session.sendMessage(textMessage);
+        } else {
+            logger.info( "event ignored" );
         }
     }
 

@@ -88,12 +88,12 @@ public class FhirCastWebsubClientTest {
         assertNull( fhirCastDrivingApplication.getCurrentPatient() );
         assertNull( fhirCastWebsubClient1.getCurrentPatient() );
 
-        System.out.println(" WAITING --------------");
-        for ( int i=0; i<10; i++ ) {
+//        System.out.println(" WAITING --------------");
+//        for ( int i=0; i<10; i++ ) {
             Thread.sleep(1000);
-            System.out.println(" WAITING " + i);
-        }
-        System.out.println(" DONE --------------");
+//            System.out.println(" WAITING " + i);
+//        }
+//        System.out.println(" DONE --------------");
 
         Patient patient1 = (Patient) new Patient()
                 .addName(new HumanName().setFamily("FhirCast1"))
@@ -119,12 +119,12 @@ public class FhirCastWebsubClientTest {
     private void newPatient( FhirCastWebsubClient fhirCastDrivingApplication, FhirCastWebsubClient fhirCastWebsubClient, Patient patient) throws InterruptedException, FhirCastException {
         fhirCastDrivingApplication.setCurrentPatient(patient);
 
-        System.out.println(" WAITING --------------");
-        for ( int i=0; i<10; i++ ) {
+//        System.out.println(" WAITING --------------");
+//        for ( int i=0; i<10; i++ ) {
             Thread.sleep(1000);
-            System.out.println(" WAITING " + i);
-        }
-        System.out.println(" DONE --------------");
+//            System.out.println(" WAITING " + i);
+//        }
+//        System.out.println(" DONE --------------");
         assertEquals(patient.getIdElement().getIdPart(), fhirCastDrivingApplication.getCurrentPatient().getIdElement().getIdPart());
         assertEquals("Patient/" + patient.getId(), fhirCastWebsubClient.getCurrentPatient().getId());
 
