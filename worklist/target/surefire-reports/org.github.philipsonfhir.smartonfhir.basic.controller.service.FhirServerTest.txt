@@ -1,0 +1,14 @@
+-------------------------------------------------------------------------------
+Test set: org.github.philipsonfhir.smartonfhir.basic.controller.service.FhirServerTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 5.572 s <<< FAILURE! - in org.github.philipsonfhir.smartonfhir.basic.controller.service.FhirServerTest
+getCapabilityStatementFromTestServer(org.github.philipsonfhir.smartonfhir.basic.controller.service.FhirServerTest)  Time elapsed: 5.427 s  <<< ERROR!
+ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException: Failed to retrieve the server metadata statement during client initialization. URL used was http://localhost:9504/hapi-fhir-jpaserver/fhir/metadata
+	at org.github.philipsonfhir.smartonfhir.basic.controller.service.FhirServerTest.getCapabilityStatementFromTestServer(FhirServerTest.java:12)
+Caused by: ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException: Failed to parse response from server when performing GET to URL http://localhost:9504/hapi-fhir-jpaserver/fhir/metadata - org.apache.http.conn.HttpHostConnectException: Connect to localhost:9504 [localhost/127.0.0.1, localhost/0:0:0:0:0:0:0:1] failed: Connection refused: connect
+	at org.github.philipsonfhir.smartonfhir.basic.controller.service.FhirServerTest.getCapabilityStatementFromTestServer(FhirServerTest.java:12)
+Caused by: org.apache.http.conn.HttpHostConnectException: Connect to localhost:9504 [localhost/127.0.0.1, localhost/0:0:0:0:0:0:0:1] failed: Connection refused: connect
+	at org.github.philipsonfhir.smartonfhir.basic.controller.service.FhirServerTest.getCapabilityStatementFromTestServer(FhirServerTest.java:12)
+Caused by: java.net.ConnectException: Connection refused: connect
+	at org.github.philipsonfhir.smartonfhir.basic.controller.service.FhirServerTest.getCapabilityStatementFromTestServer(FhirServerTest.java:12)
+

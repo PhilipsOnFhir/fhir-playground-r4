@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: org.github.philipsonfhir.smartonfhir.smartonfhir.SmartOnFhirCallTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.237 s <<< FAILURE! - in org.github.philipsonfhir.smartonfhir.smartonfhir.SmartOnFhirCallTest
+smartOnFhirCall(org.github.philipsonfhir.smartonfhir.smartonfhir.SmartOnFhirCallTest)  Time elapsed: 1.236 s  <<< ERROR!
+java.net.ConnectException: Connection refused: connect
+	at org.github.philipsonfhir.smartonfhir.smartonfhir.SmartOnFhirCallTest.smartOnFhirCall(SmartOnFhirCallTest.java:49)
+

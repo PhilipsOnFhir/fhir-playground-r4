@@ -1,0 +1,19 @@
+server:
+  port: 9444
+
+proxy:
+  base: fhir
+  fhirserver:
+    url: http://localhost:9404/hapi-fhir-jpaserver/fhir/
+
+#  authorization-endpoint: http://localhost:8080/oauth/authorize
+#  token-endpoint: http://localhost:8080/oauth/token
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+#security:
+#  oauth2:
+#    resource:
+#      token-info-uri: http://localhost:8080/oauth/introspect
