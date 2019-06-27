@@ -10,9 +10,9 @@
 
     <modules>
         <module>hapi-r4</module>
-        <module>authserver</module>
-        <module>fhircast</module>
-        <module>smartonfhir</module>
+<!--        <module>authserver</module>-->
+<!--        <module>fhircast</module>-->
+<!--        <module>smartonfhir</module>-->
         <module>worklist</module>
     </modules>
 

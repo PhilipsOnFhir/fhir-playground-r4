@@ -10,9 +10,7 @@
     <file url="file://$PROJECT_DIR$/hapi-r4" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/smartonfhir" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/worklist" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/worklist" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/worklist/server" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/worklist/tutorial-server" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/worklist/tutorial-web" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/worklist/web" charset="UTF-8" />
   </component>
 </project>

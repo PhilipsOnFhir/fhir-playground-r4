@@ -10,17 +10,19 @@
         <module name="worklist-server" />
         <module name="hapi-fhir-jpaserver-starter" />
         <module name="worklist-web" />
-        <module name="library" />
-        <module name="oauth2" />
         <module name="smartonfhir" />
-        <module name="websub" />
-        <module name="fhir-cast-hub" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="fhir-cast" target="1.8" />
+      <module name="fhir-cast-dev-auth" target="1.5" />
+      <module name="fhir-cast-hub" target="1.8" />
+      <module name="library" target="1.8" />
+      <module name="oauth2" target="1.8" />
+      <module name="parent" target="1.8" />
       <module name="tutorial-server" target="1.8" />
       <module name="tutorial-web" target="1.8" />
+      <module name="websub" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
