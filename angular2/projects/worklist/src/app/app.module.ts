@@ -7,7 +7,7 @@ import { SmartOnFhirService} from "./fhir-r4/smart-on-fhir.service";
 import { HttpClientModule} from "@angular/common/http";
 import { RouterModule} from "@angular/router";
 import { PatientImageSelectorComponent } from './component/patient-image-selector/patient-image-selector.component';
-
+import {TopicService} from "./service/topic.service";
 
 @NgModule({
   declarations: [
@@ -21,7 +21,7 @@ import { PatientImageSelectorComponent } from './component/patient-image-selecto
     RouterModule
   ],
   providers: [
-    SmartOnFhirService
+    SmartOnFhirService, TopicService
   ],
   bootstrap: [AppComponent]
 })
