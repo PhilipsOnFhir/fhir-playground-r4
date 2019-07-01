@@ -6,7 +6,6 @@ import {observable, Observable} from "rxjs";
   providedIn: 'root'
 })
 export class TopicService {
-  private topicId: string;
   private topicIds: string[];
 
   constructor(  private http: HttpClient ) {
@@ -50,12 +49,15 @@ export class TopicService {
       }
     )
   }
-  getTopicId(): string{
-    return this.topicId;
-  }
+
 
   getTopicIds():string[] {
     return this.topicIds;
   }
 
+  closeTopic( topicId:string ): Observable<string> {
+    console.log("close topic "+topicId);
+    console.log("http://localhost:9444/api/fhircast/topic/"+topicId);
+    return this.http.delete<any>( "http://localhost:9444/api/fhircast/topic/"+topicId);
+  }
 }

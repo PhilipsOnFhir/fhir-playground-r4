@@ -43,6 +43,11 @@ public class TopicController {
                 .collect( Collectors.toList());
     }
 
+    @GetMapping( prefix+"/{sessionId}" )
+    public String getFhirCastService( @PathVariable String sessionId )  {
+        return "OK";
+    }
+
     @PutMapping( prefix+"/{sessionId}" )
     public void updateFhirCastService( @PathVariable String sessionId) throws FhirCastException {
         this.topicService.updateTopic( sessionId );

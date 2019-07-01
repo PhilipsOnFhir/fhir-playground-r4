@@ -1,0 +1,11 @@
+<mat-tab-group [selectedIndex]="1+launchSessions.length">
+  <mat-tab label="Open new">
+    <app-patient-image-selector
+      (patientSelected)="patientSelected($event)"
+      (imagingStudySelected)="imagingStudySelected($event)">
+    </app-patient-image-selector>
+  </mat-tab>
+  <mat-tab *ngFor="let domainResource of launchSessions" label="{{domainResource.resourceType}} {{domainResource.id}}">
+    <app-launch-display [context]="domainResource" [practitioner]="practitioner" (closeLaunch)="launchedClosed($event)"></app-launch-display>
+  </mat-tab>
+</mat-tab-group>

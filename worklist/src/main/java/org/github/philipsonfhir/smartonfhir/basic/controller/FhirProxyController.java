@@ -19,7 +19,7 @@ import java.util.Map;
 @RestController( )
 public class FhirProxyController {
 
-
+    protected final String prefix="/fhir";
     private FhirServer fhirServer = null ;
     private org.slf4j.Logger logger =
             LoggerFactory.getLogger(this.getClass());
@@ -36,7 +36,7 @@ public class FhirProxyController {
 
     @RequestMapping (
             method = RequestMethod.GET,
-            value = "/"+ PathValues.fhirProxy+"/{resourceType}"
+            value = prefix+"/{resourceType}"
     )
     public ResponseEntity<String> getResourceType(
             @RequestHeader(value = "Accept", defaultValue = "application/fhir+json") String accept,

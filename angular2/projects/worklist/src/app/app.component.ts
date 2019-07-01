@@ -2,15 +2,10 @@ import { Component } from '@angular/core';
 import {environment} from "../environments/environment";
 import {SmartOnFhirService} from "./fhir-r4/smart-on-fhir.service";
 import {TopicService} from "./service/topic.service";
-import {Patient} from "../../../fhir2angular-r4/src/lib/Patient";
-import {ImagingStudy} from "../../../fhir2angular-r4/src/lib/ImagingStudy";
-import {DomainResource} from "../../../fhir2angular-r4/src/lib/DomainResource";
 import {Practitioner} from "../../../fhir2angular-r4/src/lib/Practitioner";
 import {HumanName} from "../../../fhir2angular-r4/src/lib/HumanName";
-import {Resource} from "../../../fhir2angular-r4/src/lib/Resource";
 import {FhirCastService} from "./service/fhir-cast.service";
 import {HumanNameUtil} from "./fhir-r4/util/humanname-util";
-import {MatSelectChange} from "@angular/material";
 
 @Component({
   selector: 'app-root',
@@ -25,9 +20,13 @@ import {MatSelectChange} from "@angular/material";
         </span>
       </mat-toolbar-row>
       <mat-toolbar-row>
-        Practitioner: {{practitionerName}}
+        <span>Practitioner: {{practitionerName}}</span>
+        <span class="example-fill-remaining-space"></span>
+        <span><button mat-icon-button (click)="closeCurrentTopic()"><mat-icon>done</mat-icon></button></span>
       </mat-toolbar-row>
     </mat-toolbar>
+    
+    
     <div *ngIf="!topicIdSet">
       <div *ngIf="topicIds && topicIds.length>0">
         Select topic:
@@ -73,36 +72,36 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
-    this.topicId = this.topicService.getTopicId();
-    this.sofs.initialize( environment.fhirUrl, '' ).subscribe(
-      data => console.log(data),
-      error => {
-      },
-      () => {
-        console.log('initialisation ready');
-        this.initialised = true;
-        this.fhircastService.login();
-      }
-    );
+    // this.sofs.initialize( environment.fhirUrl, '' ).subscribe(
+    // this.sofs.initialize( "http://localhost:9444/api/fhircast/fhir/a", '' ).subscribe(
+    //   data => console.log(data),
+    //   error => {
+    //   },
+    //   () => {
+    //     console.log('initialisation ready');
+    //     this.initialised = true;
+    //     this.fhircastService.login();
+    //   }
+    // );
 
-    this.topicService.updateTopidIds().subscribe(
-      data => console.log(data),
-      error => console.log(error),
-      () => {
-        console.log('topic initialisation ready');
-        this.topicIds = this.topicService.getTopicIds();
-        if ( this.topicIds.length>0){
-          // this.topicId = this.topicIds[0];
-        } else {
-          this.topicService.createTopicId().subscribe(
-            next => {
-              this.topicIds = this.topicService.getTopicIds();
-              this.topicId = this.topicIds[0]
-              this.topicIdSet = true;
-          })
-        }
-      }
-    );
+    // this.topicService.updateTopidIds().subscribe(
+    //   data => console.log(data),
+    //   error => console.log(error),
+    //   () => {
+    //     console.log('topic initialisation ready');
+    //     this.topicIds = this.topicService.getTopicIds();
+    //     if ( this.topicIds.length==0){
+    //       this.topicService.createTopicId().subscribe(
+    //         next => {
+    //           this.topicIds = this.topicService.getTopicIds();
+    //           this.setTopicId(this.topicIds[0]);
+    //           // this.topicId = this.topicIds[0]
+    //           // this.topicIdSet = true;
+    //       })
+    //     }
+    //   }
+    // );
+    this.updateTopicIds();
 
     this.practitioner = new Practitioner();
     this.practitioner.active = true;
@@ -115,23 +114,73 @@ export class AppComponent {
     this.practitionerName = HumanNameUtil.getPreferredName(this.practitioner.name[0]);
   }
 
-
-  createNewTopic() {
-    this.topicService.createTopicId().subscribe( topicId => {
-      this.topicId = topicId;
-    });
+  private setTopicId( topidId:string){
+    this.topicId = topidId;
+    this.topicIdSet = true;
+    this.sofs.initialize( "http://localhost:9444/api/fhircast/fhir/"+topidId, '' ).subscribe(
+      data => console.log(data),
+      error => {
+      },
+      () => {
+        console.log('sofs initialisation ready');
+        this.initialised = true;
+        this.fhircastService.login();
+      }
+    );
   }
+
+  private updateTopicIds(){
+    this.topicService.updateTopidIds().subscribe(
+      data => console.log(data),
+      error => console.log(error),
+      () => {
+        console.log('topic initialisation ready');
+        this.topicIds = this.topicService.getTopicIds();
+        if ( this.topicIds.length==0){
+          this.topicService.createTopicId().subscribe(
+            next => {
+              this.topicIds = this.topicService.getTopicIds();
+              this.setTopicId(this.topicIds[0]);
+              // this.topicId = this.topicIds[0]
+              // this.topicIdSet = true;
+            })
+        }
+      }
+    );
+  }
+  // createNewTopic() {
+  //   this.topicService.createTopicId().subscribe( topicId => {
+  //     this.topicId = topicId;
+  //   });
+  // }
 
   selectTopic() {
     console.log(this.selectedTopic);
     if ( this.selectedTopic===this.newTopicValue ){
       this.topicService.createTopicId().subscribe( topicId => {
-        this.topicId = topicId;
-        this.topicIdSet = true;
+        // this.topicId = topicId;
+        // this.topicIdSet = true;
+        this.setTopicId(topicId);
       });
     } else{
-      this.topicId = this.selectedTopic;
-      this.topicIdSet = true;
+      // this.topicId = this.selectedTopic;
+      // this.topicIdSet = true;
+      this.setTopicId(this.selectedTopic);
     }
+  }
+
+  closeCurrentTopic() {
+    console.log("close topic");
+    this.topicService.closeTopic( this.topicId ).subscribe(
+      next =>{
+        this.fhircastService.logout();
+        this.updateTopicIds();
+        this.topicIdSet = false;
+        this.initialised = false;
+        this.selectedTopic = null;
+        this.topicId = null;
+      },
+      error => console.log(error)
+    );
   }
 }
