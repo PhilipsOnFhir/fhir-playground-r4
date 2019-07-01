@@ -9,14 +9,30 @@ import {Practitioner} from "../../../fhir2angular-r4/src/lib/Practitioner";
 import {HumanName} from "../../../fhir2angular-r4/src/lib/HumanName";
 import {Resource} from "../../../fhir2angular-r4/src/lib/Resource";
 import {FhirCastService} from "./service/fhir-cast.service";
+import {HumanNameUtil} from "./fhir-r4/util/humanname-util";
 
 @Component({
   selector: 'app-root',
   template: `
     <mat-toolbar>
-      <span><b>WorkList</b></span>
-      <span class="example-fill-remaining-space"></span>
-      <span><b>topic: </b>{{topicId}}</span>
+      <mat-toolbar-row>
+        <span><b>WorkList</b></span>
+        <span class="example-fill-remaining-space"></span>
+<!--        <span><b>topic: </b>{{topicId}}</span>-->
+        <span>
+            <mat-form-field>
+                <mat-label>topicId:</mat-label>
+                <mat-select>
+                    <mat-option *ngFor="let tid of topicIds" [value]="tid">
+                        {{tid}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </span>
+      </mat-toolbar-row>
+      <mat-toolbar-row>
+        Practitioner: {{practitionerName}}
+      </mat-toolbar-row>
     </mat-toolbar>
     <div *ngIf="!initialised">
         <mat-progress-spinner
@@ -46,6 +62,8 @@ export class AppComponent {
   topicId = "??";
   launchSessions = new Array<DomainResource>();
   private practitioner: Practitioner;
+  practitionerName: string;
+  private topicIds: string[];
 
   constructor( private sofs:SmartOnFhirService, private topicService: TopicService, private fhircastService: FhirCastService) {
   }
@@ -62,6 +80,24 @@ export class AppComponent {
         this.fhircastService.login();
       }
     );
+    this.topicService.updateTopidIds().subscribe(
+      data => console.log(data),
+      error => console.log(error),
+      () => {
+        console.log('topic initialisation ready');
+        this.topicIds = this.topicService.getTopicIds();
+        if ( this.topicIds.length>0){
+          this.topicId = this.topicIds[0];
+        } else {
+          this.topicService.createTopicId().subscribe(
+            next => {
+              this.topicIds = this.topicService.getTopicIds();
+              this.topicId = this.topicIds[0]
+            })
+        }
+      }
+    );
+
     this.practitioner = new Practitioner();
     this.practitioner.active = true;
     this.practitioner.name = new Array<HumanName>(1);
@@ -70,6 +106,7 @@ export class AppComponent {
     this.practitioner.name[0].given = new Array<string>(1);
     this.practitioner.name[0].given[0] = "Doe";
 
+    this.practitionerName = HumanNameUtil.getPreferredName(this.practitioner.name[0]);
   }
 
   patientSelected( event: Patient) {

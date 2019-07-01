@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin( origins = "*")
 @RestController
 public class TopicController {
 
@@ -25,13 +26,12 @@ public class TopicController {
 
     @PostMapping( prefix )
     public ResponseEntity<String> createTopic(
-            HttpServletRequest request,
-            @RequestBody String requestBody) {
+            HttpServletRequest request ) {
         System.out.println( request.getLocalAddr() );
         System.out.println( request.getLocalName() );
 
         FhirCastTopic fhirCastTopic = topicService.createTopic();
-        ResponseEntity<String> responseEntity = new ResponseEntity( fhirCastTopic.getTopic(), HttpStatus.CREATED );
+        ResponseEntity<String> responseEntity = new ResponseEntity( "{ \"topicID\": \""+fhirCastTopic.getTopic()+"\"}" , HttpStatus.CREATED );
 
         return responseEntity;
     }

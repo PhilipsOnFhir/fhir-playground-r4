@@ -203,6 +203,7 @@
                         <contextPath>/hapi-fhir-jpaserver</contextPath>
                         <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
                     </webApp>
+                    <httpConnector><port>9404</port></httpConnector>
                 </configuration>
             </plugin>
 
