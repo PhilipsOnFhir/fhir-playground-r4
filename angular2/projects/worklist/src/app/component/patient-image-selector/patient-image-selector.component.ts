@@ -45,13 +45,13 @@ export class PatientImageSelectorComponent implements OnInit {
   ngOnInit() {
     this.sofs.searchResources( Patient.def, "" ).subscribe(
       bundle =>{
-        console.log(bundle);
+        // console.log(bundle);
         this.patients = bundle;
       }
     )
     this.sofs.searchResources( ImagingStudy.def, "" ).subscribe(
       bundle =>{
-        console.log(bundle);
+        // console.log(bundle);
         this.imagingstudies = bundle;
       }
     )

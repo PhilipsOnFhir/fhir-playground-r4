@@ -9,12 +9,14 @@ import { RouterModule} from "@angular/router";
 import { PatientImageSelectorComponent } from './component/patient-image-selector/patient-image-selector.component';
 import {TopicService} from "./service/topic.service";
 import { LaunchDisplayComponent } from './component/launch-display/launch-display.component';
+import { WorklistComponent } from './component/worklist/worklist.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PatientImageSelectorComponent,
     LaunchDisplayComponent,
+    WorklistComponent,
   ],
   imports: [
     BrowserModule,

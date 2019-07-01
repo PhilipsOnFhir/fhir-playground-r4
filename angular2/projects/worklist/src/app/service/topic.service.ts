@@ -30,13 +30,17 @@ export class TopicService {
 
   }
 
-  createTopicId(): Observable<any> {
-    return new Observable<any>(
+  createTopicId(): Observable<string> {
+    return new Observable<string>(
       observable => {
-        this.http.post<any>( "http://localhost:9444/api/fhircast/topic", "").subscribe(
+        this.http.post<any>( "http://localhost:9444/api/fhircast/topic", "", {observe: 'response' as 'body'} ).subscribe(
           next => {
+              let topicId = next.body.topicID;
               this.updateTopidIds().subscribe(
-                next => { observable.complete() },
+                next => {
+                  observable.next(topicId);
+                  observable.complete()
+                },
                 error => {}
               )
           },

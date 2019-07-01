@@ -10,6 +10,7 @@ import {HumanName} from "../../../fhir2angular-r4/src/lib/HumanName";
 import {Resource} from "../../../fhir2angular-r4/src/lib/Resource";
 import {FhirCastService} from "./service/fhir-cast.service";
 import {HumanNameUtil} from "./fhir-r4/util/humanname-util";
+import {MatSelectChange} from "@angular/material";
 
 @Component({
   selector: 'app-root',
@@ -20,50 +21,53 @@ import {HumanNameUtil} from "./fhir-r4/util/humanname-util";
         <span class="example-fill-remaining-space"></span>
 <!--        <span><b>topic: </b>{{topicId}}</span>-->
         <span>
-            <mat-form-field>
-                <mat-label>topicId:</mat-label>
-                <mat-select>
-                    <mat-option *ngFor="let tid of topicIds" [value]="tid">
-                        {{tid}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
+            topic-id: {{topicId}}
         </span>
       </mat-toolbar-row>
       <mat-toolbar-row>
         Practitioner: {{practitionerName}}
       </mat-toolbar-row>
     </mat-toolbar>
-    <div *ngIf="!initialised">
+    <div *ngIf="!topicIdSet">
+      <div *ngIf="topicIds && topicIds.length>0">
+        Select topic:
+        <mat-form-field>
+          <mat-label></mat-label>
+          <mat-select [(value)]="selectedTopic" (selectionChange)="selectTopic()">
+            <mat-option *ngFor="let tid of topicIds" [value]="tid">
+              {{tid}}
+            </mat-option>
+            <mat-option [value]="newTopicValue"><i>create new</i></mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <p>{{selectedTopic}}</p>
+<!--      <button mat-raised-button (click)="createNewTopic()">start new topic</button>-->
+    </div>
+    <div *ngIf="topicIdSet && !initialised">
         <mat-progress-spinner
             color="primary"
             mode="indeterminate">
         </mat-progress-spinner>
     </div>
-    <div *ngIf="initialised">
+    <div *ngIf="topicIdSet && initialised">
+      <app-worklist [practitioner]="practitioner"></app-worklist>
 <!--      {{this.launchSessions.length}}-->
-      <mat-tab-group [selectedIndex]="1+launchSessions.length">
-        <mat-tab label="Open new">
-          <app-patient-image-selector
-            (patientSelected)="patientSelected($event)"
-            (imagingStudySelected)="imagingStudySelected($event)">
-          </app-patient-image-selector>
-        </mat-tab>
-        <mat-tab *ngFor="let domainResource of launchSessions" label="{{domainResource.resourceType}} {{domainResource.id}}">
-          <app-launch-display [context]="domainResource" [practitioner]="practitioner" (closeLaunch)="launchedClosed($event)"></app-launch-display>
-        </mat-tab>
-      </mat-tab-group>
+      
     </div>
   `,
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  topicIdSet = false;
   initialised = false;
   topicId = "??";
-  launchSessions = new Array<DomainResource>();
+  // launchSessions = new Array<DomainResource>();
   private practitioner: Practitioner;
   practitionerName: string;
   private topicIds: string[];
+  selectedTopic: string;
+  newTopicValue="new";
 
   constructor( private sofs:SmartOnFhirService, private topicService: TopicService, private fhircastService: FhirCastService) {
   }
@@ -80,6 +84,7 @@ export class AppComponent {
         this.fhircastService.login();
       }
     );
+
     this.topicService.updateTopidIds().subscribe(
       data => console.log(data),
       error => console.log(error),
@@ -87,13 +92,14 @@ export class AppComponent {
         console.log('topic initialisation ready');
         this.topicIds = this.topicService.getTopicIds();
         if ( this.topicIds.length>0){
-          this.topicId = this.topicIds[0];
+          // this.topicId = this.topicIds[0];
         } else {
           this.topicService.createTopicId().subscribe(
             next => {
               this.topicIds = this.topicService.getTopicIds();
               this.topicId = this.topicIds[0]
-            })
+              this.topicIdSet = true;
+          })
         }
       }
     );
@@ -109,35 +115,23 @@ export class AppComponent {
     this.practitionerName = HumanNameUtil.getPreferredName(this.practitioner.name[0]);
   }
 
-  patientSelected( event: Patient) {
-    // console.log(event);
-    // let tmp  = this.launchSessions;
-    // this.launchSessions = new Array<DomainResource>();
-    // tmp.forEach( ls => this.launchSessions.push(ls) );
-    this.launchSessions.push(event);
-    this.fhircastService.openPatient(event);
+
+  createNewTopic() {
+    this.topicService.createTopicId().subscribe( topicId => {
+      this.topicId = topicId;
+    });
   }
 
-  imagingStudySelected( event: ImagingStudy) {
-    this.launchSessions.push(event);
-    this.fhircastService.openStudy(event);
-  }
-
-  launchedClosed(contextResource: Resource) {
-    // console.log("close launch "+contextResource);
-    let tmp  = this.launchSessions;
-    this.launchSessions = new Array<DomainResource>();
-    tmp.forEach( ls => {
-      if ( ls.resourceType===contextResource.resourceType && ls.id===contextResource.id ){
-        // console.log("close pannel "+ls.id);
-        if ( ls.resourceType===Patient.def ){
-          this.fhircastService.closePatient( ls );
-        } else{
-          this.fhircastService.closeStudy( ls );
-        }
-      }else{
-        this.launchSessions.push(ls)
-      }
-    } );
+  selectTopic() {
+    console.log(this.selectedTopic);
+    if ( this.selectedTopic===this.newTopicValue ){
+      this.topicService.createTopicId().subscribe( topicId => {
+        this.topicId = topicId;
+        this.topicIdSet = true;
+      });
+    } else{
+      this.topicId = this.selectedTopic;
+      this.topicIdSet = true;
+    }
   }
 }
