@@ -4,6 +4,7 @@ import {ImagingStudy} from "../../../../fhir2angular-r4/src/lib/ImagingStudy";
 import {DomainResource} from "../../../../fhir2angular-r4/src/lib/DomainResource";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {timestamp} from "rxjs/operators";
+import {Resource} from "../../../../fhir2angular-r4/src/lib/Resource";
 
 @Injectable({
   providedIn: 'root'
@@ -16,47 +17,46 @@ export class FhirCastService {
   constructor(  private http: HttpClient ) {
   }
 
-  openPatient(event: Patient) {
+  openPatient(patient: Patient) {
     console.log("patient opened");
-    // let body = new FhirCastBody();
-    // body.id = "myId";
-    // body.timestamp = "now";
-    // body.hub_topic = this.topicUrl;
-    let patientJson = JSON.stringify(event);
 
-    let body =
-      "{ \"event\": \n" +
-      "\t{ \"hub.topic\": \"FC1561990516010\", \n" +
-      "\t  \"hub.event\":\"open-patient-chart\",\n" +
-      "\t  \"context\": [\n" +
-      "\t\t{ \t\"key\": \"patient\",\n" +
-      "\t\t\t\"resource\": \n" +
-      "\t\t\t\t{\t\"resourceType\":\"Patient\",\n" +
-      "\t\t\t\t\t\"id\":\"WORKLIST-4\"\n" +
-      "\t\t\t\t}\n" +
-      "\t\t}]\n" +
-      "\t}\n" +
-      "}";
+    // let patientJson = JSON.stringify(event);
 
-    const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
-    // let headers = new HttpHeaders();
-    // headers.
-    console.log( body);
-    this.http.post(this.topicUrl,body, {headers: myHeaders, observe: 'response'} ).subscribe(
-      next => console.log(next),
-      error => console.log(error)
-    )
+    // let body =
+    //   "{ \"event\": \n" +
+    //   "\t{ \"hub.topic\": \""+this.topicId+"\", \n" +
+    //   "\t  \"hub.event\":\"open-patient-chart\",\n" +
+    //   "\t  \"context\": [\n" +
+    //   "\t\t{ \t\"key\": \"patient\",\n" +
+    //   "\t\t\t\"resource\": \n" +
+    //   "\t\t\t\t{\t\"resourceType\":\"Patient\",\n" +
+    //   "\t\t\t\t\t\"id\":\""+event.id+"\"\n" +
+    //   "\t\t\t\t}\n" +
+    //   "\t\t}]\n" +
+    //   "\t}\n" +
+    //   "}";
+
+    let body : string = this.getEventString( this.topicId, "open-patient-chart", patient);
+    console.log(body);
+    this.sendEvent( body );
   }
 
-  openStudy(event: ImagingStudy) {
+  openStudy(study: ImagingStudy) {
     console.log("imaging opened")
+    let body = this.getEventString( this.topicId, "open-imaging-study", study);
+    this.sendEvent( body );
   }
+
 
   closePatient(patient: DomainResource) {
     console.log("close patient")
+    let body = this.getEventString( this.topicId, "close-patient-chart", patient);
+    this.sendEvent( body );
   }
   closeStudy(study: DomainResource) {
     console.log("close study")
+    let body = this.getEventString( this.topicId, "close-imaging-study", study);
+    this.sendEvent( body );
   }
 
   login(topicUrl: string, topicId:string ){
@@ -68,41 +68,45 @@ export class FhirCastService {
 
   logout() {
     console.log("logout");
+    let body = this.getEventString( this.topicId, "user-logout",null );
+    this.sendEvent( body );
   }
-}
 
-class FhirCastWorkflowEventEvent {
-  hub_topic : string;
-  hub_event : string;
-  context : string[];
-}
+  private sendEvent(body: string) {
+    const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+    console.log( body);
 
-class FhirCastBody{
-  id : string
-  timestamp : string;
-  // hub_callback : string;
-  // hub_mode: string;
-  // hub_topic : string;
-  // hub_secret : string;
-  // hub_events : string;
-  // hub_lease_seconds: string;
-  event: FhirCastWorkflowEventEvent;
+    this.http.post(this.topicUrl, body, {headers: myHeaders, observe: 'response'} ).subscribe(
+      next => console.log(next),
+      error => console.log(error)
+    )
+  }
 
-  toJsonString(): string{
-    return "{ " +
-      +"\"event\": " + "\""+ "open-patient-chart" + "\""
-      " }";
-    // return "{ "
-      // "\"id\": "+ this.id
-      // + " \"timestamp\": \""+this.timestamp
-      // + "\", \"hub.callback\": \""+ this.hub_callback
-      // + "\", \"hub.mode\": \""+ this.hub_mode
-      // + "\", \"hub.topic\": \""+ this.hub_topic
-      // + "\"hub.topic\": \""+ this.hub_topic
-      // + "\", \"hub.secret\": \""+ this.hub_secret
-      // + "\", \"hub.events\": \""+ this.hub_events
-      // + "\", \"hub.lease_seconds\": \""+ this.hub_lease_seconds
-      // + "\"}";
-
+  private getEventString( topicId: string, eventType: string, resource: Resource): string {
+    if ( resource ) {
+      return(
+        "{ \"event\": \n" +
+        "\t{ \"hub.topic\": \"" + topicId + "\", \n" +
+        "\t  \"hub.event\":\"" + eventType + "\",\n" +
+        "\t  \"context\": [\n" +
+        "\t\t{ \t\"key\": \"patient\",\n" +
+        "\t\t\t\"resource\": \n" +
+        "\t\t\t\t{\t\"resourceType\":\"" + resource.resourceType + "\",\n" +
+        "\t\t\t\t\t\"id\":\"" + resource.id + "\"\n" +
+        "\t\t\t\t}\n" +
+        "\t\t}]\n" +
+        "\t}\n" +
+        "}"
+      );
+    } else {
+      return(
+        "{ \"event\": \n" +
+        "\t{ \"hub.topic\": \"" + topicId + "\", \n" +
+        "\t  \"hub.event\":\"" + eventType + "\"\n" +
+        "\t}\n" +
+        "}"
+      );
+    }
+    return "-";
   }
 }
