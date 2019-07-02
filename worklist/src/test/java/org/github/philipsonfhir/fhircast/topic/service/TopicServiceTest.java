@@ -10,7 +10,7 @@ public class TopicServiceTest {
     @Test
     public void createRemoveTopic() throws FhirCastException {
 //        MyApplicationEventPublisher myApplicationEventPublisher = new MyApplicationEventPublisher();
-        TopicService fhirCastContextService = new TopicService();
+        TopicService fhirCastContextService = new TopicService(null);
 
         FhirCastTopic fhirCastTopic1 = fhirCastContextService.updateTopic( "test" );
         FhirCastTopic fhirCastTopic2 = fhirCastContextService.createTopic();

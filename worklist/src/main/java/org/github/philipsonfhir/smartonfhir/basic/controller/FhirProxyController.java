@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@CrossOrigin( origins = "*")
 @RestController( )
 public class FhirProxyController {
 
@@ -54,6 +55,36 @@ public class FhirProxyController {
                 logger.info("JSON GET " + resourceType);
                 iBaseResource = fhirServer.doSearch(resourceType,queryParams);
             }
+        }
+        catch ( BaseServerResponseException e ){
+            iBaseResource = e.getOperationOutcome();
+            httpStatus = HttpStatus.resolve( e.getStatusCode() );
+        } catch ( FHIRException e1 ){
+            iBaseResource = new OperationOutcome().addIssue( new OperationOutcome.OperationOutcomeIssueComponent()
+                    .setSeverity( OperationOutcome.IssueSeverity.FATAL )
+                    .setDiagnostics( e1.getMessage() )
+            );
+            httpStatus= HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        httpStatus = ( httpStatus==null? HttpStatus.INTERNAL_SERVER_ERROR: httpStatus );
+        return new ResponseEntity<>( parser( accept ).encodeResourceToString(iBaseResource), httpStatus );
+    }
+
+    @RequestMapping (
+            method = RequestMethod.GET,
+            value = prefix+"/{resourceType}/{resourceId}"
+    )
+    public ResponseEntity<String> getResource(
+            @RequestHeader(value = "Accept", defaultValue = "application/fhir+json") String accept,
+            @PathVariable String resourceType,
+            @PathVariable String resourceId,
+            @RequestParam Map<String, String> queryParams
+    ) {
+        logger.info("JSON GET " + resourceType+ " "+ resourceId);
+        IBaseResource iBaseResource;
+        HttpStatus httpStatus = HttpStatus.OK;
+        try {
+            iBaseResource = fhirServer.doGet(resourceType,resourceId,queryParams);
         }
         catch ( BaseServerResponseException e ){
             iBaseResource = e.getOperationOutcome();

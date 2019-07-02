@@ -94,6 +94,12 @@
             <version>${hapi_version}</version>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>com.github.philipsonfhir.fhircast</groupId>-->
+<!--            <artifactId>library</artifactId>-->
+<!--            <version>0.0.1-SNAPSHOT</version>-->
+<!--        </dependency>-->
+
         <!--   web api's -->
         <dependency>
             <groupId>org.webjars</groupId>
@@ -114,7 +120,12 @@
             <artifactId>js-cookie</artifactId>
             <version>2.1.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>5.1.7.RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
 
 
     </dependencies>

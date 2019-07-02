@@ -15,14 +15,14 @@ import {HumanNameUtil} from "./fhir-r4/util/humanname-util";
         <span><b>WorkList</b></span>
         <span class="example-fill-remaining-space"></span>
 <!--        <span><b>topic: </b>{{topicId}}</span>-->
-        <span>
+        <span *ngIf="topicIdSet">
             topic-id: {{topicId}}
         </span>
       </mat-toolbar-row>
       <mat-toolbar-row>
         <span>Practitioner: {{practitionerName}}</span>
         <span class="example-fill-remaining-space"></span>
-        <span><button mat-icon-button (click)="closeCurrentTopic()"><mat-icon>done</mat-icon></button></span>
+        <span *ngIf="topicIdSet"><button mat-icon-button (click)="closeCurrentTopic()"><mat-icon>done</mat-icon></button></span>
       </mat-toolbar-row>
     </mat-toolbar>
     
@@ -114,17 +114,19 @@ export class AppComponent {
     this.practitionerName = HumanNameUtil.getPreferredName(this.practitioner.name[0]);
   }
 
-  private setTopicId( topidId:string){
-    this.topicId = topidId;
+  private setTopicId( topicId:string){
+    this.topicId = topicId;
     this.topicIdSet = true;
-    this.sofs.initialize( "http://localhost:9444/api/fhircast/fhir/"+topidId, '' ).subscribe(
+    // this.fhircastService.initialize("http://localhost:9444/api/fhircast/topic/"+topidId);
+
+    this.sofs.initialize( "http://localhost:9444/api/fhircast/fhir/"+topicId, '' ).subscribe(
       data => console.log(data),
       error => {
       },
       () => {
         console.log('sofs initialisation ready');
         this.initialised = true;
-        this.fhircastService.login();
+        this.fhircastService.login("http://localhost:9444/api/fhircast/topic/"+topicId+"/websub", this.topicId );
       }
     );
   }

@@ -9,6 +9,7 @@
     <name>Spring FhirCast implementation</name>
 
     <modules>
+        <module>fhircast</module>
         <module>hapi-r4</module>
 <!--        <module>authserver</module>-->
 <!--        <module>fhircast</module>-->

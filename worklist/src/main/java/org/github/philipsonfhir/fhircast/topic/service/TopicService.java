@@ -1,6 +1,8 @@
 package org.github.philipsonfhir.fhircast.topic.service;
 
 import org.github.philipsonfhir.fhircast.support.FhirCastException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -14,8 +16,15 @@ public class TopicService {
     private static final Logger logger = Logger.getLogger( TopicService.class.getName() );
     private Map<String, FhirCastTopic> _topicMap = new TreeMap<>(  );
 
+    private ApplicationEventPublisher applicationEventPublisher;
+
+    @Autowired
+    TopicService(ApplicationEventPublisher applicationEventPublisher){
+        this.applicationEventPublisher =applicationEventPublisher;
+    }
+
     public FhirCastTopic createTopic() {
-        FhirCastTopic fhirCastTopic = new FhirCastTopic();
+        FhirCastTopic fhirCastTopic = new FhirCastTopic( this );
         logger.info( "create topic "+fhirCastTopic.getTopic() );
         _topicMap.put( fhirCastTopic.getTopic(), fhirCastTopic );
         return fhirCastTopic;
@@ -23,7 +32,7 @@ public class TopicService {
 
     public FhirCastTopic updateTopic(String topic) {
         logger.info( "update topic "+topic );
-        FhirCastTopic fhirCastTopic = new FhirCastTopic( topic );
+        FhirCastTopic fhirCastTopic = new FhirCastTopic( this, topic );
         _topicMap.put( fhirCastTopic.getTopic(), fhirCastTopic );
         return fhirCastTopic;
     }
@@ -52,8 +61,9 @@ public class TopicService {
         return Collections.unmodifiableCollection( _topicMap.values() );
     }
 
-//
-//    public void publishEvent(FhirCastTopicEvent fhirCastWorkflowEvent) {
-//        this.applicationEventPublisher.publishEvent( fhirCastWorkflowEvent );
-//    }
+
+    public void publishEvent(FhirCastTopicEvent fhirCastWorkflowEvent) {
+        this.applicationEventPublisher.publishEvent( fhirCastWorkflowEvent );
+    }
+
 }

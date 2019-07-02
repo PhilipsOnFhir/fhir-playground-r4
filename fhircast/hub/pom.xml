@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>fhir-cast-hub</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>FHIR Cast hub</name>
+    <description>FHIR Cast implementation based on java.
+    </description>
+
+    <parent>
+        <groupId>com.github.philipsonfhir.fhircast</groupId>
+        <artifactId>parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <!--<parent>-->
+        <!--<groupId>org.springframework.boot</groupId>-->
+        <!--<artifactId>spring-boot-starter-parent</artifactId>-->
+        <!--<version>2.0.4.RELEASE</version>-->
+        <!--<relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
+    <!--</parent>-->
+
+    <properties>
+        <docker.image.prefix>springio</docker.image.prefix>
+    </properties>
+
+    <!--<properties>-->
+        <!--<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
+        <!--<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>-->
+        <!--<java.version>1.8</java.version>-->
+        <!--<spring-cloud.version>Finchley.SR1</spring-cloud.version>-->
+        <!--<jetty_version>9.4.8.v20171121</jetty_version>-->
+        <!--<hapi_version>3.5.0</hapi_version>-->
+        <!--&lt;!&ndash;<hapi_version>3.6.0-SNAPSHOT</hapi_version>&ndash;&gt;-->
+        <!--<cql_engine_version>1.2.50-SNAPSHOT</cql_engine_version>-->
+    <!--</properties>-->
+
+
+    <!--<repositories>-->
+        <!--<repository>-->
+            <!--<id>oss-sonatype</id>-->
+            <!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+            <!--<snapshots>-->
+                <!--<enabled>true</enabled>-->
+            <!--</snapshots>-->
+        <!--</repository>-->
+        <!--<repository>-->
+            <!--<id>oss-sonatype-public</id>-->
+            <!--<url>https://oss.sonatype.org/content/groups/public/</url>-->
+        <!--</repository>-->
+    <!--</repositories>-->
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.philipsonfhir.fhircast</groupId>
+            <artifactId>library</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
+
+    <!--<dependencyManagement>-->
+        <!--<dependencies>-->
+            <!--<dependency>-->
+                <!--<groupId>org.springframework.cloud</groupId>-->
+                <!--<artifactId>spring-cloud-dependencies</artifactId>-->
+                <!--<version>${spring-cloud.version}</version>-->
+                <!--<type>pom</type>-->
+                <!--<scope>import</scope>-->
+            <!--</dependency>-->
+        <!--</dependencies>-->
+    <!--</dependencyManagement>-->
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.github.philipsonfhir.fhircast.FhirCastHubServerApplication</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.9</version>
+                <configuration>
+                    <repository>${docker.image.prefix}/${project.artifactId}</repository>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

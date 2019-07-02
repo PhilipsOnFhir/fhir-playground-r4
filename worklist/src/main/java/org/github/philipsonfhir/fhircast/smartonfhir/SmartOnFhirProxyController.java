@@ -56,14 +56,27 @@ public class SmartOnFhirProxyController extends FhirProxyController {
             value = prefix+"/{resourceType}"
     )
     public ResponseEntity<String> getResourceType(
+            @PathVariable String topicId,
             @RequestHeader(value = "Accept", defaultValue = "application/fhir+json") String accept,
             @PathVariable String resourceType,
-            @RequestParam Map<String, String> queryParams,
-            @PathVariable String topicId
+            @RequestParam Map<String, String> queryParams
     ){
         return  super.getResourceType( accept, resourceType, queryParams );
     }
 
+    @RequestMapping (
+            method = RequestMethod.GET,
+            value = prefix+"/{resourceType}/{resourceId}"
+    )
+    public ResponseEntity<String> getResource(
+            @PathVariable String topicId,
+            @RequestHeader(value = "Accept", defaultValue = "application/fhir+json") String accept,
+            @PathVariable String resourceType,
+            @RequestParam Map<String, String> queryParams,
+            @PathVariable String resourceId
+    ){
+        return  super.getResource( accept, resourceType, resourceId, queryParams );
+    }
 
     private class SmartConfiguration {
         public String authorization_endpoint;
