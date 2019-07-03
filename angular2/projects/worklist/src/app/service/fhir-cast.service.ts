@@ -17,24 +17,28 @@ export class FhirCastService {
   constructor(  private http: HttpClient ) {
   }
 
+  subscribe(){
+    console.log("Subscribe to fhicast events");
+    let subscriptionRequest =
+      "{\n" +
+      // "\t\"hub.callback\":null,\n" +
+      "\t\"hub.mode\":\"subscribe\",\n" +
+      "\t\"hub.topic\":\""+this.topicId+"\",\n" +
+      "\t\"hub.secret\":\"randomSecret\",\n" +
+      "\t\"hub.events\":\"open-patient-chart,close-patient-chart\",\n" +
+      // "\t\"hub.lease_seconds\":null,\n" +
+      "\t\"hub.channel.type\":\"websocket\"\n" +
+      "}\n";
+    console.log(subscriptionRequest);
+    const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+    this.http.post(this.topicUrl, subscriptionRequest, {headers: myHeaders, observe: 'response'} ).subscribe(
+      next => console.log(next),
+      error => console.log(error)
+    )
+  }
+
   openPatient(patient: Patient) {
     console.log("patient opened");
-
-    // let patientJson = JSON.stringify(event);
-
-    // let body =
-    //   "{ \"event\": \n" +
-    //   "\t{ \"hub.topic\": \""+this.topicId+"\", \n" +
-    //   "\t  \"hub.event\":\"open-patient-chart\",\n" +
-    //   "\t  \"context\": [\n" +
-    //   "\t\t{ \t\"key\": \"patient\",\n" +
-    //   "\t\t\t\"resource\": \n" +
-    //   "\t\t\t\t{\t\"resourceType\":\"Patient\",\n" +
-    //   "\t\t\t\t\t\"id\":\""+event.id+"\"\n" +
-    //   "\t\t\t\t}\n" +
-    //   "\t\t}]\n" +
-    //   "\t}\n" +
-    //   "}";
 
     let body : string = this.getEventString( this.topicId, "open-patient-chart", patient);
     console.log(body);

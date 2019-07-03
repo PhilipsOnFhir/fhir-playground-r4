@@ -72,35 +72,6 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
-    // this.sofs.initialize( environment.fhirUrl, '' ).subscribe(
-    // this.sofs.initialize( "http://localhost:9444/api/fhircast/fhir/a", '' ).subscribe(
-    //   data => console.log(data),
-    //   error => {
-    //   },
-    //   () => {
-    //     console.log('initialisation ready');
-    //     this.initialised = true;
-    //     this.fhircastService.login();
-    //   }
-    // );
-
-    // this.topicService.updateTopidIds().subscribe(
-    //   data => console.log(data),
-    //   error => console.log(error),
-    //   () => {
-    //     console.log('topic initialisation ready');
-    //     this.topicIds = this.topicService.getTopicIds();
-    //     if ( this.topicIds.length==0){
-    //       this.topicService.createTopicId().subscribe(
-    //         next => {
-    //           this.topicIds = this.topicService.getTopicIds();
-    //           this.setTopicId(this.topicIds[0]);
-    //           // this.topicId = this.topicIds[0]
-    //           // this.topicIdSet = true;
-    //       })
-    //     }
-    //   }
-    // );
     this.updateTopicIds();
 
     this.practitioner = new Practitioner();
@@ -117,7 +88,6 @@ export class AppComponent {
   private setTopicId( topicId:string){
     this.topicId = topicId;
     this.topicIdSet = true;
-    // this.fhircastService.initialize("http://localhost:9444/api/fhircast/topic/"+topidId);
 
     this.sofs.initialize( "http://localhost:9444/api/fhircast/fhir/"+topicId, '' ).subscribe(
       data => console.log(data),
@@ -127,6 +97,7 @@ export class AppComponent {
         console.log('sofs initialisation ready');
         this.initialised = true;
         this.fhircastService.login("http://localhost:9444/api/fhircast/topic/"+topicId+"/websub", this.topicId );
+        this.fhircastService.subscribe();
       }
     );
   }
@@ -150,23 +121,14 @@ export class AppComponent {
       }
     );
   }
-  // createNewTopic() {
-  //   this.topicService.createTopicId().subscribe( topicId => {
-  //     this.topicId = topicId;
-  //   });
-  // }
 
   selectTopic() {
     console.log(this.selectedTopic);
     if ( this.selectedTopic===this.newTopicValue ){
       this.topicService.createTopicId().subscribe( topicId => {
-        // this.topicId = topicId;
-        // this.topicIdSet = true;
         this.setTopicId(topicId);
       });
     } else{
-      // this.topicId = this.selectedTopic;
-      // this.topicIdSet = true;
       this.setTopicId(this.selectedTopic);
     }
   }
