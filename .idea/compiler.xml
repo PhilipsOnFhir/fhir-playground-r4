@@ -19,6 +19,7 @@
     <bytecodeTargetLevel>
       <module name="fhir-cast" target="1.8" />
       <module name="fhir-cast-dev-auth" target="1.5" />
+      <module name="library (1)" target="1.8" />
       <module name="oauth2" target="1.8" />
       <module name="tutorial-server" target="1.8" />
       <module name="tutorial-web" target="1.8" />
@@ -29,6 +30,7 @@
       <module name="fhir-cast" options="-parameters" />
       <module name="fhir-cast-hub" options="-parameters" />
       <module name="library" options="-parameters" />
+      <module name="library (1)" options="-parameters" />
       <module name="oauth2" options="-parameters" />
       <module name="smartonfhir" options="-parameters" />
       <module name="tutorial-server" options="-parameters" />

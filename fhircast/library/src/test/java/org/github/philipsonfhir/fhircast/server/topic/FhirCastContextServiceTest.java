@@ -1,7 +1,7 @@
 package org.github.philipsonfhir.fhircast.server.topic;
 
 import org.github.philipsonfhir.fhircast.support.FhirCastException;
-import org.github.philipsonfhir.fhircast.support.websub.FhircastEventType;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhircastEventType;
 import org.hl7.fhir.dstu3.model.ImagingStudy;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.junit.Test;

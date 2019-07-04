@@ -1,7 +1,7 @@
 package org.github.philipsonfhir.fhircast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastWorkflowEvent;
 
 import java.io.IOException;
 import java.io.InputStream;

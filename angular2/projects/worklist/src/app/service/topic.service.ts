@@ -7,6 +7,7 @@ import {observable, Observable} from "rxjs";
 })
 export class TopicService {
   private topicIds: string[];
+  private baseUrl = "http://localhost:9444/api/fhircast/topic";
 
   constructor(  private http: HttpClient ) {
   }
@@ -15,7 +16,7 @@ export class TopicService {
     return new Observable<any>(
       observable => {
 
-        this.http.get<string[]>( "http://localhost:9444/api/fhircast/topic"  ).subscribe(
+        this.http.get<string[]>( this.baseUrl  ).subscribe(
           next => { console.log( next);
               this.topicIds = next;
               observable.next();
@@ -32,7 +33,7 @@ export class TopicService {
   createTopicId(): Observable<string> {
     return new Observable<string>(
       observable => {
-        this.http.post<any>( "http://localhost:9444/api/fhircast/topic", "", {observe: 'response' as 'body'} ).subscribe(
+        this.http.post<any>( this.baseUrl, "", {observe: 'response' as 'body'} ).subscribe(
           next => {
               let topicId = next.body.topicID;
               this.updateTopidIds().subscribe(
@@ -57,7 +58,7 @@ export class TopicService {
 
   closeTopic( topicId:string ): Observable<string> {
     console.log("close topic "+topicId);
-    console.log("http://localhost:9444/api/fhircast/topic/"+topicId);
-    return this.http.delete<any>( "http://localhost:9444/api/fhircast/topic/"+topicId);
+    console.log(this.baseUrl+topicId);
+    return this.http.delete<any>( this.baseUrl+topicId);
   }
 }

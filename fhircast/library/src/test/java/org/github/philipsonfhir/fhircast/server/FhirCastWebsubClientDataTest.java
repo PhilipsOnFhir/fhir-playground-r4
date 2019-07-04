@@ -70,7 +70,7 @@ public class FhirCastWebsubClientDataTest {
 
 
     private String baseUrl(){
-        return  "http://localhost:" + port + "/fhircast";
+        return  "http://localhost:" + port + "/api/fhircast";
     }
 
 }

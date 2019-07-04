@@ -5,9 +5,9 @@ import org.github.philipsonfhir.fhircast.server.topic.FhirCastTopic;
 import org.github.philipsonfhir.fhircast.server.topic.FhirCastTopicEvent;
 import org.github.philipsonfhir.fhircast.support.FhirCastException;
 import org.github.philipsonfhir.fhircast.support.NotImplementedException;
-import org.github.philipsonfhir.fhircast.support.websub.FhirCastSessionSubscribe;
-import org.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;
-import org.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEvent;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastSessionSubscribe;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastWorkflowEvent;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastWorkflowEventEvent;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -52,7 +52,7 @@ public class FhirCastWebsubService implements ApplicationListener<FhirCastTopicE
                 // TODO update when mechanism is clear
 //                fhircastWebsocketService.updateSubscriptions( fhirCastSessionSubscribe );
 //                break;
-            case "websub":
+            case "domain":
             default:
                 fhirCastWebsubSession.updateSubscriptions( fhirCastSessionSubscribe );
                 // TODO ensure channel is added

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.github.philipsonfhir.fhircast.server.topic.FhirCastTopicEvent;
 import org.github.philipsonfhir.fhircast.support.FhirCastException;
-import org.github.philipsonfhir.fhircast.support.websub.FhirCastContext;
-import org.github.philipsonfhir.fhircast.support.websub.FhirCastSessionSubscribe;
-import org.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEvent;
-import org.github.philipsonfhir.fhircast.support.websub.FhirCastWorkflowEventEvent;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastContext;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastSessionSubscribe;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastWorkflowEvent;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastWorkflowEventEvent;
 import lombok.ToString;
 import org.hl7.fhir.dstu3.model.Resource;
 import org.springframework.http.HttpEntity;
@@ -70,7 +70,7 @@ public class FhirCastWebsubSession {
         //TODO check permission to send
         updateContext( fhirCastWorkflowEvent );
 
-        // send websub events
+        // send domain events
         logger.info( "eventReceived " + fhirCastWorkflowEvent );
         for ( FhirCastWebsubClientData fhirCastWebsubClientData : this.fhirCastClientMap.values() ) {
             if ( fhirCastWebsubClientData.isVerified() && fhirCastWebsubClientData.hasSubscription( fhirCastWorkflowEvent.getEvent().getHub_event() ) ) {

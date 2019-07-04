@@ -1,12 +1,14 @@
 package org.github.philipsonfhir.fhircast.topic.websub.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastContext;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastWorkflowEvent;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastWorkflowEventEvent;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhircastEventType;
 import org.hl7.fhir.r4.model.Patient;
 import org.junit.Test;
 
 import java.io.IOException;
-
-import static org.junit.Assert.*;
 
 public class FhirCastWorkflowEventEventTest {
     String json =

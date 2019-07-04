@@ -2,9 +2,9 @@ package org.github.philipsonfhir.fhircast.topic.websub.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastSessionSubscribe;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhircastEventType;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class FhirCastSessionSubscribeTest {
 

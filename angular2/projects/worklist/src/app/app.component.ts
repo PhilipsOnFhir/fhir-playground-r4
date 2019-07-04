@@ -96,7 +96,7 @@ export class AppComponent {
       () => {
         console.log('sofs initialisation ready');
         this.initialised = true;
-        this.fhircastService.login("http://localhost:9444/api/fhircast/topic/"+topicId+"/websub", this.topicId );
+        this.fhircastService.login("http://localhost:9444/api/fhircast/websub/"+topicId, this.topicId );
         this.fhircastService.subscribe();
       }
     );

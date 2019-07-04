@@ -1,7 +1,7 @@
 package org.github.philipsonfhir.fhircast;
 
 import ca.uhn.fhir.context.FhirContext;
-import org.github.philipsonfhir.fhircast.support.websub.*;
+import org.github.philipsonfhir.fhircast.server.websub.domain.*;
 import org.github.philipsonfhir.fhircast.support.FhirCastException;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -103,7 +103,7 @@ public class FhirCastWebsubClient {
 
         RestTemplate restTemplate = new RestTemplate(  );
         logger.info("send event");
-        restTemplate.postForLocation( this.topicUrl+"/websub", fhirCastWorkflowEvent );
+        restTemplate.postForLocation( this.topicUrl+"/domain", fhirCastWorkflowEvent );
     }
 
     public void unSubscribePatientChange() {
@@ -113,7 +113,7 @@ public class FhirCastWebsubClient {
         fhirCastSessionSubscribe.setHub_topic( topicId );
         fhirCastSessionSubscribe.setHub_secret("mysecret");
         fhirCastSessionSubscribe.setHub_events( FhircastEventType.OPEN_PATIENT_CHART+","+ FhircastEventType.SWITCH_PATIENT_CHART+","+ FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.USER_LOGOUT ); //"patient-open-chart,patient-logout-chart" );
-        restTemplate.postForEntity( topicUrl+"/websub", fhirCastSessionSubscribe, String.class );
+        restTemplate.postForEntity( topicUrl+"/domain", fhirCastSessionSubscribe, String.class );
     }
 
     public void subscribePatientChange() {
@@ -123,7 +123,7 @@ public class FhirCastWebsubClient {
         fhirCastSessionSubscribe.setHub_topic( topicId );
         fhirCastSessionSubscribe.setHub_secret("mysecret");
         fhirCastSessionSubscribe.setHub_events( FhircastEventType.OPEN_PATIENT_CHART+","+ FhircastEventType.SWITCH_PATIENT_CHART+","+ FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.USER_LOGOUT ); //"patient-open-chart,patient-logout-chart" );
-        restTemplate.postForEntity( topicUrl+"/websub", fhirCastSessionSubscribe, String.class );
+        restTemplate.postForEntity( topicUrl+"/domain", fhirCastSessionSubscribe, String.class );
     }
 
     public Patient getCurrentPatient() {
@@ -153,7 +153,7 @@ public class FhirCastWebsubClient {
 
         RestTemplate restTemplate = new RestTemplate(  );
         logger.info("send event");
-        restTemplate.postForLocation( this.topicUrl+"/websub", fhirCastWorkflowEvent );
+        restTemplate.postForLocation( this.topicUrl+"/domain", fhirCastWorkflowEvent );
     }
 
 
@@ -178,7 +178,7 @@ public class FhirCastWebsubClient {
 
     public void getContext() {
         RestTemplate restTemplate =  new RestTemplate(  );
-        FhirCastWorkflowEvent fhirCastWorkflowEvent = restTemplate.getForObject( topicUrl+"/websub", FhirCastWorkflowEvent.class );
+        FhirCastWorkflowEvent fhirCastWorkflowEvent = restTemplate.getForObject( topicUrl+"/domain", FhirCastWorkflowEvent.class );
         System.out.println(fhirCastWorkflowEvent);
     }
 

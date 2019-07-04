@@ -1,6 +1,6 @@
 package org.github.philipsonfhir.fhircast.server.websub.service;
 
-import org.github.philipsonfhir.fhircast.support.websub.FhircastEventType;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhircastEventType;
 
 import java.util.Set;
 import java.util.TreeSet;

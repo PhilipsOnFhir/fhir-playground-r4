@@ -7,6 +7,7 @@
     <file url="file://$PROJECT_DIR$/fhircast/library" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fhircast/websub" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hapi-r4" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/library" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/worklist" charset="UTF-8" />
   </component>
 </project>

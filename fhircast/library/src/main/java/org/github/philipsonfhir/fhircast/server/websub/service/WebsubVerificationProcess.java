@@ -1,6 +1,6 @@
 package org.github.philipsonfhir.fhircast.server.websub.service;
 
-import org.github.philipsonfhir.fhircast.support.websub.FhirCastSessionSubscribe;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastSessionSubscribe;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 

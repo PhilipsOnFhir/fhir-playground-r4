@@ -3,8 +3,9 @@ import {Patient} from "../../../../fhir2angular-r4/src/lib/Patient";
 import {ImagingStudy} from "../../../../fhir2angular-r4/src/lib/ImagingStudy";
 import {DomainResource} from "../../../../fhir2angular-r4/src/lib/DomainResource";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {timestamp} from "rxjs/operators";
 import {Resource} from "../../../../fhir2angular-r4/src/lib/Resource";
+import * as Rx from 'rxjs';
+import {Observable, Observer, Subject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,9 @@ export class FhirCastService {
   private topicUrl: string;
   private initialized: boolean = false;
   private topicId: string;
+  private subject: Rx.Subject<MessageEvent> ;
+  public ws: any;
+  private websocketInitialised = false;
 
   constructor(  private http: HttpClient ) {
   }
@@ -29,19 +33,61 @@ export class FhirCastService {
       // "\t\"hub.lease_seconds\":null,\n" +
       "\t\"hub.channel.type\":\"websocket\"\n" +
       "}\n";
+
     console.log(subscriptionRequest);
+//    const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
     const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
-    this.http.post(this.topicUrl, subscriptionRequest, {headers: myHeaders, observe: 'response'} ).subscribe(
-      next => console.log(next),
+    this.http.post(this.topicUrl, subscriptionRequest, {headers: myHeaders, responseType: 'text' as 'json'} ).subscribe(
+    // this.http.post(this.topicUrl, subscriptionRequest, {observe: 'response'} ).subscribe(
+      next => {
+        console.log( "websocket: "+ next);
+        if( !this.subject ){
+          this.subject = this.create( next as string );
+          this.subject.subscribe( (message)=> {
+            // console.log("Received from websocket: " + message.data);
+            // console.log(JSON.stringify(message.data));
+            if (this.websocketInitialised) {
+              console.log('NEW EVENT: '+ message.data)
+            } else {
+              console.log("CHALLENGE RECEIVED");
+              let response = "{this.n" +
+                "   \"hub.challenge\":\"meu3we944ix80ox\"\n" +
+                "}";
+              this.ws.send(response);
+              this.websocketInitialised = true;
+            }
+          });
+        }
+      }
+      ,
       error => console.log(error)
     )
   }
 
+  private create(url: string): Subject<MessageEvent> {
+    this.ws = new WebSocket(url);
+    const observable = Observable.create(
+      (obs: Observer<any>) => {
+        this.ws.onmessage = obs.next.bind(obs);
+        this.ws.onerror = obs.error.bind(obs);
+        this.ws.onclose = obs.complete.bind(obs);
+        return this.ws.close.bind(this.ws);
+      });//.share();
+
+    const observer = {
+      next: (data: Object) => {
+        if (this.ws.readyState === WebSocket.OPEN) {
+          this.ws.send(data);
+        }
+      }
+    };
+    console.log(this.ws);
+    return Rx.Subject.create(observer, observable);
+  }
+
   openPatient(patient: Patient) {
     console.log("patient opened");
-
     let body : string = this.getEventString( this.topicId, "open-patient-chart", patient);
-    console.log(body);
     this.sendEvent( body );
   }
 
