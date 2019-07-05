@@ -26,34 +26,38 @@ import {Patient} from "../../../fhir2angular-r4/src/lib/Patient";
         <span *ngIf="topicIdSet"><button mat-icon-button (click)="closeCurrentTopic()"><mat-icon>done</mat-icon></button></span>
       </mat-toolbar-row>
     </mat-toolbar>
-    
-    
-    <div *ngIf="!topicIdSet">
-      <div *ngIf="topicIds && topicIds.length>0">
-        Select topic:
-        <mat-form-field>
-          <mat-label></mat-label>
-          <mat-select [(value)]="selectedTopic" (selectionChange)="selectTopic()">
-            <mat-option *ngFor="let tid of topicIds" [value]="tid">
-              {{tid}}
-            </mat-option>
-            <mat-option [value]="newTopicValue"><i>create new</i></mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <p>{{selectedTopic}}</p>
-<!--      <button mat-raised-button (click)="createNewTopic()">start new topic</button>-->
+
+    <div *ngIf="loggedout">
+      LOGGED OUT
     </div>
-    <div *ngIf="topicIdSet && !initialised">
-        <mat-progress-spinner
-            color="primary"
-            mode="indeterminate">
-        </mat-progress-spinner>
-    </div>
-    <div *ngIf="topicIdSet && initialised">
-      <app-worklist [practitioner]="practitioner"></app-worklist>
-<!--      {{this.launchSessions.length}}-->
+    <div *ngIf="!loggedout">
       
+      <div *ngIf="!topicIdSet">
+        <div *ngIf="topicIds && topicIds.length>0">
+          Select topic:
+          <mat-form-field>
+            <mat-label></mat-label>
+            <mat-select [(value)]="selectedTopic" (selectionChange)="selectTopic()">
+              <mat-option *ngFor="let tid of topicIds" [value]="tid">
+                {{tid}}
+              </mat-option>
+              <mat-option [value]="newTopicValue"><i>create new</i></mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <p>{{selectedTopic}}</p>
+  <!--      <button mat-raised-button (click)="createNewTopic()">start new topic</button>-->
+      </div>
+      <div *ngIf="topicIdSet && !initialised">
+          <mat-progress-spinner
+              color="primary"
+              mode="indeterminate">
+          </mat-progress-spinner>
+      </div>
+      <div *ngIf="topicIdSet && initialised">
+        <app-worklist [practitioner]="practitioner"></app-worklist>
+  <!--      {{this.launchSessions.length}}-->
+      </div>      
     </div>
   `,
   styleUrls: ['./app.component.css']
@@ -68,6 +72,7 @@ export class AppComponent {
   private topicIds: string[];
   selectedTopic: string;
   newTopicValue="new";
+  private loggedout = false;
 
   constructor( private sofs:SmartOnFhirService, private topicService: TopicService, private fhircast: FhirCastService) {
   }
@@ -157,6 +162,6 @@ export class AppComponent {
     this.initialised = false;
     this.selectedTopic = null;
     this.topicId = null;
-    this.updateTopicIds();
+    this.loggedout = true;
   }
 }
