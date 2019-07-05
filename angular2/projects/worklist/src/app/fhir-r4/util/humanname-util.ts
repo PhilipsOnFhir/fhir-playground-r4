@@ -1,4 +1,4 @@
-import {HumanName} from "../../../../../fhir2angular-r4/src/lib/HumanName";
+import {HumanName} from "fhir2angular-r4";;
 
 export class HumanNameUtil{
 

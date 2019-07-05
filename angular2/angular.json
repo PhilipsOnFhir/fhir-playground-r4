@@ -120,7 +120,7 @@
       "projectType": "library",
       "root": "projects/fhir2angular-r4",
       "sourceRoot": "projects/fhir2angular-r4/src",
-      "prefix": "fhirr4",
+      "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",

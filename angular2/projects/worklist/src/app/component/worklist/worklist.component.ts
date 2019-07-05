@@ -1,11 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {DomainResource} from "../../../../../fhir2angular-r4/src/lib/DomainResource";
-import {Patient} from "../../../../../fhir2angular-r4/src/lib/Patient";
-import {ImagingStudy} from "../../../../../fhir2angular-r4/src/lib/ImagingStudy";
-import {Resource} from "../../../../../fhir2angular-r4/src/lib/Resource";
+import {DomainResource} from "fhir2angular-r4";
+import {Patient} from "fhir2angular-r4";
+import {ImagingStudy} from "fhir2angular-r4";
+import {Resource} from "fhir2angular-r4";
 import {SmartOnFhirService} from "../../fhir-r4/smart-on-fhir.service";
 import {FhirCastService} from "../../service/fhir-cast.service";
-import {Practitioner} from "../../../../../fhir2angular-r4/src/lib/Practitioner";
+import {Practitioner} from "fhir2angular-r4";
 
 @Component({
   selector: 'app-worklist',

@@ -1,7 +1,6 @@
-import {DomainResource} from "../../../../../fhir2angular-r4/src/lib/DomainResource";
-import {Patient} from "../../../../../fhir2angular-r4/src/lib/Patient";
+import {DomainResource} from "fhir2angular-r4";
+import {Patient} from "fhir2angular-r4";
 import {PatientUtil} from "./patient-util";
-import {ImagingStudy} from "../../../../../fhir2angular-r4/src/lib/ImagingStudy";
 
 export class ResourceUtil {
 

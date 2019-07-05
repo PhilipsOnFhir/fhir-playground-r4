@@ -1,4 +1,4 @@
-import {Patient} from "../../../../../fhir2angular-r4/src/lib/Patient";
+import {Patient} from "fhir2angular-r4";
 
 export class PatientUtil {
 

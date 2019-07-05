@@ -1,15 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Resource} from "../../../../../fhir2angular-r4/src/lib/Resource";
-import {Encounter} from "../../../../../fhir2angular-r4/src/lib/Encounter";
-import {ResourceTypeEnum} from "../../../../../fhir2angular-r4/src/lib/ResourceTypeEnum";
-import {ImagingStudy} from "../../../../../fhir2angular-r4/src/lib/ImagingStudy";
 import {SmartOnFhirService} from "../../fhir-r4/smart-on-fhir.service";
-import {Patient} from "../../../../../fhir2angular-r4/src/lib/Patient";
-import {Reference} from "../../../../../fhir2angular-r4/src/lib/Reference";
-import {EncounterStatusEnum} from "../../../../../fhir2angular-r4/src/lib/EncounterStatusEnum";
-import {Encounter_Participant} from "../../../../../fhir2angular-r4/src/lib/Encounter_Participant";
-import {Practitioner} from "../../../../../fhir2angular-r4/src/lib/Practitioner";
+import {Resource,Encounter,ResourceTypeEnum,ImagingStudy,Patient,Reference,EncounterStatusEnum,Practitioner} from "fhir2angular-r4";
 import {HumanNameUtil} from "../../fhir-r4/util/humanname-util";
+import {Encounter_Participant} from "fhir2angular-r4";
 
 @Component({
   selector: 'app-launch-display',

@@ -1,12 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs/internal/Observable';
-import {CapabilityStatement} from "../../../../fhir2angular-r4/src/lib/CapabilityStatement";
-import {DomainResource} from "../../../../fhir2angular-r4/src/lib/DomainResource";
-import {Bundle} from "../../../../fhir2angular-r4/src/lib/Bundle";
-import {Resource} from "../../../../fhir2angular-r4/src/lib/Resource";
-import {Reference} from "../../../../fhir2angular-r4/src/lib/Reference";
-import {Parameters} from "../../../../fhir2angular-r4/src/lib/Parameters";
+import {CapabilityStatement,DomainResource,Bundle,Resource,Reference,Parameters} from "fhir2angular-r4";
 
 
 @Injectable()

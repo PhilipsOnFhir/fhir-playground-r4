@@ -1,12 +1,9 @@
-import { Component } from '@angular/core';
-import {environment} from "../environments/environment";
+import {Component} from '@angular/core';
 import {SmartOnFhirService} from "./fhir-r4/smart-on-fhir.service";
 import {TopicService} from "./service/topic.service";
-import {Practitioner} from "../../../fhir2angular-r4/src/lib/Practitioner";
-import {HumanName} from "../../../fhir2angular-r4/src/lib/HumanName";
 import {FhirCastService} from "./service/fhir-cast.service";
 import {HumanNameUtil} from "./fhir-r4/util/humanname-util";
-import {Patient} from "../../../fhir2angular-r4/src/lib/Patient";
+import {HumanName,Practitioner} from "fhir2angular-r4";
 
 @Component({
   selector: 'app-root',

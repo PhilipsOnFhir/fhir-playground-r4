@@ -1,10 +1,10 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {environment} from "../../../environments/environment";
 import {SmartOnFhirService} from "../../fhir-r4/smart-on-fhir.service";
-import {Bundle} from "../../../../../fhir2angular-r4/src/lib/Bundle";
-import {Patient} from "../../../../../fhir2angular-r4/src/lib/Patient";
-import {ImagingStudy} from "../../../../../fhir2angular-r4/src/lib/ImagingStudy";
-import {DomainResource} from "../../../../../fhir2angular-r4/src/lib/DomainResource";
+import {Bundle} from "fhir2angular-r4";
+import {Patient} from "fhir2angular-r4";
+import {ImagingStudy} from "fhir2angular-r4";
+import {DomainResource} from "fhir2angular-r4";
 
 
 @Component({
