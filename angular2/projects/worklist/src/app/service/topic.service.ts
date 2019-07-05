@@ -7,7 +7,7 @@ import {observable, Observable} from "rxjs";
 })
 export class TopicService {
   private topicIds: string[];
-  private baseUrl = "http://localhost:9444/api/fhircast/topic";
+  private baseUrl = "http://localhost:9444/api/fhircast/topic/";
 
   constructor(  private http: HttpClient ) {
   }

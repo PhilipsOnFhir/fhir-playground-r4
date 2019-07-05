@@ -22,16 +22,17 @@ export class WorklistComponent implements OnInit {
   ngOnInit() {
     this.fhircast.subscribe().subscribe( fce => {
         console.log(fce);
-        switch ( fce.hub_event ){
-          case "open-patient-chart":{
+        switch ( fce.hub_event ) {
+          case "open-patient-chart": {
             let p = fce.context[0].resource as Patient;
-            this.patientSelected( p );
+            this.patientSelected(p);
             break;
-            }
-          case "close-patient-chart":
+          }
+          case "close-patient-chart":{
             let p = fce.context[0].resource as Patient;
-            this.launchedClosed( p );
+            this.launchedClosed(p);
             break;
+          }
         }
       }
       , err => console.log(err)

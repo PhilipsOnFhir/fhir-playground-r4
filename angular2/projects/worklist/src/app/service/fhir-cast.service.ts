@@ -27,63 +27,66 @@ export class FhirCastService {
   }
 
   subscribe(): Observable<FhirCastEvent>{
-    console.log("Subscribe to fhicast events");
-    let obs : Observable<FhirCastEvent> = new Observable<FhirCastEvent>( obs => {
-        let subscriptionRequest =
-          "{\n" +
-          // "\t\"hub.callback\":null,\n" +
-          "\t\"hub.mode\":\"subscribe\",\n" +
-          "\t\"hub.topic\":\"" + this.topicId + "\",\n" +
-          "\t\"hub.secret\":\"randomSecret\",\n" +
-          "\t\"hub.events\":\"open-patient-chart,close-patient-chart\",\n" +
-          // "\t\"hub.lease_seconds\":null,\n" +
-          "\t\"hub.channel.type\":\"websocket\"\n" +
-          "}\n";
-
-        console.log(subscriptionRequest);
-        //    const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
-        const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
-        this.http.post(this.topicUrl, subscriptionRequest, {
-          headers: myHeaders,
-          responseType: 'text' as 'json'
-        }).subscribe(
-          // this.http.post(this.topicUrl, subscriptionRequest, {observe: 'response'} ).subscribe(
-          next => {
-            console.log("websocket: " + next);
-            if (!this.subject) {
-              this.subject = this.create(next as string);
-              this.subject.subscribe((message) => {
-                // console.log("Received from websocket: " + message.data);
-                // console.log(JSON.stringify(message.data));
-                if (this.websocketInitialised) {
-                  console.log('NEW EVENT: ' + message.data)
-                  let fce = new FhirCastEvent();
-                  // fce.hub_event = message.data.'hub.event';
-                  let b = JSON.parse(message.data);
-                  fce.hub_event = b.event["hub.event"];
-                  fce.context = b.event.context;
-                  // console.log(fce);
-                  obs.next( fce );
-                } else {
-                  console.log("CHALLENGE RECEIVED");
-                  let response = "{this.n" +
-                    "   \"hub.challenge\":\"meu3we944ix80ox\"\n" +
-                    "}";
-                  this.ws.send(response);
-                  this.websocketInitialised = true;
-                }
-              });
-            }
-          }
-          ,
-          error => {
-            console.log(error);
-            obs.error(error);
-          }
-        )
-      }
-    );
-    return obs;
+    let fcws = new FhirCastWebsocket(this.http);
+    return fcws.subscribe( this.topicId, this.topicUrl);
+    //
+    // console.log("Subscribe to fhicast events");
+    // let obs : Observable<FhirCastEvent> = new Observable<FhirCastEvent>( obs => {
+    //     let subscriptionRequest =
+    //       "{\n" +
+    //       // "\t\"hub.callback\":null,\n" +
+    //       "\t\"hub.mode\":\"subscribe\",\n" +
+    //       "\t\"hub.topic\":\"" + this.topicId + "\",\n" +
+    //       "\t\"hub.secret\":\"randomSecret\",\n" +
+    //       "\t\"hub.events\":\"open-patient-chart,close-patient-chart\",\n" +
+    //       // "\t\"hub.lease_seconds\":null,\n" +
+    //       "\t\"hub.channel.type\":\"websocket\"\n" +
+    //       "}\n";
+    //
+    //     console.log(subscriptionRequest);
+    //     //    const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+    //     const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+    //     this.http.post(this.topicUrl, subscriptionRequest, {
+    //       headers: myHeaders,
+    //       responseType: 'text' as 'json'
+    //     }).subscribe(
+    //       // this.http.post(this.topicUrl, subscriptionRequest, {observe: 'response'} ).subscribe(
+    //       next => {
+    //         console.log("websocket: " + next);
+    //         if (!this.subject) {
+    //           this.subject = this.create(next as string);
+    //           this.subject.subscribe((message) => {
+    //             // console.log("Received from websocket: " + message.data);
+    //             // console.log(JSON.stringify(message.data));
+    //             if (this.websocketInitialised) {
+    //               console.log('NEW EVENT: ' + message.data)
+    //               let fce = new FhirCastEvent();
+    //               // fce.hub_event = message.data.'hub.event';
+    //               let b = JSON.parse(message.data);
+    //               fce.hub_event = b.event["hub.event"];
+    //               fce.context = b.event.context;
+    //               // console.log(fce);
+    //               obs.next( fce );
+    //             } else {
+    //               console.log("CHALLENGE RECEIVED");
+    //               let response = "{this.n" +
+    //                 "   \"hub.challenge\":\"meu3we944ix80ox\"\n" +
+    //                 "}";
+    //               this.ws.send(response);
+    //               this.websocketInitialised = true;
+    //             }
+    //           });
+    //         }
+    //       }
+    //       ,
+    //       error => {
+    //         console.log(error);
+    //         obs.error(error);
+    //       }
+    //     )
+    //   }
+    // );
+    // return obs;
   }
 
   private create(url: string): Subject<MessageEvent> {
@@ -149,7 +152,9 @@ export class FhirCastService {
     // console.log( body);
 
     this.http.post(this.topicUrl, body, {headers: myHeaders, observe: 'response'} ).subscribe(
-      next => console.log(next),
+      next => {
+        // console.log(next)
+      },
       error => console.log(error)
     )
   }
@@ -181,4 +186,96 @@ export class FhirCastService {
     }
     return "-";
   }
+}
+
+
+class FhirCastWebsocket{
+  private subject: Rx.Subject<MessageEvent> ;
+  public ws: any;
+  private websocketInitialised = false;
+
+  constructor( private http: HttpClient ){
+  }
+
+  subscribe( topicId:string, topicUrl:string ): Observable<FhirCastEvent>{
+    console.log("Subscribe to fhicast events");
+    let obs : Observable<FhirCastEvent> = new Observable<FhirCastEvent>( obs => {
+        let subscriptionRequest =
+          "{\n" +
+          // "\t\"hub.callback\":null,\n" +
+          "\t\"hub.mode\":\"subscribe\",\n" +
+          "\t\"hub.topic\":\"" + topicId + "\",\n" +
+          "\t\"hub.secret\":\"randomSecret\",\n" +
+          "\t\"hub.events\":\"open-patient-chart,close-patient-chart\",\n" +
+          // "\t\"hub.lease_seconds\":null,\n" +
+          "\t\"hub.channel.type\":\"websocket\"\n" +
+          "}\n";
+
+        console.log(subscriptionRequest);
+        //    const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+        const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+        this.http.post(topicUrl, subscriptionRequest, {
+          headers: myHeaders,
+          responseType: 'text' as 'json'
+        }).subscribe(
+          // this.http.post(this.topicUrl, subscriptionRequest, {observe: 'response'} ).subscribe(
+          next => {
+            console.log("websocket: " + next);
+            if (!this.subject) {
+              this.subject = this.create(next as string);
+              this.subject.subscribe((message) => {
+                // console.log("Received from websocket: " + message.data);
+                // console.log(JSON.stringify(message.data));
+                if (this.websocketInitialised) {
+                  console.log('NEW EVENT: ' + message.data)
+                  let fce = new FhirCastEvent();
+                  // fce.hub_event = message.data.'hub.event';
+                  let b = JSON.parse(message.data);
+                  fce.hub_event = b.event["hub.event"];
+                  fce.context = b.event.context;
+                  // console.log(fce);
+                  obs.next( fce );
+                } else {
+                  console.log("CHALLENGE RECEIVED");
+                  let response = "{this.n" +
+                    "   \"hub.challenge\":\"meu3we944ix80ox\"\n" +
+                    "}";
+                  this.ws.send(response);
+                  this.websocketInitialised = true;
+                }
+              });
+            }
+          }
+          ,
+          error => {
+            console.log(error);
+            obs.error(error);
+          }
+        )
+      }
+    );
+    return obs;
+  }
+
+  private create(url: string): Subject<MessageEvent> {
+    this.ws = new WebSocket(url);
+    const observable = Observable.create(
+      (obs: Observer<any>) => {
+        this.ws.onmessage = obs.next.bind(obs);
+        this.ws.onerror = obs.error.bind(obs);
+        this.ws.onclose = obs.complete.bind(obs);
+        return this.ws.close.bind(this.ws);
+      });//.share();
+
+    const observer = {
+      next: (data: Object) => {
+        if (this.ws.readyState === WebSocket.OPEN) {
+          this.ws.send(data);
+        }
+      }
+    };
+    console.log(this.ws);
+    return Rx.Subject.create(observer, observable);
+  }
+
 }

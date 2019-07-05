@@ -6,6 +6,7 @@ import {Practitioner} from "../../../fhir2angular-r4/src/lib/Practitioner";
 import {HumanName} from "../../../fhir2angular-r4/src/lib/HumanName";
 import {FhirCastService} from "./service/fhir-cast.service";
 import {HumanNameUtil} from "./fhir-r4/util/humanname-util";
+import {Patient} from "../../../fhir2angular-r4/src/lib/Patient";
 
 @Component({
   selector: 'app-root',
@@ -68,7 +69,7 @@ export class AppComponent {
   selectedTopic: string;
   newTopicValue="new";
 
-  constructor( private sofs:SmartOnFhirService, private topicService: TopicService, private fhircastService: FhirCastService) {
+  constructor( private sofs:SmartOnFhirService, private topicService: TopicService, private fhircast: FhirCastService) {
   }
 
   ngOnInit(): void {
@@ -96,7 +97,18 @@ export class AppComponent {
       () => {
         console.log('sofs initialisation ready');
         this.initialised = true;
-        this.fhircastService.login("http://localhost:9444/api/fhircast/websub/"+topicId, this.topicId );
+        this.fhircast.login("http://localhost:9444/api/fhircast/websub/"+topicId, this.topicId );
+        this.fhircast.subscribe().subscribe( fce => {
+            console.log(fce);
+            switch ( fce.hub_event ) {
+              case "user-logout":
+                console.log(fce);
+                this.closeCurrentTopic();
+                break;
+            }
+          }
+          , err => console.log(err)
+        );
       }
     );
   }
@@ -136,14 +148,15 @@ export class AppComponent {
     console.log("close topic");
     this.topicService.closeTopic( this.topicId ).subscribe(
       next =>{
-        this.fhircastService.logout();
-        this.updateTopicIds();
-        this.topicIdSet = false;
-        this.initialised = false;
-        this.selectedTopic = null;
-        this.topicId = null;
+        this.fhircast.logout();
+        // this.updateTopicIds();
       },
       error => console.log(error)
     );
+    this.topicIdSet = false;
+    this.initialised = false;
+    this.selectedTopic = null;
+    this.topicId = null;
+    this.updateTopicIds();
   }
 }
