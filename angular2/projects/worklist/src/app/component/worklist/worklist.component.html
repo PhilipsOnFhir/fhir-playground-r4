@@ -1,4 +1,4 @@
-<mat-tab-group [selectedIndex]="1+launchSessions.length">
+<mat-tab-group [selectedIndex]="1+selectedLaunchIndex" (selectedIndexChange)="selectedIndexChange($event)">
   <mat-tab label="Open new">
     <app-patient-image-selector
       (patientSelected)="patientSelected($event)"

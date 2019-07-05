@@ -62,7 +62,10 @@ public class FhirCastWebsocketSession {
             ObjectMapper objectMapper = new ObjectMapper();
             String message = objectMapper.writeValueAsString(fhirCastWorkflowEvent);
             TextMessage textMessage = new TextMessage(message);
-            session.sendMessage(textMessage);
+            if ( session.isOpen() ) {
+                session.sendMessage(textMessage);
+                // TODO close and remove session
+            }
         } else {
             logger.info( "event ignored" );
         }
