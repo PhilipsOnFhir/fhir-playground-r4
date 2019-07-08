@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @Controller
 @RestController
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class FhirCastWebsubController {
 
     @Autowired

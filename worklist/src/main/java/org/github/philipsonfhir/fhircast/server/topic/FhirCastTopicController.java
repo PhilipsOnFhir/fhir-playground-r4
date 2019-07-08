@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RestController
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class FhirCastTopicController {
 
     @Autowired
