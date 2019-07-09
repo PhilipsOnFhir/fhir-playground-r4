@@ -50,7 +50,7 @@ export class ConnectorService {
 
         let newOptions = ( options? options: { headers: headers });
 
-        this._http.get<T>(resourceUrl, newOptions).subscribe(
+        this._http.get(resourceUrl, newOptions).subscribe(
           nxt => obs.next(nxt),
           err => obs.error(err)
         )
@@ -79,10 +79,10 @@ export class ConnectorService {
     })
   }
 
-  post<T>(resourceUrl, body: any | null, options?) : Observable<HttpEvent<T>>{
+  post<T>(resourceUrl, body: any | null, options?) : Observable<T>{
     console.log(resourceUrl);
     let accessToken = Cookie.get('access_token')
-    return new Observable<HttpEvent<T>>( obs => {
+    return new Observable<T>( obs => {
 
       let headers = new HttpHeaders({'Authorization': 'Bearer '+accessToken});
       if ( options && options.headers ){
