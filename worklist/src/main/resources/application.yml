@@ -17,3 +17,7 @@ logging:
 #  oauth2:
 #    resource:
 #      token-info-uri: http://localhost:8080/oauth/introspect
+security:
+    oauth2:
+      resource:
+        filter-order: 3
