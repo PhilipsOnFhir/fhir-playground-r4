@@ -6,6 +6,7 @@ public class Prefix {
     public static final String STOMP = "stomp";
     public static final String WEBSOCKET = "websocket";
     public static final String FHIRCAST_WEBSUB = FHIRCAST+"/websub";
+    public static final String FHIRCAST_FHIR = FHIRCAST+"/fhir";
     public static final String FHIRCAST_WEBSOCKET = FHIRCAST+"/websocket";
     public static final String FHIRCAST_TOPIC  = FHIRCAST+"/topic" ;
 }

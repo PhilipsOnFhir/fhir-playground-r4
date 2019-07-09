@@ -40,39 +40,37 @@ export class ConnectorService {
       console.log(resourceUrl);
       let accessToken = Cookie.get('access_token')
       return new Observable<T>( obs => {
-
         let headers = new HttpHeaders({'Authorization': 'Bearer '+accessToken});
         if ( options && options.headers ){
-          // console.error("headers already used");
-          // console.log(options.headers);
-          headers = options.headers.append( 'Authorization', 'Bearer '+accessToken );
+          options.headers = options.headers.append( 'Authorization', 'Bearer '+accessToken );
+        } else if ( options && !options.headers ){
+          options.headers = headers;
         }
-
         let newOptions = ( options? options: { headers: headers });
 
         this._http.get(resourceUrl, newOptions).subscribe(
-          nxt => obs.next(nxt),
+          nxt => {obs.next((nxt as unknown) as T); obs.complete()},
           err => obs.error(err)
         )
          // .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
       })
   }
 
-  put<T>(url: string, body: any| null, options?): Observable<HttpEvent<T>> {
+  put<T>(url: string, body: any| null, options?): Observable<T> {
     console.log(url);
     let accessToken = Cookie.get('access_token')
-    return new Observable<HttpEvent<T>>( obs => {
+    return new Observable<T>( obs => {
       let headers = new HttpHeaders({'Authorization': 'Bearer '+accessToken});
       if ( options && options.headers ){
-        // console.error("headers already used");
-        // console.log(options.headers);
-        headers = options.headers.append( 'Authorization', 'Bearer '+accessToken );
+        options.headers = options.headers.append( 'Authorization', 'Bearer '+accessToken );
+      } else if ( options && !options.headers ){
+        options.headers = headers;
       }
       let newOptions = ( options? options: { headers: headers });
 
       // this._http.post<T>(resourceUrl, body,{ headers: headers }).subscribe(
       this._http.put<T>(url, body, newOptions).subscribe(
-        nxt => obs.next(nxt),
+        nxt => {obs.next((nxt as unknown) as T); obs.complete()},
         err => obs.error(err)
       )
       // .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
@@ -83,19 +81,17 @@ export class ConnectorService {
     console.log(resourceUrl);
     let accessToken = Cookie.get('access_token')
     return new Observable<T>( obs => {
-
       let headers = new HttpHeaders({'Authorization': 'Bearer '+accessToken});
       if ( options && options.headers ){
-        // console.error("headers already used");
-        // console.log((options.headers as HttpHeaders).keys());
-        headers = options.headers.append( 'Authorization', 'Bearer '+accessToken );
-        // console.log( headers );
+        options.headers = options.headers.append( 'Authorization', 'Bearer '+accessToken );
+      } else if ( options && !options.headers ){
+        options.headers = headers;
       }
-      options.headers = headers;
+      let newOptions = ( options? options: { headers: headers });
 
       // this._http.post<T>(resourceUrl, body,{ headers: headers }).subscribe(
-      this._http.post<T>(resourceUrl, body,options).subscribe(
-        nxt => obs.next(nxt),
+      this._http.post<T>(resourceUrl, body,newOptions).subscribe(
+        nxt => {obs.next((nxt as unknown) as T); obs.complete()},
         err => obs.error(err)
       )
       // .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
@@ -112,7 +108,7 @@ export class ConnectorService {
 
   login(){
     let url = 'http://localhost:9444/oauth/authorize?response_type=code&client_id=' + this.clientId + '&redirect_uri='+ this.redirectUri;
-    url = url + '&scope=topic'
+    url = url + '&scope=topic+fhircast'
     console.log(url);
     window.location.href = url;
   }
@@ -122,49 +118,24 @@ export class ConnectorService {
     window.location.reload();
   }
 
-  //
-  //   private _router: Router, private _http: HttpClient, private oauthService: OAuthService){
-  //   this.oauthService.configure({
-  //     // loginUrl: 'http://localhost:8181/spring-security-oauth-server/oauth/authorize',
-  //     loginUrl: 'http://localhost:9444/oauth/authorize',
-  //     redirectUri: 'http://localhost:4200/',
-  //     clientId: 'worklist',
-  //     scope: 'read write foo bar',
-  //     oidc: false
-  //   })
-  //   this.oauthService.setStorage(sessionStorage);
-  //   this.oauthService.tryLogin({});
-  // }
-  //
-  // obtainAccessToken(){
-  //   this.oauthService.initImplicitFlow();
-  // }
-  //
-  // get<T>(resourceUrl) : Observable<any>{
-  //   console.log(resourceUrl);
-  //   return new Observable<T>( obs => {
-  //
-  //     var headers = new HttpHeaders({'Content-type': 'application/x-www-form-urlencoded; charset=utf-8', 'Authorization': 'Bearer '+this.oauthService.getAccessToken()});
-  //     this._http.get<T>(resourceUrl, { headers: headers }).subscribe(
-  //       nxt => obs.next(nxt),
-  //       err => obs.error(err)
-  //     )
-  //      // .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
-  //   })
-  // }
-  //
-  // isLoggedIn(){
-  //   console.log(this.oauthService.getAccessToken());
-  //   if (this.oauthService.getAccessToken() === null){
-  //     return false;
-  //   }
-  //   return true;
-  // }
-  //
-  // logout() {
-  //   this.oauthService.logOut();
-  //   location.reload();
-  // }
+  delete(url: string, options? ) : Observable<any> {
+    console.log("DELETE " + url);
+    let accessToken = Cookie.get('access_token')
+    return new Observable<any>( obs => {
+      let headers = new HttpHeaders({'Authorization': 'Bearer '+accessToken});
+      if ( options && options.headers ){
+        options.headers = options.headers.append( 'Authorization', 'Bearer '+accessToken );
+      } else if ( options && !options.headers ){
+        options.headers = headers;
+      }
+      let newOptions = ( options? options: { headers: headers });
 
-
+      // this._http.post<T>(resourceUrl, body,{ headers: headers }).subscribe(
+        this._http.delete(url, newOptions).subscribe(
+          nxt => { obs.next(); obs.complete() },
+          err => obs.error(err)
+        )
+        // .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+      });
+  }
 }

@@ -9,16 +9,16 @@ import {ConnectorService} from "./service/connector.service";
 @Component({
   selector: 'app-root',
   template: `
-    <div class="container" >
-      <button *ngIf="!isLoggedIn" class="btn btn-primary" (click)="login()" type="submit">Login</button>
-      <div *ngIf="isLoggedIn" class="content">
-        <span>Welcome !!</span>
-        <a class="btn btn-default pull-right"(click)="logout()" href="#">Logout</a>
-        <br/>
-        <app-home></app-home>
-      </div>
-    </div>
-  `,
+    <button *ngIf="!isLoggedIn" class="btn btn-primary" (click)="login()" type="submit">Login</button>
+    <app-home *ngIf="isLoggedIn" (logOut)="logout()"></app-home>
+<!--      <div *ngIf="isLoggedIn" class="content">-->
+<!--        <span>Welcome !!</span>-->
+<!--        <a class="btn btn-default pull-right"(click)="logout()" href="#">Logout</a>-->
+<!--        <br/>-->
+<!--        <app-home (logOut)="logout()"></app-home>-->
+<!--      </div>-->
+<!--    </div>-->
+    `,
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {

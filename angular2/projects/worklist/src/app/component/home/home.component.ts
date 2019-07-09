@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {HumanName,Practitioner} from "fhir2angular-r4";
 import {SmartOnFhirService} from "../../fhir-r4/smart-on-fhir.service";
 import {TopicService} from "../../service/topic.service";
@@ -11,7 +11,7 @@ import {HumanNameUtil} from "../../fhir-r4/util/humanname-util";
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-
+  @Output() logOut = new EventEmitter();
   topicIdSet = false;
   initialised = false;
   topicId = "??";
@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit {
   private loggedout = false;
 
   constructor( private sofs:SmartOnFhirService, private topicService: TopicService, private fhircast: FhirCastService) {
+
   }
 
   ngOnInit(): void {
@@ -100,17 +101,24 @@ export class HomeComponent implements OnInit {
 
   closeCurrentTopic() {
     console.log("close topic");
-    this.topicService.closeTopic( this.topicId ).subscribe(
-      next =>{
-        this.fhircast.logout();
-        // this.updateTopicIds();
-      },
-      error => console.log(error)
-    );
-    this.topicIdSet = false;
-    this.initialised = false;
-    this.selectedTopic = null;
-    this.topicId = null;
-    this.loggedout = true;
+    this.fhircast.logout().subscribe( nxt => {
+      console.log("Event send");
+      this.topicService.closeTopic( this.topicId ).subscribe(
+        next =>{
+          // this.updateTopicIds();
+          this.topicIdSet = false;
+          this.initialised = false;
+          this.selectedTopic = null;
+          this.topicId = null;
+          this.loggedout = true;
+          this.logOut.emit(true);
+        },
+        error => console.log(error)
+      );
+    });
+  }
+
+  logout() {
+    this.logOut.emit(true);
   }
 }

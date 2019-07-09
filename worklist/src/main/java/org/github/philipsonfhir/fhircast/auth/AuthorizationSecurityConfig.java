@@ -65,7 +65,7 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
                 .authorizedGrantTypes("password",
                         "refresh_token", "implicit", "client_credentials", "authorization_code")
                 .authorities("EMR")
-                .scopes("read","topic","user/*.*")
+                .scopes("read","topic","fhircast","user/*.*")
                 .accessTokenValiditySeconds(3600)
                 .redirectUris("http://localhost:8080/test","http://localhost:4200/")
                 .secret("{noop}worklist-secret");

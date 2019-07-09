@@ -1,5 +1,6 @@
 package org.github.philipsonfhir.fhircast.auth;
 
+import org.github.philipsonfhir.fhircast.server.Prefix;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
@@ -15,8 +16,10 @@ class ResourceServer extends ResourceServerConfigurerAdapter {
                 .antMatchers("/api/**")
             .and()
                 .authorizeRequests()
-                .antMatchers("/api/fhircast/topic/**").access("#oauth2.hasScope('topic')")
-                .antMatchers("/api/fhircast/fhir/**").access("#oauth2.hasScope('topic')")
+//                .antMatchers("/api/fhircast/**").access("#oauth2.hasScope('topic')")
+                .antMatchers(Prefix.FHIRCAST_TOPIC+"/**").access("#oauth2.hasScope('topic')")
+                .antMatchers(Prefix.FHIRCAST_FHIR+"/**").access("#oauth2.hasScope('topic')")
+                .antMatchers(Prefix.FHIRCAST_WEBSUB+"/**").access("#oauth2.hasScope('fhircast')")
         ;
     }
 }

@@ -60,6 +60,6 @@ export class TopicService {
   closeTopic( topicId:string ): Observable<string> {
     console.log("close topic "+topicId);
     console.log(this.baseUrl+topicId);
-    return this.http.delete<any>( this.baseUrl+topicId);
+    return this.httpSec.delete( this.baseUrl+topicId);
   }
 }

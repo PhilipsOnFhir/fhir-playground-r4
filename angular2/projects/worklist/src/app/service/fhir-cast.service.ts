@@ -81,10 +81,14 @@ export class FhirCastService {
     this.initialized = true;
   }
 
-  logout() {
-    console.log("logout");
-    let body = this.getEventString( this.topicId, "user-logout",null );
-    this.sendEvent( body );
+  logout(): Observable<any> {
+    return new Observable( obs => {
+      console.log("logout");
+      let body = this.getEventString( this.topicId, "user-logout",null );
+      this.sendEvent( body );
+      obs.next();
+      obs.complete();
+    });
   }
 
   private sendEvent(body: string) {

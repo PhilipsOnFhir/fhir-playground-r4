@@ -11,6 +11,7 @@
     <span>Practitioner: {{practitionerName}}</span>
     <span class="example-fill-remaining-space"></span>
     <span *ngIf="topicIdSet"><button mat-icon-button (click)="closeCurrentTopic()"><mat-icon>done</mat-icon></button></span>
+    <span *ngIf="!topicIdSet"><button mat-icon-button (click)="logout()"><mat-icon>done</mat-icon></button></span>
   </mat-toolbar-row>
 </mat-toolbar>
 
