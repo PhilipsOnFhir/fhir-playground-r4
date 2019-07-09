@@ -1,6 +1,7 @@
 import {Injectable, OnInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {observable, Observable} from "rxjs";
+import {ConnectorService} from "./connector.service";
 
 @Injectable({
   providedIn: 'root'
@@ -9,14 +10,14 @@ export class TopicService {
   private topicIds: string[];
   private baseUrl = "http://localhost:9444/api/fhircast/topic/";
 
-  constructor(  private http: HttpClient ) {
+  constructor(  private http: HttpClient, private httpSec: ConnectorService ) {
   }
 
   updateTopidIds(): Observable<any> {
     return new Observable<any>(
       observable => {
 
-        this.http.get<string[]>( this.baseUrl  ).subscribe(
+        this.httpSec.get<string[]>( this.baseUrl  ).subscribe(
           next => { console.log( next);
               this.topicIds = next;
               observable.next();
@@ -33,7 +34,7 @@ export class TopicService {
   createTopicId(): Observable<string> {
     return new Observable<string>(
       observable => {
-        this.http.post<any>( this.baseUrl, "", {observe: 'response' as 'body'} ).subscribe(
+        this.httpSec.post<any>( this.baseUrl, "", {observe: 'response' as 'body'} ).subscribe(
           next => {
               let topicId = next.body.topicID;
               this.updateTopidIds().subscribe(

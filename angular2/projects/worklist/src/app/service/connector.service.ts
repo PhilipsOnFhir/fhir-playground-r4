@@ -20,11 +20,11 @@ export class ConnectorService {
     params.append('redirect_uri', this.redirectUri);
     params.append('code',code);
 
-    let headers = new HttpHeaders({'Content-type': 'application/x-www-form-urlencoded; charset=utf-8', 'Authorization': 'Basic '+btoa(this.clientId+":secret")});
+    let headers = new HttpHeaders({'Content-type': 'application/x-www-form-urlencoded; charset=utf-8', 'Authorization': 'Basic '+btoa(this.clientId+":worklist-secret")});
     this._http.post('http://localhost:9444/oauth/token', params.toString(), { headers: headers })
       .subscribe(
         data => this.saveToken(data),
-        err => alert('Invalid Credentials')
+        err => { console.log(err);alert('Invalid Credentials');}
       );
   }
 
@@ -41,7 +41,7 @@ export class ConnectorService {
       let accessToken = Cookie.get('access_token')
       return new Observable<T>( obs => {
 
-        let headers = new HttpHeaders({'Content-type': 'application/x-www-form-urlencoded; charset=utf-8', 'Authorization': 'Bearer '+accessToken});
+        let headers = new HttpHeaders({'Authorization': 'Bearer '+accessToken});
         this._http.get<T>(resourceUrl, { headers: headers }).subscribe(
           nxt => obs.next(nxt),
           err => obs.error(err)
@@ -54,19 +54,41 @@ export class ConnectorService {
     //   .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
   }
 
+  post<T>(resourceUrl, body: any | null, options?) : Observable<T>{
+    console.log(resourceUrl);
+    let accessToken = Cookie.get('access_token')
+    return new Observable<T>( obs => {
+      let headers = new HttpHeaders({'Authorization': 'Bearer '+accessToken});
+      options.headers = headers;
+
+
+
+      // this._http.post<T>(resourceUrl, body,{ headers: headers }).subscribe(
+      this._http.post<T>(resourceUrl, body,options).subscribe(
+        nxt => obs.next(nxt),
+        err => obs.error(err)
+      )
+      // .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+    })
+
+    // var headers = new HttpHeaders({'Content-type': 'application/x-www-form-urlencoded; charset=utf-8', 'Authorization': 'Bearer '+Cookie.get('access_token')});
+    // return this._http.get(resourceUrl, { headers: headers })
+    //   .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+  }
+
   checkCredentials(){
     return Cookie.check('access_token');
   }
 
   login(){
     let url = 'http://localhost:9444/oauth/authorize?response_type=code&client_id=' + this.clientId + '&redirect_uri='+ this.redirectUri;
-    url = url + '&scope=token'
+    url = url + '&scope=topic'
     console.log(url);
     window.location.href = url;
   }
 
   logout() {
-    Cookie.delete('access_token');
+    Cookie.delete('access_token')
     window.location.reload();
   }
 
@@ -113,4 +135,5 @@ export class ConnectorService {
   //   this.oauthService.logOut();
   //   location.reload();
   // }
+
 }

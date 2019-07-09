@@ -10,6 +10,8 @@ import { PatientImageSelectorComponent } from './component/patient-image-selecto
 import {TopicService} from "./service/topic.service";
 import { LaunchDisplayComponent } from './component/launch-display/launch-display.component';
 import { WorklistComponent } from './component/worklist/worklist.component';
+import {HomeComponent} from "./component/home/home.component";
+import {ConnectorService} from "./service/connector.service";
 
 @NgModule({
   declarations: [
@@ -17,6 +19,7 @@ import { WorklistComponent } from './component/worklist/worklist.component';
     PatientImageSelectorComponent,
     LaunchDisplayComponent,
     WorklistComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +28,7 @@ import { WorklistComponent } from './component/worklist/worklist.component';
     RouterModule
   ],
   providers: [
-    SmartOnFhirService, TopicService
+    SmartOnFhirService, TopicService, ConnectorService
   ],
   bootstrap: [AppComponent]
 })

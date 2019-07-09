@@ -67,7 +67,7 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
                 .authorities("EMR")
                 .scopes("read","topic","user/*.*")
                 .accessTokenValiditySeconds(3600)
-                .redirectUris("http://localhost:8080/test","http://localhost:4200")
+                .redirectUris("http://localhost:8080/test","http://localhost:4200/")
                 .secret("{noop}worklist-secret");
     }
 

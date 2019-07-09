@@ -75,7 +75,7 @@ public class SeleniumTests {
         //Execute the method writing your HttpEntity to the request
         ResponseEntity<String> response = restTemplate.exchange(baseUrl+ Prefix.FHIRCAST_TOPIC, HttpMethod.GET, entity, String.class);
         System.out.println(response.getBody());
-        assertTrue( response.getBody().startsWith("{"));
+        assertTrue( response.getBody().startsWith("["));
         driver.quit();
     }
 
