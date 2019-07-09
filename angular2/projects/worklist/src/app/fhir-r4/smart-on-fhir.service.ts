@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs/internal/Observable';
 import {CapabilityStatement,DomainResource,Bundle,Resource,Reference,Parameters} from "fhir2angular-r4";
+import {ConnectorService} from "../service/connector.service";
 
 
 @Injectable()
@@ -13,7 +14,7 @@ export class SmartOnFhirService   {
   private url: string = null;
   private token: TokenResponse = null;
 
-  constructor( private http: HttpClient /*, private router: Router*/ ) {
+  constructor( private http: ConnectorService /*, private router: Router*/ ) {
   }
 
   initialize( fs: string, path: string): Observable<any> {
@@ -229,7 +230,7 @@ export class SmartOnFhirService   {
     let url = this.url + (resourceType.startsWith('/') ? resourceType : '/' + resourceType);
     url += searchString;
     console.log(url);
-    return this.http.get<Bundle>(url  );
+    return this.http.get<Bundle>(url);
   }
 
   postResource( resource: Resource): Observable<any> {

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import { Cookie } from 'ng2-cookies';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {HttpClient, HttpEvent, HttpHeaders} from '@angular/common/http';
 // import 'rxjs/add/operator/catch';
 // import 'rxjs/add/operator/map';
 import {Observable} from "rxjs";
@@ -36,32 +36,62 @@ export class ConnectorService {
     window.location.href = 'http://localhost:4200';
   }
 
-  get<T>(resourceUrl) : Observable<T>{
+  get<T>(resourceUrl, options?) : Observable<T>{
       console.log(resourceUrl);
       let accessToken = Cookie.get('access_token')
       return new Observable<T>( obs => {
 
         let headers = new HttpHeaders({'Authorization': 'Bearer '+accessToken});
-        this._http.get<T>(resourceUrl, { headers: headers }).subscribe(
+        if ( options && options.headers ){
+          // console.error("headers already used");
+          // console.log(options.headers);
+          headers = options.headers.append( 'Authorization', 'Bearer '+accessToken );
+        }
+
+        let newOptions = ( options? options: { headers: headers });
+
+        this._http.get<T>(resourceUrl, newOptions).subscribe(
           nxt => obs.next(nxt),
           err => obs.error(err)
         )
          // .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
       })
-
-    // var headers = new HttpHeaders({'Content-type': 'application/x-www-form-urlencoded; charset=utf-8', 'Authorization': 'Bearer '+Cookie.get('access_token')});
-    // return this._http.get(resourceUrl, { headers: headers })
-    //   .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
   }
 
-  post<T>(resourceUrl, body: any | null, options?) : Observable<T>{
+  put<T>(url: string, body: any| null, options?): Observable<HttpEvent<T>> {
+    console.log(url);
+    let accessToken = Cookie.get('access_token')
+    return new Observable<HttpEvent<T>>( obs => {
+      let headers = new HttpHeaders({'Authorization': 'Bearer '+accessToken});
+      if ( options && options.headers ){
+        // console.error("headers already used");
+        // console.log(options.headers);
+        headers = options.headers.append( 'Authorization', 'Bearer '+accessToken );
+      }
+      let newOptions = ( options? options: { headers: headers });
+
+      // this._http.post<T>(resourceUrl, body,{ headers: headers }).subscribe(
+      this._http.put<T>(url, body, newOptions).subscribe(
+        nxt => obs.next(nxt),
+        err => obs.error(err)
+      )
+      // .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+    })
+  }
+
+  post<T>(resourceUrl, body: any | null, options?) : Observable<HttpEvent<T>>{
     console.log(resourceUrl);
     let accessToken = Cookie.get('access_token')
-    return new Observable<T>( obs => {
+    return new Observable<HttpEvent<T>>( obs => {
+
       let headers = new HttpHeaders({'Authorization': 'Bearer '+accessToken});
+      if ( options && options.headers ){
+        // console.error("headers already used");
+        // console.log((options.headers as HttpHeaders).keys());
+        headers = options.headers.append( 'Authorization', 'Bearer '+accessToken );
+        // console.log( headers );
+      }
       options.headers = headers;
-
-
 
       // this._http.post<T>(resourceUrl, body,{ headers: headers }).subscribe(
       this._http.post<T>(resourceUrl, body,options).subscribe(
@@ -135,5 +165,6 @@ export class ConnectorService {
   //   this.oauthService.logOut();
   //   location.reload();
   // }
+
 
 }

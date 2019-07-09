@@ -3,6 +3,7 @@ import {DomainResource,Resource,Patient,ImagingStudy} from "fhir2angular-r4";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import * as Rx from 'rxjs';
 import {Observable, Observer, Subject} from "rxjs";
+import {ConnectorService} from "./connector.service";
 
 class FhirCastEvent {
   hub_event: string;
@@ -20,11 +21,11 @@ export class FhirCastService {
   public ws: any;
   private websocketInitialised = false;
 
-  constructor(  private http: HttpClient ) {
+  constructor(  private secHttp: ConnectorService, private http: HttpClient ) {
   }
 
   subscribe(): Observable<FhirCastEvent>{
-    let fcws = new FhirCastWebsocket(this.http);
+    let fcws = new FhirCastWebsocket(this.secHttp, this.http);
     return fcws.subscribe( this.topicId, this.topicUrl);
   }
 
@@ -90,7 +91,7 @@ export class FhirCastService {
     const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
     // console.log( body);
 
-    this.http.post(this.topicUrl, body, {headers: myHeaders, observe: 'response'} ).subscribe(
+    this.secHttp.post(this.topicUrl, body, {headers: myHeaders, observe: 'response'} ).subscribe(
       next => {
         // console.log(next)
       },
@@ -133,7 +134,7 @@ class FhirCastWebsocket{
   public ws: any;
   private websocketInitialised = false;
 
-  constructor( private http: HttpClient ){
+  constructor( private secHttp: ConnectorService, private http: HttpClient ){
   }
 
   subscribe( topicId:string, topicUrl:string ): Observable<FhirCastEvent>{
@@ -153,7 +154,7 @@ class FhirCastWebsocket{
         console.log(subscriptionRequest);
         //    const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
         const myHeaders = new HttpHeaders().set('Content-Type', 'application/json');
-        this.http.post(topicUrl, subscriptionRequest, {
+        this.secHttp.post(topicUrl, subscriptionRequest, {
           headers: myHeaders,
           responseType: 'text' as 'json'
         }).subscribe(

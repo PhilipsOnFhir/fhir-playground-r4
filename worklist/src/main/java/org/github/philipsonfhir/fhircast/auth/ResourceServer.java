@@ -14,7 +14,9 @@ class ResourceServer extends ResourceServerConfigurerAdapter {
         http.requestMatchers()
                 .antMatchers("/api/**")
             .and()
-                .authorizeRequests().anyRequest()
-                .access("#oauth2.hasScope('topic')");
+                .authorizeRequests()
+                .antMatchers("/api/fhircast/topic/**").access("#oauth2.hasScope('topic')")
+                .antMatchers("/api/fhircast/fhir/**").access("#oauth2.hasScope('topic')")
+        ;
     }
 }

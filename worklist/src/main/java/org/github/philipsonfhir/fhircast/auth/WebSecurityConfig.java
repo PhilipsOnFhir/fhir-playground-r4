@@ -79,12 +79,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .anyRequest().authenticated()
+                .antMatchers("/api/fhircast/websocket/**").permitAll()
             .and()
                 .formLogin()
             .and()
                 .logout().permitAll()
-//            .and()
-//                .antMatcher("/api/**").anonymous()
             .and()
                 .csrf().disable();
     }

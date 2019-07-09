@@ -1,5 +1,5 @@
 import {Injectable, OnInit} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpResponse} from "@angular/common/http";
 import {observable, Observable} from "rxjs";
 import {ConnectorService} from "./connector.service";
 
@@ -36,7 +36,7 @@ export class TopicService {
       observable => {
         this.httpSec.post<any>( this.baseUrl, "", {observe: 'response' as 'body'} ).subscribe(
           next => {
-              let topicId = next.body.topicID;
+              let topicId = (next as HttpResponse<any>).body.topicID;
               this.updateTopidIds().subscribe(
                 next => {
                   observable.next(topicId);

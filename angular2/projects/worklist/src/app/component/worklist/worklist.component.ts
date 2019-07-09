@@ -96,7 +96,7 @@ export class WorklistComponent implements OnInit {
     let resource = this.launchSessions[index-1];
     if ( resource && resource.resourceType===Patient.def ) {
       this.fhircast.openPatient(resource as Patient);
-    } else {
+    } else if ( resource && resource.resourceType===ImagingStudy.def ){
       this.fhircast.openStudy(resource as ImagingStudy);
     }
   }
