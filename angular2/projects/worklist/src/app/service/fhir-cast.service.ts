@@ -68,6 +68,7 @@ export class FhirCastService {
     let body = this.getEventString( this.topicId, "close-patient-chart", patient);
     this.sendEvent( body );
   }
+
   closeStudy(study: DomainResource) {
     console.log("close study")
     let body = this.getEventString( this.topicId, "close-imaging-study", study);
@@ -110,7 +111,7 @@ export class FhirCastService {
         "\t{ \"hub.topic\": \"" + topicId + "\", \n" +
         "\t  \"hub.event\":\"" + eventType + "\",\n" +
         "\t  \"context\": [\n" +
-        "\t\t{ \t\"key\": \"patient\",\n" +
+        "\t\t{ \t\"key\": \""+(resource.resourceType===Patient.def?"patient":"study")+"\",\n" +
         "\t\t\t\"resource\": \n" +
         "\t\t\t\t{\t\"resourceType\":\"" + resource.resourceType + "\",\n" +
         "\t\t\t\t\t\"id\":\"" + resource.id + "\"\n" +
@@ -150,7 +151,7 @@ class FhirCastWebsocket{
           "\t\"hub.mode\":\"subscribe\",\n" +
           "\t\"hub.topic\":\"" + topicId + "\",\n" +
           "\t\"hub.secret\":\"randomSecret\",\n" +
-          "\t\"hub.events\":\"open-patient-chart,close-patient-chart\",\n" +
+          "\t\"hub.events\":\"open-patient-chart,close-patient-chart,open-imaging-study,close-imaging-study,user-logout\",\n" +
           // "\t\"hub.lease_seconds\":null,\n" +
           "\t\"hub.channel.type\":\"websocket\"\n" +
           "}\n";

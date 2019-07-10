@@ -8,10 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public enum FhircastEventType {
     OPEN_PATIENT_CHART("open-patient-chart"),
-    SWITCH_PATIENT_CHART("switch-patient-chart"),
+//    SWITCH_PATIENT_CHART("switch-patient-chart"),
     CLOSE_PATIENT_CHART("close-patient-chart"),
     OPEN_IMAGING_STUDY("open-imaging-study"),
-    SWITCH_IMAGING_STUDY("switch-imaging-study"),
+//    SWITCH_IMAGING_STUDY("switch-imaging-study"),
     CLOSE_IMAGING_STUDY("close-imaging-study"),
     USER_LOGOUT("user-logout"),
     USER_HIBERNATE("user-hibernate");

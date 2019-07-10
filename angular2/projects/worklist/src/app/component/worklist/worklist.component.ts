@@ -89,6 +89,8 @@ export class WorklistComponent implements OnInit {
         this.launchSessions.push(ls)
       }
     } );
+    this.selectedLaunchIndex=0;
+
   }
 
   selectedIndexChange(index: number) {

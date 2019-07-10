@@ -87,17 +87,18 @@ public class FhircastWebsubClientWebsocket extends FhirCastWebsubClient {
     @Override
     public void sendEvent(FhirCastWorkflowEvent fhirCastWorkflowEvent ) throws FhirCastException {
 // send model events
-        logger.info("eventReceived " + fhirCastWorkflowEvent);
-        logger.info("Sending event to " + websocketId );
-        this.websocketSessions.stream()
-                .forEach( websocketSession -> {
-                    try {
-                        websocketSession.sendEvent( fhirCastWorkflowEvent );
-                    } catch (IOException e) {
-                        logger.info("Error sending event "+websocketSession );
-                    }
-                });
-
+        if ( hasSubscription(fhirCastWorkflowEvent.getEvent().getHub_event() )) {
+            logger.info("eventReceived " + fhirCastWorkflowEvent);
+            logger.info("Sending event to " + websocketId);
+            this.websocketSessions.stream()
+                    .forEach(websocketSession -> {
+                        try {
+                            websocketSession.sendEvent(fhirCastWorkflowEvent);
+                        } catch (IOException e) {
+                            logger.info("Error sending event " + websocketSession);
+                        }
+                    });
+        }
 //        if (isVerified() && hasSubscription(fhirCastWorkflowEvent.getEvent().getHub_event())) {
 //            logger.info("Sending event to " + websocketId );
 

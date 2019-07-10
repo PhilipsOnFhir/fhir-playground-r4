@@ -12,8 +12,11 @@ public class FhirCastTopicStudyOrPatient {
         _patient = patient;
     }
 
-    public FhirCastTopicStudyOrPatient(FhirCastTopic fhirCastTopic, ImagingStudy study) {
+    public FhirCastTopicStudyOrPatient( ImagingStudy study) {
         _imagingStudy = study;
+//        if ( study.hasSubject() ){
+//            this._patient = study.getSubject().getReference();
+//        }
     }
 
     public Resource getPatient() {
@@ -53,6 +56,19 @@ public class FhirCastTopicStudyOrPatient {
         return false;
     }
 
+    public boolean contains(Patient patient) {
+        if ( hasPatient() && _patient.getId().equals(patient.getId() )){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean contains(ImagingStudy study ) {
+        if ( hasImagingStudy() && _imagingStudy.getId().equals(study.getId() )){
+            return true;
+        }
+        return false;
+    }
 //    public void closePatientChart() {
 //        _fhirCastTopic.eventReceived(FhircastEventType.CLOSE_PATIENT_CHART, null );
 //    }

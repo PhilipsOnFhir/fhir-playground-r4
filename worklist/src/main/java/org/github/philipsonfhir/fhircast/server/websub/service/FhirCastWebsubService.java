@@ -9,6 +9,7 @@ import org.github.philipsonfhir.fhircast.support.NotImplementedException;
 import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastSessionSubscribe;
 import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastWorkflowEvent;
 import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastWorkflowEventEvent;
+import org.hl7.fhir.r4.model.ImagingStudy;
 import org.hl7.fhir.r4.model.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -75,11 +76,21 @@ public class FhirCastWebsubService implements ApplicationListener<FhirCastTopicE
                 fhirCastTopic.close( patient );
                 break;
             }
-            case SWITCH_PATIENT_CHART: {
-                Patient patient = fhirCastWorkflowEventEvent.retrievePatientFromContext();
-                fhirCastTopic.switchPatient( patient );
+            case OPEN_IMAGING_STUDY: {
+                ImagingStudy study = fhirCastWorkflowEventEvent.retrieveImagingStudyFromContext();
+                fhirCastTopic.openImagingStudy( study );
                 break;
             }
+            case CLOSE_IMAGING_STUDY: {
+                ImagingStudy study = fhirCastWorkflowEventEvent.retrieveImagingStudyFromContext();
+                fhirCastTopic.close( study );
+                break;
+            }
+//            case SWITCH_PATIENT_CHART: {
+//                Patient patient = fhirCastWorkflowEventEvent.retrievePatientFromContext();
+//                fhirCastTopic.switchPatient( patient );
+//                break;
+//            }
             default:
                 throw new NotImplementedException();
         }

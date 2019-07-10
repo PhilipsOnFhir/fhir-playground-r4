@@ -113,7 +113,7 @@ public class FhirCastWebsubClient {
         fhirCastSessionSubscribe.setHub_mode( "unsubscribe" );
         fhirCastSessionSubscribe.setHub_topic( topicId );
         fhirCastSessionSubscribe.setHub_secret("mysecret");
-        fhirCastSessionSubscribe.setHub_events( FhircastEventType.OPEN_PATIENT_CHART+","+ FhircastEventType.SWITCH_PATIENT_CHART+","+ FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.USER_LOGOUT ); //"patient-open-chart,patient-logout-chart" );
+        fhirCastSessionSubscribe.setHub_events( FhircastEventType.OPEN_PATIENT_CHART+","+ FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.USER_LOGOUT ); //"patient-open-chart,patient-logout-chart" );
         restTemplate.postForEntity( baseUrl+"/"+Prefix.FHIRCAST_WEBSUB+"/"+topicId, fhirCastSessionSubscribe, String.class );
     }
 
@@ -123,7 +123,7 @@ public class FhirCastWebsubClient {
         fhirCastSessionSubscribe.setHub_mode( "subscribe" );
         fhirCastSessionSubscribe.setHub_topic( topicId );
         fhirCastSessionSubscribe.setHub_secret("mysecret");
-        fhirCastSessionSubscribe.setHub_events( FhircastEventType.OPEN_PATIENT_CHART+","+ FhircastEventType.SWITCH_PATIENT_CHART+","+ FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.USER_LOGOUT ); //"patient-open-chart,patient-logout-chart" );
+        fhirCastSessionSubscribe.setHub_events( FhircastEventType.OPEN_PATIENT_CHART+","+ FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.CLOSE_PATIENT_CHART+","+FhircastEventType.USER_LOGOUT ); //"patient-open-chart,patient-logout-chart" );
         restTemplate.postForEntity( baseUrl+"/"+Prefix.FHIRCAST_WEBSUB+"/"+topicId, fhirCastSessionSubscribe, String.class );
     }
 

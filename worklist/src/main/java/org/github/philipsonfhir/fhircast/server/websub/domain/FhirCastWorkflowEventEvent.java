@@ -5,6 +5,7 @@ import org.github.philipsonfhir.fhircast.support.FhirCastException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hl7.fhir.r4.model.ImagingStudy;
 import org.hl7.fhir.r4.model.Patient;
 
 import java.util.ArrayList;
@@ -26,6 +27,17 @@ public class FhirCastWorkflowEventEvent {
             .findFirst();
         if ( opt.isPresent() ){
             return (Patient) opt.get().retrieveFhirResource();
+        }
+        throw new FhirCastException( "Context should contain patient" );
+    }
+
+    public ImagingStudy retrieveImagingStudyFromContext() throws FhirCastException {
+        Optional<FhirCastContext> opt = context
+                .stream()
+                .filter( fhirCastContext -> fhirCastContext.getKey().equals( "study" ) )
+                .findFirst();
+        if ( opt.isPresent() ){
+            return (ImagingStudy) opt.get().retrieveFhirResource();
         }
         throw new FhirCastException( "Context should contain patient" );
     }
