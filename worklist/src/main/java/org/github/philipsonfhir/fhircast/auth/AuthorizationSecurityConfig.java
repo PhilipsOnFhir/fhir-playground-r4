@@ -42,25 +42,25 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients
             .inMemory()
-                .withClient("my-trusted-client")
-                    .authorizedGrantTypes("password",
-                            "refresh_token", "implicit", "client_credentials", "authorization_code")
-                    .authorities("CLIENT")
-                    .scopes("read", "write", "trust")
-                    .accessTokenValiditySeconds(3600)
-                    .redirectUris("http://localhost:8081/test.html")
-//                    .resourceIds("resource")
-                    .secret("mysecret")
-            .and()
-                .withClient("fhircasthub")
-                        .authorizedGrantTypes("password",
-                                "refresh_token", "implicit", "client_credentials", "authorization_code")
-                        .authorities("CLIENT")
-                        .scopes("read", "write", "trust")
-                        .accessTokenValiditySeconds(3600)
-                        .redirectUris("http://localhost:8080/test")
-                        .secret("{noop}fhircast-secret")
-            .and()
+//                .withClient("my-trusted-client")
+//                    .authorizedGrantTypes("password",
+//                            "refresh_token", "implicit", "client_credentials", "authorization_code")
+//                    .authorities("CLIENT")
+//                    .scopes("read", "write", "trust")
+//                    .accessTokenValiditySeconds(3600)
+//                    .redirectUris("http://localhost:8081/test.html")
+////                    .resourceIds("resource")
+//                    .secret("mysecret")
+//            .and()
+//                .withClient("fhircasthub")
+//                        .authorizedGrantTypes("password",
+//                                "refresh_token", "implicit", "client_credentials", "authorization_code")
+//                        .authorities("CLIENT")
+//                        .scopes("read", "write", "trust")
+//                        .accessTokenValiditySeconds(3600)
+//                        .redirectUris("http://localhost:8080/test")
+//                        .secret("{noop}fhircast-secret")
+//            .and()
                 .withClient("worklist")
                 .authorizedGrantTypes("password",
                         "refresh_token", "implicit", "client_credentials", "authorization_code")
@@ -68,7 +68,16 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
                 .scopes("read","topic","fhircast","user/*.*")
                 .accessTokenValiditySeconds(3600)
                 .redirectUris("http://localhost:8080/test","http://localhost:4200/")
-                .secret("{noop}worklist-secret");
+                .secret("{noop}worklist-secret")
+            .and()
+                .withClient("eventviewer")
+                        .authorizedGrantTypes("authorization_code")
+                        .authorities("CLIENT")
+                        .scopes("fhircast")
+                        .accessTokenValiditySeconds(3600)
+                        .redirectUris("http://localhost:4201")
+                        .secret("{noop}eventviewer-secret")
+                ;
     }
 
     @Override

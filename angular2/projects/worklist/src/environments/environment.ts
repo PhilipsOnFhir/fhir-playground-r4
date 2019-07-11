@@ -5,7 +5,12 @@
 export const environment = {
   production: false,
   fhirUrl: 'http://localhost:9404/hapi-fhir-jpaserver/fhir/',
-  topicViewerUrl: 'http://localhost:9401/'
+  smartApps: [
+    { name: 'Event Viewer',
+      url: 'http://localhost:4201/launch'
+    }
+  ]
+
 
 };
 

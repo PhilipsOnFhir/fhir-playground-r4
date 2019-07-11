@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start worklist": "ng serve worklist",
+    "start event": "ng serve event-viewer --port 4201",
     "watch fhirr4": "ng build fhir2angular-r4 --watch",
     "build": "ng build",
     "test": "ng test",
@@ -22,6 +23,7 @@
     "@angular/platform-browser": "~8.0.0",
     "@angular/platform-browser-dynamic": "~8.0.0",
     "@angular/router": "~8.0.0",
+    "ng2-cookies": "^1.0.12",
     "rxjs": "~6.4.0",
     "tslib": "^1.9.0",
     "zone.js": "~0.9.1"

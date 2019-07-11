@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs/internal/Observable';
 import {CapabilityStatement,DomainResource,Bundle,Resource,Reference,Parameters} from "fhir2angular-r4";
-import {ConnectorService} from "../service/connector.service";
+// import {ConnectorService} from "../service/connector.service";
 import {ActivatedRoute} from "@angular/router";
 import {CapabilityStatement_Security} from "../../../../fhir2angular-r4/src/lib/CapabilityStatement_Security";
 
@@ -15,7 +15,7 @@ export class SmartOnFhirService   {
   private url: string = null;
   private token: TokenResponse = null;
 
-  constructor( private http: ConnectorService, private route: ActivatedRoute ) {
+  constructor( private http: HttpClient, private route: ActivatedRoute ) {
   }
 
   initialize2( clientId: string, clientSecret:string, scopes:string ): Observable<any> {
@@ -70,7 +70,7 @@ export class SmartOnFhirService   {
                 const secret = clientSecret;
                 // sessionStorage.setItem('clientId', clientId);
                 sessionStorage.setItem('secret', secret);
-                sessionStorage.setItem('serviceUri', iss);
+                sessionStorage.setItem('fhirUri', iss);
                 sessionStorage.setItem('redirectUri', redirect_uri);
                 sessionStorage.setItem('tokenUri', token);
 
@@ -96,9 +96,10 @@ export class SmartOnFhirService   {
           const iss = sessionStorage.getItem('serviceUri');
           // const clientId = sessionStorage.getItem('clientId');
           const secret = sessionStorage.getItem('secret');
-          const serviceUri = sessionStorage.getItem('serviceUri');
+          const serviceUri = sessionStorage.getItem('fhirUri');
           const redirectUri = sessionStorage.getItem('redirectUri');
           const tokenUri = sessionStorage.getItem('tokenUri');
+          this.url = serviceUri;
 
           const params = new URLSearchParams();
           params.set('grant_type', 'authorization_code');

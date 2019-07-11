@@ -5,13 +5,18 @@ import { AppComponent } from './app.component';
 import { MaterialModule} from "./material/material.module";
 import { SmartOnFhirService} from "./fhir-r4/smart-on-fhir.service";
 import { HttpClientModule} from "@angular/common/http";
-import { RouterModule} from "@angular/router";
+import { RouterModule, Routes} from "@angular/router";
 import { PatientImageSelectorComponent } from './component/patient-image-selector/patient-image-selector.component';
-import {TopicService} from "./service/topic.service";
+import { TopicService} from "./service/topic.service";
 import { LaunchDisplayComponent } from './component/launch-display/launch-display.component';
 import { WorklistComponent } from './component/worklist/worklist.component';
-import {HomeComponent} from "./component/home/home.component";
-import {ConnectorService} from "./service/connector.service";
+import { HomeComponent} from "./component/home/home.component";
+import { ConnectorService} from "./service/connector.service";
+
+const appRoutes: Routes = [
+  { path: 'launch', component: AppComponent },
+  { path: '', component: AppComponent}
+];
 
 @NgModule({
   declarations: [
@@ -25,7 +30,7 @@ import {ConnectorService} from "./service/connector.service";
     BrowserModule,
     MaterialModule,
     HttpClientModule,
-    RouterModule
+    RouterModule.forRoot(appRoutes)
   ],
   providers: [
     SmartOnFhirService, TopicService, ConnectorService

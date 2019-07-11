@@ -3,6 +3,7 @@ import {SmartOnFhirService} from "../../fhir-r4/smart-on-fhir.service";
 import {Resource,Encounter,ResourceTypeEnum,ImagingStudy,Patient,Reference,EncounterStatusEnum,Practitioner} from "fhir2angular-r4";
 import {HumanNameUtil} from "../../fhir-r4/util/humanname-util";
 import {Encounter_Participant} from "fhir2angular-r4";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-launch-display',
@@ -21,11 +22,13 @@ export class LaunchDisplayComponent implements OnInit {
   private patientName: string;
   private practitionerName: string;
   private title = '-';
+  smartApps: any;
 
-  constructor( private sofs: SmartOnFhirService ) { }
+  constructor( private sofs: SmartOnFhirService ) {
+    this.smartApps = environment.smartApps;
+  }
 
   ngOnInit() {
-
     this.encounter = new Encounter();
     if ( this.context.resourceType === ResourceTypeEnum.IMAGINGSTUDY ){
       this.imagingStudy = this.context as ImagingStudy;
@@ -67,5 +70,13 @@ export class LaunchDisplayComponent implements OnInit {
   close() {
     console.log("close");
     this.closeLaunch.emit(this.context);
+  }
+
+  launch(app: any) {
+    console.log("launch ");
+    console.log(app);
+    let launch = "unknown";
+    let url=app.url+"/?launch="+launch+"&iss="+this.sofs.getUrl();
+    window.open(url);
   }
 }

@@ -33,6 +33,16 @@ export class WorklistComponent implements OnInit {
             this.launchedClosed(p);
             break;
           }
+          case "open-imaging-study": {
+            let s = fce.context[0].resource as ImagingStudy;
+            this.imagingStudySelected(s);
+            break;
+          }
+          case "close-imaging-study":{
+            let s = fce.context[0].resource as ImagingStudy;
+            this.launchedClosed(s);
+            break;
+          }
         }
       }
       , err => console.log(err)

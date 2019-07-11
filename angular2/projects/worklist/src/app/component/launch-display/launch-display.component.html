@@ -10,3 +10,4 @@
   <tr *ngIf="patient">     <td>Patient:</td>     <td>{{patient.id}}</td>      <td>{{this.patientName}}</td></tr>
   <tr *ngIf="imagingStudy"><td>ImagingStudy:</td><td>{{imagingStudy.id}}</td> </tr>
 </table>
+<button *ngFor="let app of smartApps" (click)="launch(app)">{{app.name}}</button>

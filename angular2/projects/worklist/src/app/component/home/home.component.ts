@@ -45,14 +45,19 @@ export class HomeComponent implements OnInit {
     this.topicId = topicId;
     this.topicIdSet = true;
 
-    this.sofs.initialize( "http://localhost:9444/api/fhircast/fhir/"+topicId, '' ).subscribe(
+    let topicUrl = "http://localhost:9444/api/fhircast/websub/"+topicId;
+    let fhirUrl  = "http://localhost:9444/api/fhircast/fhir/"+topicId;
+
+    // this.sofs.initialize( "http://localhost:9444/api/fhircast/fhir/"+topicId, '' ).subscribe(
+    this.sofs.initialize( fhirUrl, '' ).subscribe(
       data => console.log(data),
       error => {
       },
       () => {
         console.log('sofs initialisation ready');
         this.initialised = true;
-        this.fhircast.login("http://localhost:9444/api/fhircast/websub/"+topicId, this.topicId );
+        // this.fhircast.login("http://localhost:9444/api/fhircast/websub/"+topicId, this.topicId );
+        this.fhircast.login(topicUrl, this.topicId );
         this.fhircast.subscribe().subscribe( fce => {
             console.log(fce);
             switch ( fce.hub_event ) {
