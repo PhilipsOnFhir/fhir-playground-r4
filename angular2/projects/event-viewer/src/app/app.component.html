@@ -9,3 +9,9 @@
 <div *ngIf="!initialised">
   <mat-spinner></mat-spinner>
 </div>
+
+<div *ngIf="initialised">
+  <div *ngFor="let event of events">
+    <ngx-json-viewer [json]="event"></ngx-json-viewer>
+  </div>
+</div>

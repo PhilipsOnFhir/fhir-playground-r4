@@ -1,8 +1,10 @@
 package org.github.philipsonfhir.fhircast.server.topic;
 
+import ca.uhn.fhir.context.FhirContext;
 import org.github.philipsonfhir.fhircast.server.Prefix;
 import org.github.philipsonfhir.fhircast.server.topic.service.TopicService;
 import org.github.philipsonfhir.fhircast.server.topic.service.FhirCastTopic;
+import org.github.philipsonfhir.fhircast.server.websub.domain.FhirCastBody;
 import org.github.philipsonfhir.fhircast.support.FhirCastException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ public class FhirCastTopicController {
 
     @Autowired
     private TopicService topicService;
+    FhirContext ourCtx = FhirContext.forR4();
 
     @PostMapping( Prefix.FHIRCAST_TOPIC )
     public ResponseEntity<String> createFhirCastSession(
@@ -49,6 +52,12 @@ public class FhirCastTopicController {
     @DeleteMapping( Prefix.FHIRCAST_TOPIC+"/{sessionId}" )
     public void removeFhirCastService( @PathVariable String sessionId) throws FhirCastException {
         topicService.removeTopic( sessionId );
+    }
+
+    @PostMapping( Prefix.FHIRCAST_TOPIC+"/{sessionId}" )
+    public String createFhirCastTopicLaunch(@PathVariable String sessionId, @RequestBody  String launchResource ) throws FhirCastException {
+        String launch = this.topicService.getTopic(sessionId).openLaunch( ourCtx.newJsonParser().parseResource( launchResource ) );
+        return launch;
     }
 
 

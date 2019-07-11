@@ -13,6 +13,7 @@ import {FhirCastService} from "./service/fhir-cast.service";
 export class AppComponent implements OnInit {
   title = 'event-viewer';
   private initialised: boolean = false;
+  private events: any[] = new Array(0);
 
   // constructor( private router: Router, private _AcLocation: Location ){
   constructor(private route: ActivatedRoute, private sofs: SmartOnFhirService, private fhircast: FhirCastService ){
@@ -24,8 +25,11 @@ export class AppComponent implements OnInit {
       err => { console.log(err) },
        () => {
         this.initialised = this.sofs.isInitialized();
+        let topicId = this.sofs.getToken()["cast-hub"];
+        this.fhircast.login( "http://localhost:9444/api/fhircast/websub/"+topicId, topicId);
          this.fhircast.subscribe().subscribe(next => {
-           console.log(next)
+           console.log(next);
+           this.events.unshift(next);
          })
       }
     );

@@ -12,6 +12,7 @@ import {environment} from "../../../environments/environment";
 })
 export class LaunchDisplayComponent implements OnInit {
   @Input() context:Resource;
+  @Input() launch:string;
   @Input() practitioner: Practitioner;
   @Output() closeLaunch = new EventEmitter();
 
@@ -72,11 +73,10 @@ export class LaunchDisplayComponent implements OnInit {
     this.closeLaunch.emit(this.context);
   }
 
-  launch(app: any) {
+  launchApp(app: any) {
     console.log("launch ");
     console.log(app);
-    let launch = "unknown";
-    let url=app.url+"/?launch="+launch+"&iss="+this.sofs.getUrl();
+    let url=app.url+"/?launch="+this.launch+"&iss="+this.sofs.getUrl();
     window.open(url);
   }
 }

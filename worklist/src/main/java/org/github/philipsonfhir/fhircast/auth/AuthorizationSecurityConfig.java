@@ -1,5 +1,7 @@
 package org.github.philipsonfhir.fhircast.auth;
 
+import org.github.philipsonfhir.fhircast.server.topic.service.TopicService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
@@ -28,11 +30,14 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
 //    private AuthenticationManager authenticationManager;
 //
 //
+    @Autowired
+    TopicService topicService;
+
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
                 .tokenStore(new InMemoryTokenStore())
-                .tokenEnhancer( new CustomTokenEnhancer())
+                .tokenEnhancer( new CustomTokenEnhancer(topicService))
                 ;
     }
 
@@ -88,6 +93,13 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
     }
 
     private class CustomTokenEnhancer implements TokenEnhancer {
+
+        private final TopicService topicService;
+
+        public CustomTokenEnhancer(TopicService topicService) {
+            this.topicService = topicService;
+        }
+
         @Override
         public OAuth2AccessToken enhance(OAuth2AccessToken oAuth2AccessToken, OAuth2Authentication oAuth2Authentication) {
             System.out.println("enhance");
@@ -95,6 +107,23 @@ public class AuthorizationSecurityConfig extends AuthorizationServerConfigurerAd
             additionalInfo.put("patient","patientId");
             additionalInfo.put("encounter","encounterId");
             additionalInfo.put("need_patient_banner","false");
+
+            oAuth2Authentication.getOAuth2Request().getScope().forEach(
+                    scope -> {
+                        switch( scope ){
+                            case "fhircast":
+                                String launch = oAuth2Authentication.getOAuth2Request().getRequestParameters().get("launch");
+                                if ( launch !=null ) {
+                                    String topic = topicService.getTopicFromLaunch(launch);
+                                    if ( topic !=null ) {
+                                        additionalInfo.put("cast-hub", topic);
+                                        additionalInfo.put("hub.topic", topic);
+                                    }
+                                }
+                                break;
+                        }
+                    }
+            );
 
             OAuth2AccessToken newToken = new MyOAuth2AccessToken(oAuth2AccessToken,additionalInfo);
 

@@ -7,6 +7,7 @@ import { MaterialModule} from "./material/material.module";
 import { HttpClientModule} from "@angular/common/http";
 import {SmartOnFhirService} from "./fhir-r4/smart-on-fhir.service";
 import {FhirCastService} from "./service/fhir-cast.service";
+import {NgxJsonViewerModule} from "ngx-json-viewer";
 
 const appRoutes: Routes = [
   { path: 'launch', component: AppComponent },
@@ -20,8 +21,9 @@ const appRoutes: Routes = [
   imports: [
     BrowserModule,
     MaterialModule,
-    RouterModule.forRoot(appRoutes ),
-    HttpClientModule
+    RouterModule.forRoot(appRoutes),
+    HttpClientModule,
+    NgxJsonViewerModule
   ],
   providers: [ SmartOnFhirService, FhirCastService ],
   bootstrap: [AppComponent]

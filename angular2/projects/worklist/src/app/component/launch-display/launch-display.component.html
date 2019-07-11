@@ -5,9 +5,10 @@
 </mat-toolbar>
 <h2>Current context</h2>
 <table>
+  <tr ><td>Launch:</td><td>{{practitioner.id}}</td> <td>{{launch}}</td> </tr>
   <tr *ngIf="practitioner"><td>Practitioner:</td><td>{{practitioner.id}}</td> <td>{{this.practitionerName}}</td> </tr>
   <tr *ngIf="encounter">   <td>Encounter:</td>   <td>{{encounter.id}}</td>    </tr>
   <tr *ngIf="patient">     <td>Patient:</td>     <td>{{patient.id}}</td>      <td>{{this.patientName}}</td></tr>
   <tr *ngIf="imagingStudy"><td>ImagingStudy:</td><td>{{imagingStudy.id}}</td> </tr>
 </table>
-<button *ngFor="let app of smartApps" (click)="launch(app)">{{app.name}}</button>
+<button *ngFor="let app of smartApps" (click)="launchApp(app)">{{app.name}}</button>

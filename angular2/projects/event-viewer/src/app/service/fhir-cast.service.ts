@@ -22,8 +22,8 @@ export class FhirCastService {
   private secHttp: SecHttp;
 
   constructor(  private sofs: SmartOnFhirService, private http: HttpClient ) {
-    this.secHttp = this.sofs.getSecHttp();
   }
+
 
   subscribe(): Observable<FhirCastEvent>{
     let fcws = new FhirCastWebsocket(this.secHttp, this.http);
@@ -78,6 +78,7 @@ export class FhirCastService {
 
   login(topicUrl: string, topicId:string ){
     console.log("login "+topicUrl);
+    this.secHttp = this.sofs.getSecHttp();
     this.topicUrl = topicUrl;
     this.topicId = topicId;
     this.initialized = true;

@@ -469,6 +469,10 @@ export class SmartOnFhirService   {
     return this.availableAndReady;
   }
 
+
+  public getAccessToken() : TokenResponse {
+    return  this.token;
+  }
 }
 
 class TokenResponse {
@@ -476,6 +480,7 @@ class TokenResponse {
   client_id: string;
   expires_in: string;
   scope: string;
+  'cast-hub' : string;
 }
 
 

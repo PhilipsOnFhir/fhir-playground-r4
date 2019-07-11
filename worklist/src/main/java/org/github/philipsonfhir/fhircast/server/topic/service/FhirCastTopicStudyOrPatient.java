@@ -7,6 +7,7 @@ import org.hl7.fhir.r4.model.Resource;
 public class FhirCastTopicStudyOrPatient {
     private Patient _patient;
     private ImagingStudy _imagingStudy;
+    private String launch = "LNCH"+System.currentTimeMillis();
 
     public FhirCastTopicStudyOrPatient( Patient patient) {
         _patient = patient;
@@ -68,6 +69,10 @@ public class FhirCastTopicStudyOrPatient {
             return true;
         }
         return false;
+    }
+
+    public String getLaunch() {
+        return this.launch;
     }
 //    public void closePatientChart() {
 //        _fhirCastTopic.eventReceived(FhircastEventType.CLOSE_PATIENT_CHART, null );

@@ -3,6 +3,7 @@ package org.github.philipsonfhir.fhircast.server.topic.service;
 import org.github.philipsonfhir.fhircast.support.FhirCastException;
 import org.github.philipsonfhir.fhircast.server.websub.domain.FhircastEventType;
 import lombok.ToString;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.ImagingStudy;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Resource;
@@ -58,12 +59,23 @@ public class FhirCastTopic {
 
     public FhirCastTopicStudyOrPatient openPatientChart(Patient patient) {
         logger.info( "open patient "+patient.getId() );
+
+        boolean present = false;
         FhirCastTopicStudyOrPatient studyOrPatient = new FhirCastTopicStudyOrPatient( patient );
+        Iterator<FhirCastTopicStudyOrPatient> it = this.fhirCastTopicStudyOrPatients.iterator();
+        while( it.hasNext() ){
+            FhirCastTopicStudyOrPatient nxt = it.next();
+            if ( nxt.equals( studyOrPatient )){
+                studyOrPatient = nxt;
+                present=true;
+            }
+        }
+        if ( !present ){
+            this.fhirCastTopicStudyOrPatients.add(studyOrPatient);
+        }
+
         if ( _current !=null && !_current.equals(studyOrPatient)) {
             sendEvent(FhircastEventType.OPEN_PATIENT_CHART, patient);
-        }
-        if ( !this.fhirCastTopicStudyOrPatients.contains(  studyOrPatient )){
-            this.fhirCastTopicStudyOrPatients.add(studyOrPatient);
         }
         _current = studyOrPatient;
         return studyOrPatient;
@@ -147,4 +159,24 @@ public class FhirCastTopic {
     }
 
 
+    public boolean containsLaunch(String launch) {
+        Iterator<FhirCastTopicStudyOrPatient> it = this.fhirCastTopicStudyOrPatients.iterator();
+        while ( it.hasNext() ){
+            FhirCastTopicStudyOrPatient fhirCastTopicStudyOrPatient = it.next();
+            if ( fhirCastTopicStudyOrPatient.getLaunch().equals(launch)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String openLaunch(IBaseResource retrieveFhirResource) {
+        FhirCastTopicStudyOrPatient fhirCastTopicStudyOrPatient = null;
+        if ( retrieveFhirResource instanceof Patient ){
+            fhirCastTopicStudyOrPatient = this.openPatientChart((Patient) retrieveFhirResource);
+        } else if ( retrieveFhirResource instanceof ImagingStudy ){
+            fhirCastTopicStudyOrPatient = this.openImagingStudy((ImagingStudy) retrieveFhirResource);
+        }
+        return ( fhirCastTopicStudyOrPatient!=null?fhirCastTopicStudyOrPatient.getLaunch():null );
+    }
 }

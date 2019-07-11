@@ -43,7 +43,7 @@
     </mat-progress-spinner>
   </div>
   <div *ngIf="topicIdSet && initialised">
-    <app-worklist [practitioner]="practitioner"></app-worklist>
+    <app-worklist [topicId]="topicId" [practitioner]="practitioner"></app-worklist>
     <!--      {{this.launchSessions.length}}-->
   </div>
 </div>

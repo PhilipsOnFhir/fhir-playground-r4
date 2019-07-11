@@ -45,5 +45,6 @@ export class AppComponent {
 
   logout() {
     this.httpSec.logout();
+    this.isLoggedIn = false;
   }
 }

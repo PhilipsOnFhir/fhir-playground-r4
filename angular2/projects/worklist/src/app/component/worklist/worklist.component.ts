@@ -6,6 +6,12 @@ import {Resource} from "fhir2angular-r4";
 import {SmartOnFhirService} from "../../fhir-r4/smart-on-fhir.service";
 import {FhirCastService} from "../../service/fhir-cast.service";
 import {Practitioner} from "fhir2angular-r4";
+import {TopicService} from "../../service/topic.service";
+
+class LaunchSession {
+  domainResource: DomainResource;
+  launchId:string;
+}
 
 @Component({
   selector: 'app-worklist',
@@ -14,10 +20,11 @@ import {Practitioner} from "fhir2angular-r4";
 })
 export class WorklistComponent implements OnInit {
   @Input() practitioner: Practitioner;
-  launchSessions = new Array<DomainResource>();
+  @Input() topicId: string;
+  launchSessions = new Array<LaunchSession>();
   selectedLaunchIndex: number = 0;
 
-  constructor( private sofs: SmartOnFhirService, private fhircast: FhirCastService) { }
+  constructor( private sofs: SmartOnFhirService, private fhircast: FhirCastService, private topicService: TopicService) { }
 
   ngOnInit() {
     this.fhircast.subscribe().subscribe( fce => {
@@ -55,12 +62,12 @@ export class WorklistComponent implements OnInit {
     this.fhircast.openPatient(patient);
   }
 
-  private locateAndChangeFocus( domainResource: DomainResource) {
+  private locateAndChangeFocus( domainResource: DomainResource ) {
     let found = false;
     let i = 0;
     while (i < this.launchSessions.length && !found) {
       let ls = this.launchSessions[i];
-      if (ls.resourceType == domainResource.resourceType && ls.id === domainResource.id) {
+      if (ls.domainResource.resourceType == domainResource.resourceType && ls.domainResource.id === domainResource.id) {
         found = true;
       } else {
         i++;
@@ -68,32 +75,51 @@ export class WorklistComponent implements OnInit {
     }
 
     if (!found) {
+      console.log("new resource "+domainResource.id);
       this.sofs.getResource( domainResource.resourceType+"/"+domainResource.id ).subscribe( dr=> {
-        this.launchSessions[i]=dr;
+        let ls = new LaunchSession();
+        ls.domainResource=dr;
+        // console.log(ls);
+
+        this.topicService.openLaunch(this.topicId, domainResource).subscribe(
+          nxt => {
+            console.log("launch received "+nxt);
+            ls.launchId=nxt;
+            this.launchSessions[i]=ls;
+            console.log( this.launchSessions);
+            this.selectedLaunchIndex = this.launchSessions.length + 1;
+          },
+          err => console.log(err)
+        );
       });
-      this.launchSessions.push(domainResource);
-      this.selectedLaunchIndex = this.launchSessions.length + 1;
+
+      // let ls = new LaunchSession();
+      // ls.domainResource =domainResource;
+      // ls.launchId=launch;
+      // this.launchSessions.push(ls);
+      // console.log(ls);
+      // this.selectedLaunchIndex = this.launchSessions.length + 1;
     } else {
       this.selectedLaunchIndex = i;
     }
   }
 
   imagingStudySelected( study: ImagingStudy) {
-    this.locateAndChangeFocus(study);
+    this.locateAndChangeFocus( study );
     this.fhircast.openStudy(study);
   }
 
   launchedClosed(contextResource: Resource) {
     // console.log("close launch "+contextResource);
     let tmp  = this.launchSessions;
-    this.launchSessions = new Array<DomainResource>();
+    this.launchSessions = new Array<LaunchSession>();
     tmp.forEach( ls => {
-      if ( ls.resourceType===contextResource.resourceType && ls.id===contextResource.id ){
+      if ( ls.domainResource.resourceType===contextResource.resourceType && ls.domainResource.id===contextResource.id ){
         // console.log("close pannel "+ls.id);
-        if ( ls.resourceType===Patient.def ){
-          this.fhircast.closePatient( ls );
+        if ( ls.domainResource.resourceType===Patient.def ){
+          this.fhircast.closePatient( ls.domainResource );
         } else{
-          this.fhircast.closeStudy( ls );
+          this.fhircast.closeStudy( ls.domainResource );
         }
       }else{
         this.launchSessions.push(ls)
@@ -105,11 +131,11 @@ export class WorklistComponent implements OnInit {
 
   selectedIndexChange(index: number) {
     console.log("tab focus on:" + index);
-    let resource = this.launchSessions[index-1];
-    if ( resource && resource.resourceType===Patient.def ) {
-      this.fhircast.openPatient(resource as Patient);
-    } else if ( resource && resource.resourceType===ImagingStudy.def ){
-      this.fhircast.openStudy(resource as ImagingStudy);
+    let ls = this.launchSessions[index-1];
+    if ( ls && ls.domainResource.resourceType===Patient.def ) {
+      this.fhircast.openPatient(ls.domainResource as Patient);
+    } else if ( ls && ls.domainResource.resourceType===ImagingStudy.def ){
+      this.fhircast.openStudy(ls.domainResource as ImagingStudy);
     }
   }
 }

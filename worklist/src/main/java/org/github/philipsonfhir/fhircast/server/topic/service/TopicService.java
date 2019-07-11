@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.logging.Logger;
 
 @Component
@@ -65,5 +62,17 @@ public class TopicService {
 
     public void publishEvent(FhirCastTopicEvent fhirCastWorkflowEvent) {
         this.applicationEventPublisher.publishEvent( fhirCastWorkflowEvent );
+    }
+
+    public String getTopicFromLaunch(String launch) {
+        Iterator<FhirCastTopic> it = _topicMap.values().iterator();
+        while ( it.hasNext() ) {
+            FhirCastTopic fct = it.next();
+            if ( fct.containsLaunch(launch)) {
+                String topic = fct.getTopic();
+                return topic;
+            }
+        }
+        return null;
     }
 }

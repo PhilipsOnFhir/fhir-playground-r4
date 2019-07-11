@@ -11,6 +11,8 @@ export class SecHttp {
   }
 
   private updateOptions(options):any {
+    // console.log(options)
+    // console.log(this.accessToken)
     if (this.accessToken) {
       let headers = new HttpHeaders({'Authorization': 'Bearer ' + this.accessToken});
       if (options && options.headers) {
@@ -19,6 +21,7 @@ export class SecHttp {
         options.headers = headers;
       }
       let newOptions = (options ? options : {headers: headers});
+      // console.log(newOptions)
       return newOptions;
     }
     else {
@@ -28,7 +31,7 @@ export class SecHttp {
 
 
   get<T>(resourceUrl, options?) : Observable<T>{
-      console.log(resourceUrl);
+      // console.log(resourceUrl);
       return new Observable<T>( obs => {
         let newOptions = this.updateOptions(options);
 
@@ -42,7 +45,7 @@ export class SecHttp {
 
 
   put<T>(url: string, body: any| null, options?): Observable<T> {
-    console.log(url);
+    // console.log(url);
     return new Observable<T>( obs => {
       let newOptions = this.updateOptions(options);
 
@@ -54,10 +57,9 @@ export class SecHttp {
   }
 
   post<T>(resourceUrl, body: any | null, options?) : Observable<T>{
-    console.log(resourceUrl);
+    // console.log(resourceUrl);
     return new Observable<T>( obs => {
       let newOptions = this.updateOptions(options);
-
       this.http.post<T>(resourceUrl, body,newOptions).subscribe(
         nxt => {obs.next((nxt as unknown) as T); obs.complete()},
         err => obs.error(err)

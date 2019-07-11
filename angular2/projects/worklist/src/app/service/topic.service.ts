@@ -2,6 +2,8 @@ import {Injectable, OnInit} from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
 import {observable, Observable} from "rxjs";
 import {ConnectorService} from "./connector.service";
+import {Patient} from "../../../../fhir2angular-r4/src/lib/Patient";
+import {Resource} from "../../../../fhir2angular-r4/src/lib/Resource";
 
 @Injectable({
   providedIn: 'root'
@@ -61,5 +63,10 @@ export class TopicService {
     console.log("close topic "+topicId);
     console.log(this.baseUrl+topicId);
     return this.httpSec.delete( this.baseUrl+topicId);
+  }
+
+  openLaunch(topicId:string,  patient: Resource) :Observable<string> {
+    console.log("topic open launch for "+patient);
+      return this.httpSec.post(this.baseUrl+topicId, patient, {responseType: 'text' as 'json' } );
   }
 }
