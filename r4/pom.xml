@@ -10,10 +10,6 @@
 
     <modules>
         <module>hapi-r4</module>
-<!--        <module>authserver</module>-->
-<!--        <module>fhircast</module>-->
-<!--        <module>smartonfhir</module>-->
-        <module>fhirproxy</module>
         <module>cdshooks-test-services</module>
         <module>worklist</module>
         <module>fhirproxy</module>
