@@ -1,0 +1,7 @@
+.idea\
+fhirproxy\target\
+hapi-r4\target\
+worklist\target\
+angular2\dist\
+angular2\node_modules
+/cdshooks-test-services/target/

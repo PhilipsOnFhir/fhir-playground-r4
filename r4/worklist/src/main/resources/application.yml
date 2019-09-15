@@ -1,0 +1,48 @@
+server:
+  port: 9401
+
+proxy:
+  base: fhir
+  fhirserver:
+    url: http://localhost:9404/hapi-fhir-jpaserver/fhir/
+  authorization-endpoint: http://localhost:9401/oauth/authorize
+  token-endpoint: http://localhost:9401/oauth/token
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+
+cdshooks:
+  services:
+    http://localhost:9450/cds-services, http://localhost:9451/cds-services
+  hooks:
+    - hook: patient-view
+      check: true
+      context:
+        - id: userid
+          expression: \%user.id
+        - id: encounterid
+          exression: \%encounter.id
+        - id: patientid
+          exression: \%patient.id
+    - hook: imagestudy-view
+      check: true
+      context:
+        - id: userid
+          expression: \%user.id
+        - id: encounterid
+          exression: \%encounter.id
+        - id: imagestudyid
+          exression: \%imagestudy.id
+
+#security:
+#  oauth2:
+#    resource:
+#      token-info-uri: http://localhost:8080/oauth/introspect
+security:
+    oauth2:
+      resource:
+        filter-order: 3
+
+

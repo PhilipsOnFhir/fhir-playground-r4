@@ -1,0 +1,50 @@
+<mat-toolbar>
+  <mat-toolbar-row>
+    <span><b>WorkList</b></span>
+    <span class="example-fill-remaining-space"></span>
+    <!--        <span><b>topic: </b>{{topicId}}</span>-->
+    <span *ngIf="topicIdSet">
+            topic-id: {{topicId}}
+        </span>
+  </mat-toolbar-row>
+  <mat-toolbar-row>
+    <span>Practitioner: {{practitionerName}}</span>
+    <span class="example-fill-remaining-space"></span>
+    <span *ngIf="topicIdSet"><button mat-icon-button (click)="closeCurrentTopic()"><mat-icon>done</mat-icon></button></span>
+    <span *ngIf="!topicIdSet"><button mat-icon-button (click)="logout()"><mat-icon>done</mat-icon></button></span>
+<!--    <span (click)="sendMessage()">send</span>-->
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<div *ngIf="loggedout">
+  LOGGED OUT
+</div>
+<div *ngIf="!loggedout">
+
+  <div *ngIf="!topicIdSet">
+    <div *ngIf="topicIds && topicIds.length>0">
+      Select topic:
+      <mat-form-field>
+        <mat-label></mat-label>
+        <mat-select [(value)]="selectedTopic" (selectionChange)="selectTopic()">
+          <mat-option *ngFor="let tid of topicIds" [value]="tid">
+            {{tid}}
+          </mat-option>
+          <mat-option [value]="newTopicValue"><i>create new</i></mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <p>{{selectedTopic}}</p>
+    <!--      <button mat-raised-button (click)="createNewTopic()">start new topic</button>-->
+  </div>
+  <div *ngIf="topicIdSet && !initialised">
+    <mat-progress-spinner
+      color="primary"
+      mode="indeterminate">
+    </mat-progress-spinner>
+  </div>
+  <div *ngIf="topicIdSet && initialised">
+    <app-worklist [topicId]="topicId" [practitioner]="practitioner"></app-worklist>
+    <!--      {{this.launchSessions.length}}-->
+  </div>
+</div>

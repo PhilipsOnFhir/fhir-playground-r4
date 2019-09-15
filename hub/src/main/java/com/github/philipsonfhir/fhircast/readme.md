@@ -1,1 +1,0 @@
-Starts the FhirCast Server. 

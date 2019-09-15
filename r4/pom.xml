@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.github.philipsonfhir.worklist.fhircast</groupId>
+    <artifactId>fhircast</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Spring FhirCast implementation</name>
+
+    <modules>
+        <module>hapi-r4</module>
+<!--        <module>authserver</module>-->
+<!--        <module>fhircast</module>-->
+<!--        <module>smartonfhir</module>-->
+        <module>fhirproxy</module>
+        <module>cdshooks-test-services</module>
+        <module>worklist</module>
+        <module>fhirproxy</module>
+    </modules>
+
+    <build>
+        <plugins>
+        </plugins>
+    </build>
+
+</project>

@@ -1,0 +1,11 @@
+<mat-tab-group [selectedIndex]="1+selectedLaunchIndex" (selectedIndexChange)="selectedIndexChange($event)">
+  <mat-tab label="Open new">
+    <app-patient-image-selector
+      (patientSelected)="patientSelected($event)"
+      (imagingStudySelected)="imagingStudySelected($event)">
+    </app-patient-image-selector>
+  </mat-tab>
+  <mat-tab *ngFor="let ls of launchSessions" label="{{ls.domainResource.resourceType}} {{ls.domainResource.id}} ">
+    <app-launch-display [context]="ls.domainResource" [launch]="ls.launchId" [practitioner]="practitioner" (closeLaunch)="launchedClosed($event)"></app-launch-display>
+  </mat-tab>
+</mat-tab-group>
