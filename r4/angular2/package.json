@@ -5,7 +5,7 @@
     "ng": "ng",
     "start worklist": "ng serve worklist --port 4401",
     "start event": "ng serve event-viewer --port 4402",
-    "watch fhirr4": "ng build fhir2angular-r4 --watch",
+    "build fhirr4": "ng build fhir2angular-r4",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
