@@ -1,0 +1,21 @@
+server:
+  port: 9410
+
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+spring:
+  main:
+    allow-bean-definition-overriding=true:
+
+fhircast:
+  fhirserver:
+    url: http://localhost:9404/hapi-fhir-jpaserver/fhir/
+    memory: false
+  includeEntity: false
+  alive:
+    active: true
+    period: 10000
+

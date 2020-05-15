@@ -1,0 +1,36 @@
+@startuml
+    box Launcher
+        participant Launcher
+        participant Launcher_FHIR
+    end box
+
+    box OAuth
+        participant AuthorizeServer
+        participant TokenServer
+    end box
+
+    box FhirCast
+        participant FhicCastHub
+    end box
+
+    box App
+        participant App
+    end box
+
+    Launcher -> App : open <co-url>/?iss=<fhir-url>&launch=<launch>
+    App -> Launcher_FHIR : GET CapabilityStatement
+    note left: retrieve authorize and token endpoint
+    App -> AuthorizeServer: redirect ?launch=<launch>&scope=launch&state=abc&aud=<fhir-url>
+    AuthorizeServer -> App: redirect ?code=123&...
+    App -> TokenServer: POST ?grant_type=authorization_code&code=123&...
+    TokenServer --> App: <token>
+    note left
+        token contains:
+            patientId, encounterId, hub.url and hub.topic
+    end note
+    == token received ==
+    App -> Launcher_FHIR: GET fhir data
+    == register with FHIRCast ==
+    App -> FhicCastHub: subscribe (<token>) ...
+    
+@enduml

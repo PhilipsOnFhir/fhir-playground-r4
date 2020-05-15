@@ -1,0 +1,21 @@
+@startuml
+    box eCC
+        participant eCC
+        participant eCC_FHIR
+        participant AuthServer
+    end box
+
+    box CO
+        participant CO
+    end box
+
+    eCC -> CO : open <co-url>/?iss=<fhir-url>&launch=<launch>
+    CO -> eCC_FHIR : GET CapabilityStatement
+    note left: retrieve auth and token endpoint
+    CO -> AuthServer: redirect ?launch=<launch>&scope=launch&state=abc&aud=<fhir-url>
+    AuthServer -> CO: redirect ?code=123&...
+    CO -> AuthServer: POST ?grant_type=authorization_code&code=123&...
+    AuthServer --> CO: <token patientid=<id>>
+    CO -> AuthServer: redirect <auth>
+    
+@enduml

@@ -1,0 +1,64 @@
+@startuml
+    == hub url and topic known ==
+    == subscribe ==
+    Client -> FhirCastHub : POST <hub-url> subscribe
+    note right
+        hub.channel.type = webhook
+        hub.mode = subscribe
+        hub.topic = <topicId>
+        hub.events = ....
+        hub.callback = <client-callback-url>
+        hub.secret = <secret>
+    end note
+    FhirCastHub --> Client: 202 Accepted
+    alt Accepted
+        FhirCastHub -> Client: GET <callback-url>/?hub.mode=subscribe&hub.topic=<topic>&events=...&hub.challenge=HMAC(<secret>)&hub.lease_seconds=<lease-time>
+        Client --> FhirCastHub: 2xx <hub.challenge>
+        note right: if challenge matches - subscription complete
+        
+    else Denied
+        FhirCastHub -> Client: GET <callback-url>/?hub.mode=denied&hub.topic=<topic>&events=...&hub.reason=<denial-reason>
+        Client --> FhirCastHub: 2xx
+    end
+    == send event ==
+    Client -> FhirCastHub: POST <hub.url>
+    note right
+        timestamp: <ISO 8601-2 timestamp>
+        id: <unique-event-id>
+        event: 
+            hub.topic=<topic>
+            hub.event=<event-name>
+            context=<FHIR-Resources>
+    end note
+    FhirCastHub -> Client: POST <callback-url> 
+    note right
+        timestamp: <ISO 8601-2 timestamp>
+        id: <unique-event-id>
+        event: 
+            hub.topic=<topic>
+            hub.event=<event-name>
+            context=<FHIR-Resources>
+    end note
+    
+
+    == unsubscribe ==
+    Client -> FhirCastHub : POST <hub-url> unsubscribe
+    note right
+        hub.channel.type = webhook
+        hub.mode = unsubscribe
+        hub.topic = <topicId>
+        hub.events = ....
+        hub.callback = <client-callback-url>
+        hub.secret = <secret>
+    end note
+    FhirCastHub --> Client: 202 Accepted
+    alt Accepted
+        FhirCastHub -> Client: GET <callback-url>/?hub.mode=subscribe&hub.topic=<topic>&events=...&hub.challenge=HMAC(<secret>)&hub.lease_seconds=<lease-time>
+        Client --> FhirCastHub: 2xx <hub.challenge>
+        note right: if challenge matches - unsubscription complete
+        
+    else Denied
+        FhirCastHub -> Client: GET <callback-url>/?hub.mode=denied&hub.topic=<topic>&events=...&hub.reason=<denial-reason>
+        Client --> FhirCastHub: 2xx
+    end
+@enduml

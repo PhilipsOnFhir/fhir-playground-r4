@@ -1,0 +1,8 @@
+@startuml
+    eCC -> FCHub: create topic
+    eCC -> CO: open <co-url>/fhircast=<hub-url>/<topic>
+    CO -> FCHub: /auth get token
+    CO -> FCHub: subscribe patient-*
+    eCC -> FCHub: patient-open (pid)
+    FCHub -> CO: patient-open (pid)
+@enduml

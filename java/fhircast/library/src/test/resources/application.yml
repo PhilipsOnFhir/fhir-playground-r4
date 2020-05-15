@@ -1,0 +1,11 @@
+server:
+  port: 3410
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+fhircast:
+  fhirserver:
+
+
