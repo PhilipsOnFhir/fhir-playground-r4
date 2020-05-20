@@ -12,14 +12,15 @@ the FHIRcast end-points as specified in the specification.
 
 ## Compilation
 Check-out the code.
-Compile the code by running mvn install.
+Compile the code by running `mvn install`.
 
 ## Execution
 The examples/local directory contains a project that will run a local instance of the
 project. The FHIR data is retrieved from the public HAPI FHIR server ( http://hapi.fhir.org/baseR4).
-The server can be run by calling
-    java.exe -jar target/local-fhircast-4.1-SNAPSHOT.jar org.github.philipsonfhir.smartsuite.examples.local.MyPlainFhirCastServer
-from the directory
-    examples/local/local-fhircast
+The server can be run by calling   
+ * `java.exe -jar target/local-fhircast-4.1-SNAPSHOT.jar org.github.philipsonfhir.smartsuite.examples.local.MyPlainFhirCastServer`  
+
+from the directory:
+ * examples/local/local-fhircast
 
 
