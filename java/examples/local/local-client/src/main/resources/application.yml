@@ -1,9 +1,0 @@
-logging:
-  level:
-    org.springframework.security: DEBUG
-#    org.jline: WARNING
-
-shell:
-  interactive:
-    enabled=true:
-

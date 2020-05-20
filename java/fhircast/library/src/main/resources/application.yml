@@ -1,7 +1,0 @@
-server:
-  port: 9410
-
-logging:
-  level:
-    org.springframework.security: DEBUG
-
